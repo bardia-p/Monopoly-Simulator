@@ -12,4 +12,3 @@ Bardia Parmoun \
 Kyra Lothrop\
 Sarah Chow \
 Owen VanDusen 
-
