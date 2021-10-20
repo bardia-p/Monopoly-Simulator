@@ -18,11 +18,9 @@ public class BoardModel {
         views.remove(view);
     }
 
-    public void buyProperty (Property property, Player player){
-        if (property.getOwner() == null && property.getPrice() >= player.getCash()) {
-            for (BoardView view: views){
-                view.handleBuyProperty(property, player);
-            }
+    public void buyProperty (String propertyName, String playerName){
+        for (BoardView view: views){
+            view.handleBuyProperty(propertyName, playerName);
         }
     }
 

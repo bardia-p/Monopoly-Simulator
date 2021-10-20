@@ -3,10 +3,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Player {
+    private String name;
     private int cash;
     private List<Property> properties;
 
-    Player(){
+    Player(String name) {
+        this.name = name;
         this.cash = 1500;
         this.properties = new ArrayList<>();
     }
@@ -15,7 +17,11 @@ public class Player {
         return this.cash;
     }
 
-    public void pay(int propertyAmount){
+    public void pay (int propertyAmount){
         this.cash -= propertyAmount;
+    }
+
+    public String getName(){
+        return name;
     }
 }
