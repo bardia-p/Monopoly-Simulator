@@ -4,10 +4,12 @@ public class Property {
     private String name;
     private Player propertyOwner;
     private int price;
+    private int rent;
 
     Property(){
         this.propertyOwner = null;
         this.price = 0;
+        this.rent = 100;
     }
 
     public Player getOwner() {
@@ -23,5 +25,9 @@ public class Property {
 
     public void setOwner(Player player) {
         this.propertyOwner = player;
+    }
+
+    public int getRent(){
+        return this.rent;
     }
 }

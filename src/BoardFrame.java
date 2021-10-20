@@ -36,13 +36,39 @@ public class BoardFrame implements BoardView {
     }
 
     @Override
-    public void handleBuyProperty(String propertyName, String playerName) {
+    public boolean handleBuyProperty(String propertyName, String playerName) {
         Property property = getPropertyByName(propertyName);
         Player player = getPlayerByName(playerName);
 
-        if (property.getOwner() == null && property.getPrice() >= player.getCash()) {
+        if (property.getOwner() == null && property.getPrice() <= player.getCash()) {
             property.setOwner(player);
             player.pay(property.getPrice());
+        }
+        else{
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean handlePayRent(String propertyName, String playerName) {
+        Property property = getPropertyByName(propertyName);
+        Player propertyOwner = property.getOwner();
+        Player playerPaysRent = getPlayerByName(playerName);
+        int amountToPay = property.getRent();
+
+        if (property.getOwner() != null && amountToPay <= playerPaysRent.getCash()) {
+            propertyOwner.getMoney(amountToPay);
+            playerPaysRent.pay(amountToPay);
+            return true;
+        }
+        else if(amountToPay >= playerPaysRent.getCash()){
+            playerPaysRent.setBankrupt(true);
+            return false;
+        }
+        else{
+            return false;
         }
     }
 }

@@ -18,10 +18,20 @@ public class BoardModel {
         views.remove(view);
     }
 
-    public void buyProperty (String propertyName, String playerName){
+    public boolean buyProperty (String propertyName, String playerName){
+        boolean success = true;
         for (BoardView view: views){
-            view.handleBuyProperty(propertyName, playerName);
+            success &= view.handleBuyProperty(propertyName, playerName);
         }
+        return success;
+    }
+
+    public boolean payRent (String propertyName, String playerName){
+        boolean success = true;
+        for (BoardView view: views){
+            success &= view.handlePayRent(propertyName, playerName);
+        }
+        return success;
     }
 
 }

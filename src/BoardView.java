@@ -1,5 +1,6 @@
 // Bardia Parmoun & Kyra Lothrop
 
 public interface BoardView {
-    void handleBuyProperty(String propertyName, String playerName);
+    boolean handleBuyProperty(String propertyName, String playerName);
+    boolean handlePayRent(String propertyName, String playerName);
 }
