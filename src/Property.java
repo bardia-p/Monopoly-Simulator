@@ -1,4 +1,9 @@
 // Bardia Parmoun & Kyra Lothrop
 
-public class Property implements BoardView {
+public class Property {
+    public Object getOwner() {
+    }
+
+    public Object getPrice() {
+    }
 }
