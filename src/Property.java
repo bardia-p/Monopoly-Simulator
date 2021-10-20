@@ -6,7 +6,8 @@ public class Property {
     private int price;
     private int rent;
 
-    Property(){
+    Property(String name){
+        this.name = name;
         this.propertyOwner = null;
         this.price = 0;
         this.rent = 100;

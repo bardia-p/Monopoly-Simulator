@@ -1,6 +1,7 @@
 // Bardia Parmoun & Kyra Lothrop
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class BoardFrame implements BoardView {
@@ -13,6 +14,52 @@ public class BoardFrame implements BoardView {
         players = new ArrayList<>();
         model = new BoardModel();
         model.addBoardView(this);
+        constructBoard();
+    }
+
+    private void constructBoard(){
+        properties.addAll(Arrays.asList(
+                new Property("GO"),
+                new Property("Mediterranean Avenue"),
+                // Community Chest here
+                new Property("Baltic Avenue"),
+                // Income Tax
+                // Reading Railroad
+                new Property("Oriental Avenue"),
+                // Chance Card
+                new Property("Vermont Avenue"),
+                new Property("Connecticut Avenue"),
+                // JAIL!
+                new Property("St. Charles Place"),
+                // Electric Company
+                new Property("States Avenue"),
+                new Property("Virginia Avenue"),
+                // Pennsylvania Railroad
+                new Property("St. James Place"),
+                // Community Chest
+                new Property("Tennessee Avenue"),
+                new Property("New York Avenue"),
+                // FREE PARKING
+                new Property("Kentucky Avenue"),
+                // Chance Card
+                new Property("Indiana Avenue"),
+                new Property("Illinois Avenue"),
+                // B. & O. Railroad
+                new Property("Atlantic Avenue"),
+                new Property("Ventnor Avenue"),
+                // Waterworks
+                new Property("Marvin Garden"),
+                // GO TO JAIL ->
+                new Property("Pacific Avenue"),
+                new Property("North Carolina Avenue"),
+                // Community Chest
+                new Property("Pennsylvania Avenue"),
+                // Shortline Railroad
+                // Chance Card
+                new Property("Park Place"),
+                // Luxury Tax
+                new Property("Boardwalk")
+        ));
     }
 
     private Property getPropertyByName(String propertyName){
@@ -68,7 +115,13 @@ public class BoardFrame implements BoardView {
             return false;
         }
         else{
-            return false;
+            return true;
         }
+    }
+
+    @Override
+    public boolean handleNewPlayer(String playerName, String playerIcon) {
+        this.players.add(new Player(playerName, playerIcon));
+        return true;
     }
 }
