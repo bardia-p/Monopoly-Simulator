@@ -25,15 +25,21 @@ public class Player {
         return this.cash;
     }
 
-    public void pay(int propertyAmount){
-        this.cash -= propertyAmount;
+    public void buyProperty(Property property){
+        this.properties.add(property);
+        this.cash -= property.getPrice();
+    }
+
+    public void sellProperty(Property property){
+        this.properties.remove(property);
+        this.cash += property.getPrice();
     }
 
     public void setBankrupt(boolean isBankrupt){
         this.bankrupt = isBankrupt;
     }
 
-    public boolean getBankrupt(){
+    public boolean isBankrupt(){
         return this.bankrupt;
     }
 
@@ -59,6 +65,10 @@ public class Player {
 
     public void setCurrentProperty(Property currentProperty){
         this.currentProperty = currentProperty;
+    }
+
+    public Property getCurrentProperty(){
+        return currentProperty;
     }
 
     @Override

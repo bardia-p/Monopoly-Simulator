@@ -8,7 +8,6 @@ public class BoardController  {
     private ArrayList<String>  remainingIcons;
 
     public BoardController(){
-        boardModel = new BoardModel();
         remainingIcons = new ArrayList<>(Arrays.asList(
                 "boot",
                 "iron",
@@ -22,16 +21,13 @@ public class BoardController  {
     }
 
     public void eventListener(BoardEvent e){
+        boardModel = (BoardModel) e.getSource();
         if (e.getType() == BoardModel.Status.GET_NUM_PLAYERS){
             getNumPlayers();
         } else if (e.getType() == BoardModel.Status.INITIALIZE_PLAYERS){
-            initializePlayers(e.getAmount());
-        } else if (e.getType() == BoardModel.Status.ROLL){
-            roll(e.getPlayer());
-        } else if (e.getType() == BoardModel.Status.MOVE_PLAYER){
-            movePlayer(e.getPlayer(), e.getAmount());
-        } else if (e.getType() == BoardModel.Status.GET_PLAYER_STATUS){
-            getPlayerStatus(e.getPlayer());
+            initializePlayers(e.getValue());
+        } else if (e.getType() == BoardModel.Status.GET_COMMAND){
+            getCommand(e.getPlayer(), e.getCommands());
         }
     }
 
@@ -62,8 +58,7 @@ public class BoardController  {
 
     }
 
-
-    public String getListOfIconsUpper(){
+    private String getListOfIconsUpper(){
 
         String upperCaseIcon = "";
 
@@ -73,88 +68,49 @@ public class BoardController  {
         return upperCaseIcon;
     }
 
+    private String getListAvailableOfCommands(ArrayList<BoardModel.Command> commands){
+        String availableCommands = "";
 
-    private void roll(Player player){
-        System.out.println("Rolling dice for " + player.getIcon());
-        Random rand = new Random();
-        int die1 = rand.nextInt((6 - 1) + 1) + 1;
-        int die2 = rand.nextInt((6 - 1) + 1) + 1;
-        System.out.printf("You rolled a %d and a %d\n", die1, die2);
-
-        boardModel.setDice(die1, die2);
+        for (BoardModel.Command command: commands){
+            if(command == BoardModel.Command.BUY){
+                availableCommands += "buy, ";
+            } if(command == BoardModel.Command.SELL){
+                availableCommands += "sell, ";
+            } if(command == BoardModel.Command.STATUS){
+                availableCommands += "status, ";
+            } if(command == BoardModel.Command.NEXT){
+                availableCommands += "next, ";
+            }
+        }
+        return availableCommands;
     }
 
-    private void movePlayer(Player player, int amountToMove){
-        System.out.printf("Moving player %s by %d\n", player.getIcon(), amountToMove);
-        boardModel.updatePlayer(player, amountToMove);
+    private void getCommand(Player player, ArrayList<BoardModel.Command> commands){
+        System.out.println("Here is a list of the available commands: ");
+        String availableCommands = getListAvailableOfCommands(commands);
+        System.out.println(availableCommands);
+
+        Scanner scan = new Scanner(System.in);
+        String command = scan.nextLine().toLowerCase();
+
+        while (!(availableCommands.contains(command))) {
+            System.out.println("Sorry try again!");
+            command = scan.nextLine().toLowerCase();
+        }
+
+        if (command.equals("buy")){
+            boardModel.buyProperty(player.getCurrentProperty(), player);
+        } else if (command.equals("sell")){
+            boardModel.sellProperty(player.getCurrentProperty(), player);
+        } else if (command.equals("next")){
+            boardModel.passTurn();
+        } else if (command.equals("status")){
+            boardModel.getStatus(player);
+        }
     }
 
     private void getPlayerStatus(Player player){
         System.out.println(player);
     }
 
-    /*
-    private void playerTurn(String currentIcon){
-        List<Integer> dice = roll();
-        int currentPosition;
-
-
-
-        if (dice.get(0)== dice.get(1)){
-            System.out.println("You got a double!!");
-        }
-
-        currentPosition = iconPosition.get(currentIcon);
-        iconPosition.replace(currentIcon, currentPosition + dice.get(0) + dice.get(1));
-        currentPosition = iconPosition.get(currentIcon);
-
-        System.out.printf("You landed on %s!\n", boardModel.getPropertyName(currentPosition));
-
-        if (boardModel.isPropertyBought(currentPosition)){
-            System.out.printf("It is owned by %s! You need to pay rent :( \n",
-                    boardModel.getPropertyName(currentPosition),
-                    Integer.valueOf(boardModel.getPropertyRent(currentPosition))
-                    );
-            if (!boardModel.payRent(currentPosition, currentIcon)){ // Rental payment did not go through
-                System.out.println("You do not have enough money to pay rent! You're BOOTED!\n");
-            }
-        }
-        else{
-            Scanner scan1 = new Scanner(System.in);
-            System.out.printf("Would you like to buy %s for %d?\n",
-                    boardModel.getPropertyName(currentPosition),
-                    boardModel.getPropertyRent(currentPosition));
-            String answer = scan1.nextLine().toLowerCase();
-
-            if (answer.equals("yes")){
-                if(!boardModel.buyProperty(currentPosition, currentIcon)){
-                    System.out.printf("You do not have enough money to buy this property!\n" +
-                            "You have $%d left!\n", boardModel.getPlayerCash(currentIcon));
-                }
-            }
-        }
-
-
-    }
-
-
-
-    public static void main(String[] args) {
-        BoardController boardC;
-        String startGame;
-
-        do {
-            Scanner scan1 = new Scanner(System.in);
-            System.out.println("Would you like to start a game? start / quit");
-            startGame = scan1.nextLine().toLowerCase();
-        } while(!(startGame.equals("start") || (startGame.equals("quit"))));
-
-        if(startGame.equals("start")){
-            boardC = new BoardController();
-            boardC.play();
-        }
-
-        System.out.println("See you later");
-        System.exit(0);
-    }*/
 }

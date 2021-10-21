@@ -46,7 +46,7 @@ public class Property {
     public String toString() {
         return "Property{" +
                 "name='" + name + '\'' +
-                ", propertyOwner=" + propertyOwner +
+                ", propertyOwner=" + propertyOwner.getIcon() +
                 ", price=" + price +
                 ", rent=" + rent +
                 ", propertyIndex=" + propertyIndex +
