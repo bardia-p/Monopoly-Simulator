@@ -4,26 +4,11 @@
 import java.util.*;
 
 public class BoardController  {
-    private BoardFrame boardFrame;
     private BoardModel boardModel;
-    private boolean gameFinish;
-
-    private int turnsPassed;
-    private int numPlayers;
-
-    private ArrayList<String> remainingIcons;
-
-    //temporary stuff until GUI
-    private ArrayList<String> activeIcons;
-    private HashMap<String, Integer> iconPosition;
+    private ArrayList<String>  remainingIcons;
 
     public BoardController(){
-        boardFrame = new BoardFrame();
         boardModel = new BoardModel();
-        boardModel.addBoardView(boardFrame);
-
-        turnsPassed = 0;
-
         remainingIcons = new ArrayList<>(Arrays.asList(
                 "boot",
                 "iron",
@@ -34,17 +19,31 @@ public class BoardController  {
                 "wheelbarrow",
                 "thimble"
         ));
-
-        activeIcons = new ArrayList<>();
-        iconPosition = new HashMap<>();
     }
 
-    private void initiatePlayers(){
-        String icon;
+    public void eventListener(BoardEvent e){
+        if (e.getType() == BoardModel.Status.GET_NUM_PLAYERS){
+            getNumPlayers();
+        } else if (e.getType() == BoardModel.Status.INITIALIZE_PLAYERS){
+            initializePlayers(e.getAmount());
+        } else if (e.getType() == BoardModel.Status.ROLL){
+            roll(e.getPlayer());
+        } else if (e.getType() == BoardModel.Status.MOVE_PLAYER){
+            movePlayer(e.getPlayer(), e.getAmount());
+        } else if (e.getType() == BoardModel.Status.GET_PLAYER_STATUS){
+            getPlayerStatus(e.getPlayer());
+        }
+    }
 
-        Scanner scan1 = new Scanner(System.in);
+    private void getNumPlayers(){
+        Scanner scan = new Scanner(System.in);
         System.out.println("How many people will be playing?");
-        numPlayers = scan1.nextInt();
+        int numPlayers = scan.nextInt();
+        boardModel.setNumPlayers(numPlayers);
+    }
+
+    private void initializePlayers(int numPlayers){
+        String icon;
 
         for (int i = 0; i < numPlayers; i++){
             Scanner scan2 = new Scanner(System.in);
@@ -57,40 +56,49 @@ public class BoardController  {
                 icon = scan2.nextLine().toLowerCase();
             } while (!(remainingIcons.contains(icon)));
 
-            boardModel.addPlayer(name, icon);
-            activeIcons.add(icon);
-            iconPosition.put(icon, 0); //All players start on the GO tile of the board
+            boardModel.addPlayer(new Player(name, icon));
             remainingIcons.remove(icon);
         }
 
     }
+
 
     public String getListOfIconsUpper(){
 
         String upperCaseIcon = "";
 
         for (String icon : remainingIcons){
-            upperCaseIcon += icon.toUpperCase() + " ";
+            upperCaseIcon += icon.toUpperCase() + ", ";
         }
         return upperCaseIcon;
     }
 
-    private List<Integer> roll(){
+
+    private void roll(Player player){
+        System.out.println("Rolling dice for " + player.getIcon());
         Random rand = new Random();
         int die1 = rand.nextInt((6 - 1) + 1) + 1;
         int die2 = rand.nextInt((6 - 1) + 1) + 1;
+        System.out.printf("You rolled a %d and a %d\n", die1, die2);
 
-        List<Integer> dice = new ArrayList<Integer>(Arrays.asList(die1, die2));
-
-        return dice;
+        boardModel.setDice(die1, die2);
     }
 
+    private void movePlayer(Player player, int amountToMove){
+        System.out.printf("Moving player %s by %d\n", player.getIcon(), amountToMove);
+        boardModel.updatePlayer(player, amountToMove);
+    }
+
+    private void getPlayerStatus(Player player){
+        System.out.println(player);
+    }
+
+    /*
     private void playerTurn(String currentIcon){
         List<Integer> dice = roll();
         int currentPosition;
 
 
-        System.out.printf("You rolled a %d and a %d\n", dice.get(0), dice.get(0));
 
         if (dice.get(0)== dice.get(1)){
             System.out.println("You got a double!!");
@@ -129,21 +137,7 @@ public class BoardController  {
 
     }
 
-    private void play(){
-        initiatePlayers();
-        int turn;
 
-
-        while(!gameFinish){
-            //which player
-            turn = turnsPassed % numPlayers;
-            String currentIcon = activeIcons.get(turn);
-
-            playerTurn(currentIcon);
-
-            turnsPassed++;
-        }
-    }
 
     public static void main(String[] args) {
         BoardController boardC;
@@ -162,5 +156,5 @@ public class BoardController  {
 
         System.out.println("See you later");
         System.exit(0);
-    }
+    }*/
 }

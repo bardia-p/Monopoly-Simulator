@@ -3,30 +3,139 @@
 import java.util.*;
 
 public class BoardModel {
+    private static List<Property> properties;
+    private static List<Player> players;
+    private static int[] dice;
+    private static int numPlayers;
+
+    private final int SIZE_OF_BOARD = 23;
+
     private List<BoardView> views;
-    public enum Status {
-        PLAYERWON (""),
-        PLAYERLOST ("");
 
-        private String playerName;
 
-        Status(String playerName){
-            this.playerName = playerName;
-        }
+    private boolean gameFinish;
 
-        public void setPlayer(String playerName){
-            this.playerName = playerName;
-        }
+    private int turnsPassed;
 
-        public String getPlayer(){
-            return this.playerName;
-        }
-    }
+    public enum Status {GET_NUM_PLAYERS, INITIALIZE_PLAYERS, ROLL, MOVE_PLAYER, GET_PLAYER_STATUS}
 
     private Status boardStatus;
 
     public BoardModel(){
         views = new ArrayList<>();
+        properties = new ArrayList<>();
+        players = new ArrayList<>();
+        turnsPassed = 0;
+        dice =  new int[2];
+    }
+
+    private void constructBoard(){
+        properties.addAll(Arrays.asList(
+                new Property("GO"),
+                new Property("Mediterranean Avenue"),
+                // Community Chest here
+                new Property("Baltic Avenue"),
+                // Income Tax
+                // Reading Railroad
+                new Property("Oriental Avenue"),
+                // Chance Card
+                new Property("Vermont Avenue"),
+                new Property("Connecticut Avenue"),
+                // JAIL!
+                new Property("St. Charles Place"),
+                // Electric Company
+                new Property("States Avenue"),
+                new Property("Virginia Avenue"),
+                // Pennsylvania Railroad
+                new Property("St. James Place"),
+                // Community Chest
+                new Property("Tennessee Avenue"),
+                new Property("New York Avenue"),
+                // FREE PARKING
+                new Property("Kentucky Avenue"),
+                // Chance Card
+                new Property("Indiana Avenue"),
+                new Property("Illinois Avenue"),
+                // B. & O. Railroad
+                new Property("Atlantic Avenue"),
+                new Property("Ventnor Avenue"),
+                // Waterworks
+                new Property("Marvin Garden"),
+                // GO TO JAIL ->
+                new Property("Pacific Avenue"),
+                new Property("North Carolina Avenue"),
+                // Community Chest
+                new Property("Pennsylvania Avenue"),
+                // Shortline Railroad
+                // Chance Card
+                new Property("Park Place"),
+                // Luxury Tax
+                new Property("Boardwalk")
+        ));
+
+        for (int i = 0; i < properties.size(); i++){
+            properties.get(i).setPropertyIndex(i);
+        }
+    }
+
+    public void play(){
+        constructBoard();
+        getNumPlayers();
+        initiatePlayers();
+
+        for (Player player: players){
+            System.out.println(player);
+        }
+
+        while(!gameFinish){
+            for (Player player: players){
+                if (!player.getBankrupt()){
+                    roll(player);
+                    move(player, dice[0] + dice[1]);
+                    getPlayerStatus(player);
+                    while (dice[0] == dice[1]){
+                        System.out.println("You rolled a double");
+                        roll(player);
+                        move(player, dice[0] + dice[1]);
+                        getPlayerStatus(player);
+                    }
+                }
+            }
+            /*
+            //which player
+            turn = turnsPassed % numPlayers;
+            String currentIcon = activeIcons.get(turn);
+
+            playerTurn(currentIcon);
+
+            turnsPassed++;*/
+        }
+    }
+
+    private void initiatePlayers(){
+        for (BoardView view : views) {
+            view.handleBoardUpdate(new BoardEvent(this, Status.INITIALIZE_PLAYERS, numPlayers));
+        }
+    }
+
+    public void getNumPlayers() {
+        for (BoardView view : views) {
+            view.handleBoardUpdate(new BoardEvent(this, Status.GET_NUM_PLAYERS));
+        }
+    }
+
+    public void setNumPlayers(int numPlayers){
+        this.numPlayers = numPlayers;
+    }
+
+    public void setDice(int die1, int die2){
+        dice[0] = die1;
+        dice[1] = die2;
+    }
+
+    public void addPlayer(Player player){
+        player.setCurrentProperty(this.properties.get(0));
+        this.players.add(player);
     }
 
     public void addBoardView (BoardView view){
@@ -37,6 +146,35 @@ public class BoardModel {
         views.remove(view);
     }
 
+    public void roll(Player player){
+        for (BoardView view : views) {
+            view.handleBoardUpdate(new BoardEvent(this, Status.ROLL, player));
+        }
+    }
+
+    public void move(Player player, int amountToMove){
+        for (BoardView view : views) {
+            view.handleBoardUpdate(new BoardEvent(this, Status.MOVE_PLAYER, player, amountToMove));
+        }
+    }
+
+    public void getPlayerStatus(Player player){
+        for (BoardView view : views) {
+            view.handleBoardUpdate(new BoardEvent(this, Status.GET_PLAYER_STATUS, player));
+        }
+    }
+
+    public void updatePlayer(Player newPlayer, int newPosition){
+        for (Player player: players){
+            if (player.getIcon().equals(newPlayer.getIcon())){
+                int newPlayerPosition = (player.getPosition() + newPosition) % SIZE_OF_BOARD;
+                player.setPosition(newPlayerPosition);
+                player.setCurrentProperty(properties.get(newPlayerPosition));
+            }
+        }
+    }
+
+    /*
     public boolean isPropertyBought(int propertyIndex){
         boolean propertyCheck = false;
         for (BoardView view : views){
@@ -149,6 +287,6 @@ public class BoardModel {
         }
         return finalString;
 
-    }
+    }*/
 
 }

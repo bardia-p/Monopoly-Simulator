@@ -8,6 +8,8 @@ public class Player {
     private String name;
     private String icon;
     private int cash;
+    private int position;
+    private Property currentProperty;
     private List<Property> properties;
 
     Player(String name, String icon) {
@@ -15,6 +17,7 @@ public class Player {
         this.name = name;
         this.icon = icon;
         this.cash = 1500;
+        this.position = 0;
         this.properties = new ArrayList<>();
     }
 
@@ -46,13 +49,27 @@ public class Player {
         return icon;
     }
 
+    public void setPosition(int newPosition){
+        this.position = newPosition;
+    }
+
+    public int getPosition(){
+        return position;
+    }
+
+    public void setCurrentProperty(Property currentProperty){
+        this.currentProperty = currentProperty;
+    }
+
     @Override
     public String toString() {
         return "Player{" +
                 "bankrupt=" + bankrupt +
                 ", name='" + name + '\'' +
                 ", icon='" + icon + '\'' +
-                ", cash=" + cash +
+                ", cash=" + cash + '\'' +
+                ", position=" + position + '\'' +
+                ", currentProperty=" + currentProperty.getName() + '\'' +
                 ", properties=" + properties +
                 '}';
     }
