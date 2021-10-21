@@ -45,4 +45,15 @@ public class Player {
     public String getIcon(){
         return icon;
     }
+
+    @Override
+    public String toString() {
+        return "Player{" +
+                "bankrupt=" + bankrupt +
+                ", name='" + name + '\'' +
+                ", icon='" + icon + '\'' +
+                ", cash=" + cash +
+                ", properties=" + properties +
+                '}';
+    }
 }

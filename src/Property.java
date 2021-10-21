@@ -5,12 +5,17 @@ public class Property {
     private Player propertyOwner;
     private int price;
     private int rent;
+    private int propertyIndex;
 
     Property(String name){
         this.name = name;
         this.propertyOwner = null;
         this.price = 0;
         this.rent = 100;
+    }
+
+    public void setPropertyIndex(int propertyIndex) {
+        this.propertyIndex = propertyIndex;
     }
 
     public Player getOwner() {
@@ -20,6 +25,7 @@ public class Property {
     public int getPrice() {
         return this.price;
     }
+
     public String getName(){
         return name;
     }
@@ -30,5 +36,20 @@ public class Property {
 
     public int getRent(){
         return this.rent;
+    }
+
+    public int getPropertyIndex() {
+        return propertyIndex;
+    }
+
+    @Override
+    public String toString() {
+        return "Property{" +
+                "name='" + name + '\'' +
+                ", propertyOwner=" + propertyOwner +
+                ", price=" + price +
+                ", rent=" + rent +
+                ", propertyIndex=" + propertyIndex +
+                '}';
     }
 }

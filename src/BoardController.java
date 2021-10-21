@@ -1,3 +1,6 @@
+// Sarah Chow 101143033
+// Owen VanDusen 101152022
+
 import java.util.*;
 
 public class BoardController  {
@@ -72,8 +75,62 @@ public class BoardController  {
         return upperCaseIcon;
     }
 
+    private List<Integer> roll(){
+        Random rand = new Random();
+        int die1 = rand.nextInt((6 - 1) + 1) + 1;
+        int die2 = rand.nextInt((6 - 1) + 1) + 1;
+
+        List<Integer> dice = new ArrayList<Integer>(Arrays.asList(die1, die2));
+
+        return dice;
+    }
+
+    private void playerTurn(String currentIcon){
+        List<Integer> dice = roll();
+        int currentPosition;
+
+
+        System.out.printf("You rolled a %d and a %d\n", dice.get(0), dice.get(0));
+
+        if (dice.get(0)== dice.get(1)){
+            System.out.println("You got a double!!");
+        }
+
+        currentPosition = iconPosition.get(currentIcon);
+        iconPosition.replace(currentIcon, currentPosition + dice.get(0) + dice.get(1));
+        currentPosition = iconPosition.get(currentIcon);
+
+        System.out.printf("You landed on %s!\n", boardModel.getPropertyName(currentPosition));
+
+        if (boardModel.isPropertyBought(currentPosition)){
+            System.out.printf("It is owned by %s! You need to pay rent :( \n",
+                    boardModel.getPropertyName(currentPosition),
+                    Integer.valueOf(boardModel.getPropertyRent(currentPosition))
+                    );
+            if (!boardModel.payRent(currentPosition, currentIcon)){ // Rental payment did not go through
+                System.out.println("You do not have enough money to pay rent! You're BOOTED!\n");
+            }
+        }
+        else{
+            Scanner scan1 = new Scanner(System.in);
+            System.out.printf("Would you like to buy %s for %d?\n",
+                    boardModel.getPropertyName(currentPosition),
+                    boardModel.getPropertyRent(currentPosition));
+            String answer = scan1.nextLine().toLowerCase();
+
+            if (answer.equals("yes")){
+                if(!boardModel.buyProperty(currentPosition, currentIcon)){
+                    System.out.printf("You do not have enough money to buy this property!\n" +
+                            "You have $%d left!\n", boardModel.getPlayerCash(currentIcon));
+                }
+            }
+        }
+
+
+    }
+
     private void play(){
-        initiatePlayers(); //TODO
+        initiatePlayers();
         int turn;
 
 
@@ -82,7 +139,7 @@ public class BoardController  {
             turn = turnsPassed % numPlayers;
             String currentIcon = activeIcons.get(turn);
 
-            System.out.printf("It is currently the turn of: %s\n they are on tile %d\n\n",currentIcon,iconPosition.get(currentIcon));
+            playerTurn(currentIcon);
 
             turnsPassed++;
         }

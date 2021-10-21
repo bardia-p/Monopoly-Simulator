@@ -60,11 +60,15 @@ public class BoardFrame implements BoardView {
                 // Luxury Tax
                 new Property("Boardwalk")
         ));
+
+        for (int i = 0; i < properties.size(); i++){
+            properties.get(i).setPropertyIndex(i);
+        }
     }
 
-    private Property getPropertyByName(String propertyName){
+    private Property getPropertyByIndex(int propertyIndex){
         for (Property property: properties){
-            if (property.getName().equals(propertyName)){
+            if (property.getPropertyIndex() == (propertyIndex)){
                 return property;
             }
         }
@@ -72,9 +76,9 @@ public class BoardFrame implements BoardView {
         return null;
     }
 
-    private Player getPlayerByName(String playerName){
+    private Player getPlayerByIcon(String playerIcon){
         for (Player player: players){
-            if (player.getName().equals(playerName)){
+            if (player.getIcon().equals(playerIcon)){
                 return player;
             }
         }
@@ -83,9 +87,9 @@ public class BoardFrame implements BoardView {
     }
 
     @Override
-    public boolean handleBuyProperty(String propertyName, String playerName) {
-        Property property = getPropertyByName(propertyName);
-        Player player = getPlayerByName(playerName);
+    public boolean handleBuyProperty(int propertyIndex, String playerIcon) {
+        Property property = getPropertyByIndex(propertyIndex);
+        Player player = getPlayerByIcon(playerIcon);
 
         if (property.getOwner() == null && property.getPrice() <= player.getCash()) {
             property.setOwner(player);
@@ -99,10 +103,10 @@ public class BoardFrame implements BoardView {
     }
 
     @Override
-    public boolean handlePayRent(String propertyName, String playerName) {
-        Property property = getPropertyByName(propertyName);
+    public boolean handlePayRent(int propertyIndex, String playerIcon) {
+        Property property = getPropertyByIndex(propertyIndex);
         Player propertyOwner = property.getOwner();
-        Player playerPaysRent = getPlayerByName(playerName);
+        Player playerPaysRent = getPlayerByIcon(playerIcon);
         int amountToPay = property.getRent();
 
         if (property.getOwner() != null && amountToPay <= playerPaysRent.getCash()) {
@@ -124,4 +128,77 @@ public class BoardFrame implements BoardView {
         this.players.add(new Player(playerName, playerIcon));
         return true;
     }
+//
+//    @Override
+//    public boolean handlePropertyBoughtCheck(int propertyIndex) {
+//        if (properties.get(propertyIndex).getOwner() != null){
+//            return true;
+//        }
+//        return false;
+//    }
+//
+//    @Override
+//    public String handleGetPropertyName(int propertyIndex) {
+//        String propertyName = "";
+//        for (Property property: properties){
+//            if (property.getPropertyIndex() == (propertyIndex)){
+//                propertyName = property.getName();
+//            }
+//        }
+//        return propertyName;
+//    }
+//
+//    @Override
+//    public int handleGetPropertyRent(int propertyIndex) {
+//        int propertyRent = 0;
+//        for (Property property: properties){
+//            if (property.getPropertyIndex() == (propertyIndex)){
+//                propertyRent = property.getRent();
+//            }
+//        }
+//        return propertyRent;
+//    }
+
+    @Override
+    public List<String> handleGetPlayerStatus(String playerIcon) {
+        List<String> playerStatusList = new ArrayList<>();
+        for (Player player: players){
+            if (player.getIcon().equals(playerIcon)){
+                playerStatusList = Arrays.asList(
+                        player.getName(),
+                        player.getIcon(),
+                        String.valueOf(player.getCash())
+                );
+            }
+        }
+        return playerStatusList;
+    }
+
+    @Override
+    public List<String> handleGetPropertyStatus(int propertyIndex) {
+        List<String> propertyStatusList = new ArrayList<>();
+        for (Property property: properties){
+            if (property.getPropertyIndex() == propertyIndex){
+                propertyStatusList.add(property.getName());
+                System.out.println(propertyStatusList.get(0)); // Something is wrong
+
+                if (property.getOwner() == null){
+                    propertyStatusList.add(null);
+                }
+                else{
+                    property.getOwner().getName();
+                }
+
+                propertyStatusList = Arrays.asList(
+                        String.valueOf(property.getPrice()),
+                        String.valueOf(property.getRent())
+                );
+            }
+        }
+        return propertyStatusList;
+    }
+
+
+
+
 }
