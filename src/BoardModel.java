@@ -18,6 +18,10 @@ public class BoardModel {
         public void setPlayer(String playerName){
             this.playerName = playerName;
         }
+
+        public String getPlayer(){
+            return this.playerName;
+        }
     }
 
     private Status playerStatus;
@@ -63,7 +67,7 @@ public class BoardModel {
         return success;
     }
 
-    public Status getStatus() {return playerStatus;}
+    public String getStatus() {return playerStatus.getPlayer();}
 
     private void updateStatus(String playerName, boolean status) {
         if (status){
