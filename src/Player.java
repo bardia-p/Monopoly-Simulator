@@ -11,6 +11,8 @@ public class Player {
     private int position;
     private Property currentProperty;
     private List<Property> properties;
+    private int numDubbles;
+    private boolean rollAgain;
 
     Player(String name, String icon) {
         this.bankrupt = false;
@@ -19,6 +21,8 @@ public class Player {
         this.cash = 1500;
         this.position = 0;
         this.properties = new ArrayList<>();
+        this.numDubbles = 0;
+        this.rollAgain = false;
     }
 
     public int getCash() {
@@ -69,6 +73,22 @@ public class Player {
 
     public Property getCurrentProperty(){
         return currentProperty;
+    }
+
+    public int getNumDubbles(){
+        return numDubbles;
+    }
+
+    public void setNumDubbles(int newNumDubbles){
+        this.numDubbles = newNumDubbles;
+    }
+
+    public boolean hasAnotherRoll(){
+        return rollAgain;
+    }
+
+    public void setRollAgain(boolean rollAgain){
+        this.rollAgain = rollAgain;
     }
 
     @Override

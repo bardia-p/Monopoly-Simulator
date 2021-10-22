@@ -20,7 +20,7 @@ public class BoardModel {
 
     public enum Status {GET_NUM_PLAYERS, INITIALIZE_PLAYERS, GET_COMMAND}
 
-    public enum Command{BUY, SELL, STATUS, NEXT}
+    public enum Command{BUY, SELL, STATUS, PASS, ROLL_AGAIN}
 
 
     public BoardModel(){
@@ -90,12 +90,6 @@ public class BoardModel {
                 System.out.printf("Current turn: %s\n", turn.getIcon());
                 if (!player.isBankrupt()){
                     roll(player);
-                    move(player, dice[0] + dice[1]);
-                    while (dice[0] == dice[1]){
-                        System.out.println("You rolled a double");
-                        roll(player);
-                        move(player, dice[0] + dice[1]);
-                    }
 
                     while (turn != null){
                         getCommand(player);
@@ -129,7 +123,11 @@ public class BoardModel {
             commands.add(BoardModel.Command.BUY);
         }
 
-        commands.add(BoardModel.Command.NEXT);
+        if (player.hasAnotherRoll()){
+            commands.add(Command.ROLL_AGAIN);
+        } else {
+            commands.add(BoardModel.Command.PASS);
+        }
 
         for (BoardView view : views) {
             view.handleBoardUpdate(new BoardEvent(this, BoardModel.Status.GET_COMMAND, player, commands));
@@ -156,13 +154,20 @@ public class BoardModel {
     }
 
     public void roll(Player player){
+        player.setRollAgain(false);
         Random rand = new Random();
         dice[0] = rand.nextInt((6 - 1) + 1) + 1;
         dice[1] = rand.nextInt((6 - 1) + 1) + 1;
 
+        if (dice[0] == dice[1]){
+            setDoubleRoll(player);
+        }
+
         for (BoardView view : views) {
             view.handleRoll(dice[0], dice[1], player);
         }
+
+        move(player, dice[0] + dice[1]);
     }
 
     public void move(Player player, int amountToMove){
@@ -205,5 +210,14 @@ public class BoardModel {
 
     public void passTurn(){
         turn = null;
+    }
+
+    public void setDoubleRoll(Player player){
+        player.setNumDubbles(player.getNumDubbles()+1);
+        player.setRollAgain(true);
+
+        for (BoardView view : views) {
+            view.handleRollingDoubles(player);
+        }
     }
 }

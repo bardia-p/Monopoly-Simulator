@@ -78,8 +78,10 @@ public class BoardController  {
                 availableCommands += "sell, ";
             } if(command == BoardModel.Command.STATUS){
                 availableCommands += "status, ";
-            } if(command == BoardModel.Command.NEXT){
-                availableCommands += "next, ";
+            } if(command == BoardModel.Command.PASS){
+                availableCommands += "pass, ";
+            } if(command == BoardModel.Command.ROLL_AGAIN){
+                availableCommands += "roll, ";
             }
         }
         return availableCommands;
@@ -102,10 +104,12 @@ public class BoardController  {
             boardModel.buyProperty(player.getCurrentProperty(), player);
         } else if (command.equals("sell")){
             boardModel.sellProperty(player.getCurrentProperty(), player);
-        } else if (command.equals("next")){
+        } else if (command.equals("pass")){
             boardModel.passTurn();
         } else if (command.equals("status")){
             boardModel.getStatus(player);
+        } else if (command.equals("roll")){
+            boardModel.roll(player);
         }
     }
 

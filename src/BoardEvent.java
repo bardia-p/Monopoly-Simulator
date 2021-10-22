@@ -22,12 +22,14 @@ public class BoardEvent extends EventObject {
     public BoardEvent(BoardModel model, BoardModel.Status type){
         super(model);
         this.type = type;
+        this.player = null;
+        this.value = 0;
+        this.commands = new ArrayList<>();
     }
 
     public BoardModel.Status getType(){
         return type;
     }
-
 
     public Player getPlayer() {
         return player;

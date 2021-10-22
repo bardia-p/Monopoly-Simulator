@@ -9,4 +9,5 @@ public interface BoardView {
     void handleBuyProperty(Player player, Property property, boolean result);
     void handleSellProperty(Player player, Property property, boolean result);
     void handleGetPlayerStatus(Player player);
+    void handleRollingDoubles(Player player);
 }

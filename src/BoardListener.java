@@ -1,16 +1,11 @@
 // Bardia Parmoun & Kyra Lothrop
 
-import javax.sound.midi.Soundbank;
-import java.sql.SQLOutput;
-import java.util.ArrayList;
-import java.util.List;
-
-public class BoardFrame implements BoardView {
+public class BoardListener implements BoardView {
 
     BoardModel model;
     BoardController controller;
 
-    public BoardFrame(){
+    public BoardListener(){
         model = new BoardModel();
         model.addBoardView(this);
         controller = new BoardController();
@@ -57,7 +52,12 @@ public class BoardFrame implements BoardView {
         System.out.println(player);
     }
 
+    @Override
+    public void handleRollingDoubles(Player player){
+        System.out.printf("Player %s rolled a double\n", player.getIcon());
+    }
+
     public static void main(String[] args) {
-        new BoardFrame();
+        new BoardListener();
     }
 }
