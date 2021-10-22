@@ -101,6 +101,9 @@ public class BoardController  {
                 case STATUS:
                     availableCommands += "status, ";
                     break;
+                case BOARD_STATUS:
+                    availableCommands += "board status, ";
+                    break;
                 case PASS:
                     availableCommands += "pass, ";
                     break;
@@ -138,6 +141,8 @@ public class BoardController  {
             boardModel.passTurn(player);
         } else if (command.equals("status")){
             boardModel.getStatus(player);
+        } else if (command.equals("board status")){
+            boardModel.getBoardStatus();
         } else if (command.equals("roll")){
             boardModel.roll(player);
         } else if (command.equals("pay rent")){

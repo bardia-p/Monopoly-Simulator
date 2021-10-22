@@ -1,6 +1,8 @@
 // Bardia Parmoun & Kyra Lothrop
 
 import java.sql.SQLOutput;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BoardListener implements BoardView {
 
@@ -56,6 +58,35 @@ public class BoardListener implements BoardView {
         System.out.printf("\nDisplaying the status of player: %s\n", player.getIcon().toUpperCase());
         System.out.println(player);
         System.out.println("");
+    }
+
+    @Override
+    public void handleGetBoardStatus(List<Player> players) {
+        System.out.printf("\nDisplaying the status of the board: \n");
+
+        List<Player> bankruptPlayers = new ArrayList<>();
+        List<Player> nonBankruptPlayers = new ArrayList<>();
+
+        for (Player player: players){
+            if(player.isBankrupt() == true){
+                bankruptPlayers.add(player);
+            }
+            else if (player.isBankrupt() == false){
+                nonBankruptPlayers.add(player);
+            }
+        }
+
+        System.out.println("\nBankrupt Players:");
+        for (Player bankruptPlayer: bankruptPlayers){
+            System.out.printf("\tPlayer %s, $%d\n", bankruptPlayer.getIcon().toUpperCase(), bankruptPlayer.getCash());
+        }
+
+        System.out.println("\nNon Bankrupt Players:");
+        for (Player nonBankruptPlayer: nonBankruptPlayers){
+            System.out.printf("\tPlayer %s, $%d\n", nonBankruptPlayer.getIcon().toUpperCase(), nonBankruptPlayer.getCash());
+        }
+
+        System.out.printf("\n");
     }
 
     @Override

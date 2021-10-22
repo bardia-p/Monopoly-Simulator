@@ -119,8 +119,8 @@ public class Player {
         playerInfo = "\tbankrupt=" + bankrupt +
                 "\n\tname='" + name + '\'' +
                 "\n\ticon='" + icon + '\'' +
-                "\n\tcash=" + cash + '\'' +
-                "\n\tposition=" + position + '\'' +
+                "\n\tcash='" + cash + '\'' +
+                "\n\tposition='" + position + '\'' +
                 "\n\tproperties= { ";
 
         for (Property property: properties)

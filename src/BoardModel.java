@@ -22,7 +22,7 @@ public class BoardModel {
 
     public enum Status {GET_NUM_PLAYERS, INITIALIZE_PLAYERS, GET_COMMAND}
 
-    public enum Command{BUY, SELL, PAY_RENT, STATUS, PASS, ROLL_AGAIN}
+    public enum Command{BUY, SELL, PAY_RENT, STATUS, BOARD_STATUS, PASS, ROLL_AGAIN}
 
 
     public BoardModel(){
@@ -125,6 +125,7 @@ public class BoardModel {
         ArrayList<BoardModel.Command> commands = new ArrayList<>();
 
         commands.add(BoardModel.Command.STATUS);
+        commands.add(BoardModel.Command.BOARD_STATUS);
 
         if(currentProperty.getOwner() != player && currentProperty.getOwner() != null &&
                 (player.getRentStatus() == Player.StatusEnum.UNPAID_RENT ||
@@ -225,6 +226,12 @@ public class BoardModel {
     public void getStatus(Player player){
         for (BoardView view : views) {
             view.handleGetPlayerStatus(player);
+        }
+    }
+
+    public void getBoardStatus(){
+        for (BoardView view : views) {
+            view.handleGetBoardStatus(this.players);
         }
     }
 
