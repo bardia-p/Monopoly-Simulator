@@ -91,28 +91,7 @@ public class BoardController  {
         String availableCommands = "";
 
         for (BoardModel.Command command: commands){
-            switch(command) {
-                case BUY:
-                    availableCommands += "buy, ";
-                    break;
-                case SELL:
-                    availableCommands += "sell, ";
-                    break;
-                case STATUS:
-                    availableCommands += "status, ";
-                    break;
-                case BOARD_STATUS:
-                    availableCommands += "board status, ";
-                    break;
-                case PASS:
-                    availableCommands += "pass, ";
-                    break;
-                case ROLL_AGAIN:
-                    availableCommands += "roll, ";
-                    break;
-                case PAY_RENT:
-                    availableCommands += "pay rent, ";
-            }
+            availableCommands += command.getStringCommand() + ", ";
         }
 
         return availableCommands.substring(0, availableCommands.length() - 2);
@@ -133,25 +112,22 @@ public class BoardController  {
             command = scan.nextLine().toLowerCase();
         }
 
-        if (command.equals("buy")){
+        if (command.equals(BoardModel.Command.BUY.getStringCommand())){
             boardModel.buyProperty(player.getCurrentProperty(), player);
-        } else if (command.equals("sell")){
+        } else if (command.equals(BoardModel.Command.SELL.getStringCommand())){
             boardModel.sellProperty(player.getCurrentProperty(), player);
-        } else if (command.equals("pass")){
+        } else if (command.equals(BoardModel.Command.PASS.getStringCommand())){
             boardModel.passTurn(player);
-        } else if (command.equals("status")){
+        } else if (command.equals(BoardModel.Command.STATUS.getStringCommand())){
             boardModel.getStatus(player);
-        } else if (command.equals("board status")){
+        } else if (command.equals(BoardModel.Command.BOARD_STATUS.getStringCommand())) {
             boardModel.getBoardStatus();
-        } else if (command.equals("roll")){
+        } else if (command.equals(BoardModel.Command.CELL_STATUS.getStringCommand())){
+                boardModel.getCellStatus();
+        } else if (command.equals(BoardModel.Command.ROLL_AGAIN.getStringCommand())){
             boardModel.roll(player);
-        } else if (command.equals("pay rent")){
+        } else if (command.equals(BoardModel.Command.PAY_RENT.getStringCommand())){
             boardModel.payRent(player.getCurrentProperty(), player);
         }
     }
-
-    private void getPlayerStatus(Player player){
-        System.out.println(player);
-    }
-
 }

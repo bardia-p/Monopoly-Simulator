@@ -83,10 +83,18 @@ public class BoardListener implements BoardView {
 
         System.out.println("\nNon Bankrupt Players:");
         for (Player nonBankruptPlayer: nonBankruptPlayers){
-            System.out.printf("\tPlayer %s, $%d\n", nonBankruptPlayer.getIcon().toUpperCase(), nonBankruptPlayer.getCash());
+            System.out.printf("\tPlayer %s, $%d\n", nonBankruptPlayer.getIcon().toUpperCase(),
+                    nonBankruptPlayer.getCash());
         }
 
         System.out.printf("\n");
+    }
+
+    @Override
+    public void handleGetCellStatus(Property property){
+        System.out.printf("\nDisplaying the status of the current cell: %s\n", property.getName());
+        System.out.println(property);
+        System.out.println("");
     }
 
     @Override
@@ -106,7 +114,6 @@ public class BoardListener implements BoardView {
 
     @Override
     public void handlePayRent(Property property, Player renter, boolean result) {
-
         if (result){
             System.out.printf("You have successfully paid %d$ to %s\n",
                     property.getRent(),
@@ -118,8 +125,6 @@ public class BoardListener implements BoardView {
                     property.getRent(),
                     renter.getCash());
         }
-
-
     }
 
     @Override
