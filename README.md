@@ -8,7 +8,7 @@
 This repository simulates the popular board game monopoly. 
 
 ## Contributors
-Bardia Parmoun \
-Kyra Lothrop\
-Sarah Chow \
-Owen VanDusen 
+Bardia Parmoun 101143006\
+Kyra Lothrop 101145872\
+Sarah Chow 101143033\
+Owen VanDusen 101152022 
