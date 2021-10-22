@@ -32,8 +32,9 @@ public class BoardController  {
     }
 
     private void getNumPlayers(){
+        System.out.println("INITIALIZE GAME DATA");
         Scanner scan = new Scanner(System.in);
-        System.out.println("How many people will be playing?");
+        System.out.print("How many people will be playing? ");
         int numPlayers = scan.nextInt();
         boardModel.setNumPlayers(numPlayers);
     }
@@ -43,18 +44,19 @@ public class BoardController  {
 
         for (int i = 0; i < numPlayers; i++){
             Scanner scan2 = new Scanner(System.in);
-            System.out.printf("What's player %d's name?\n", i + 1);
+            System.out.printf("What's player %d's name? ", i + 1);
             String name = scan2.nextLine();
 
             do {
                 Scanner scan3 = new Scanner(System.in);
-                System.out.printf("Choose an icon: %s\n", getListOfIconsUpper());
+                System.out.printf("Choose an icon <%s>: ", getListOfIconsUpper());
                 icon = scan2.nextLine().toLowerCase();
             } while (!(remainingIcons.contains(icon)));
 
             boardModel.addPlayer(new Player(name, icon));
             remainingIcons.remove(icon);
         }
+        System.out.println("-------------------------------------------------------------");
 
     }
 
@@ -65,23 +67,32 @@ public class BoardController  {
         for (String icon : remainingIcons){
             upperCaseIcon += icon.toUpperCase() + ", ";
         }
-        return upperCaseIcon;
+
+        return upperCaseIcon.substring(0, upperCaseIcon.length() - 2);
     }
 
     private String getListAvailableOfCommands(ArrayList<BoardModel.Command> commands){
         String availableCommands = "";
 
         for (BoardModel.Command command: commands){
-            if(command == BoardModel.Command.BUY){
-                availableCommands += "buy, ";
-            } if(command == BoardModel.Command.SELL){
-                availableCommands += "sell, ";
-            } if(command == BoardModel.Command.STATUS){
-                availableCommands += "status, ";
-            } if(command == BoardModel.Command.PASS){
-                availableCommands += "pass, ";
-            } if(command == BoardModel.Command.ROLL_AGAIN){
-                availableCommands += "roll, ";
+            switch(command) {
+                case BUY:
+                    availableCommands += "buy, ";
+                    break;
+                case SELL:
+                    availableCommands += "sell, ";
+                    break;
+                case STATUS:
+                    availableCommands += "status, ";
+                    break;
+                case PASS:
+                    availableCommands += "pass, ";
+                    break;
+                case ROLL_AGAIN:
+                    availableCommands += "roll, ";
+                    break;
+                case PAY_RENT:
+                    availableCommands += "pay rent, ";
             }
         }
         return availableCommands;
@@ -105,11 +116,13 @@ public class BoardController  {
         } else if (command.equals("sell")){
             boardModel.sellProperty(player.getCurrentProperty(), player);
         } else if (command.equals("pass")){
-            boardModel.passTurn();
+            boardModel.passTurn(player);
         } else if (command.equals("status")){
             boardModel.getStatus(player);
         } else if (command.equals("roll")){
             boardModel.roll(player);
+        } else if (command.equals("pay rent")){
+            boardModel.payRent(player.getCurrentProperty(), player);
         }
     }
 

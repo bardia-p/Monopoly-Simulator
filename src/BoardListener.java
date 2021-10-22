@@ -1,5 +1,7 @@
 // Bardia Parmoun & Kyra Lothrop
 
+import java.sql.SQLOutput;
+
 public class BoardListener implements BoardView {
 
     BoardModel model;
@@ -55,6 +57,26 @@ public class BoardListener implements BoardView {
     @Override
     public void handleRollingDoubles(Player player){
         System.out.printf("Player %s rolled a double\n", player.getIcon());
+    }
+
+    @Override
+    public void handleWelcomeMonopoly() {
+        System.out.println("WELCOME TO MONOPOLY");
+        System.out.println("-------------------------------------------------------------");
+        System.out.println("In this interactive business game you will try to outwit your\n" +
+                "opponents by making them go bankrupt while purchasing properties\n" +
+                "around the board. Spend wisely and aim for a TOTAL MONOPOLY.");
+        System.out.println("-------------------------------------------------------------");
+    }
+
+    @Override
+    public void handlePayRent(Property property, Player renter) {
+        System.out.printf("You have successfully paid %d$ to %s\n",property.getRent(), property.getOwner());
+    }
+
+    @Override
+    public void handleCantPayRent(Property property, Player renter){
+        System.out.printf("You cannot currently pay rent to %s. Rent costs %d$ and you only have %d$ remaining\n",property.getOwner(),property.getRent(),renter.getCash());
     }
 
     public static void main(String[] args) {

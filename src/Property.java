@@ -6,12 +6,22 @@ public class Property {
     private int price;
     private int rent;
     private int propertyIndex;
+    private boolean buyable;
 
-    Property(String name){
+    Property(String name, int price, int rent, boolean buyable){
         this.name = name;
+        this.price = price;
         this.propertyOwner = null;
-        this.price = 0;
         this.rent = 100;
+        this.buyable = buyable;
+    }
+
+    Property(String name, int price, int rent){
+        this.name = name;
+        this.price = price;
+        this.propertyOwner = null;
+        this.rent = 100;
+        this.buyable = true;
     }
 
     public void setPropertyIndex(int propertyIndex) {
