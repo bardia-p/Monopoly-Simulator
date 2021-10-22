@@ -7,22 +7,25 @@ public class Property {
     private int rent;
     private int propertyIndex;
     private boolean buyable;
+    private boolean recentlyChanged;
+
+
+
+    Property(String name, int price, int rent, boolean buyable, Player propertyOwner){
+        this(name, price, rent, buyable);
+        this.propertyOwner = propertyOwner;
+    }
 
     Property(String name, int price, int rent, boolean buyable){
         this.name = name;
         this.price = price;
-        this.propertyOwner = null;
-        this.rent = 100;
+        this.rent = 200;
         this.buyable = buyable;
+        this.propertyOwner = null;
+        this.recentlyChanged = false;
     }
 
-    Property(String name, int price, int rent){
-        this.name = name;
-        this.price = price;
-        this.propertyOwner = null;
-        this.rent = 100;
-        this.buyable = true;
-    }
+
 
     public void setPropertyIndex(int propertyIndex) {
         this.propertyIndex = propertyIndex;
@@ -52,6 +55,18 @@ public class Property {
         return propertyIndex;
     }
 
+    public boolean isBuyable() {
+        return buyable;
+    }
+
+    public void toggleRecentlyChanged(){
+        this.recentlyChanged = !this.recentlyChanged;
+    }
+
+    public boolean getRecentlyChanged() {
+        return recentlyChanged;
+    }
+
     @Override
     public String toString() {
         return "Property{" +
@@ -62,4 +77,6 @@ public class Property {
                 ", propertyIndex=" + propertyIndex +
                 '}';
     }
+
+
 }

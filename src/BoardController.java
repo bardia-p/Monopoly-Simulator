@@ -95,7 +95,8 @@ public class BoardController  {
                     availableCommands += "pay rent, ";
             }
         }
-        return availableCommands;
+
+        return availableCommands.substring(0, availableCommands.length() - 2);
     }
 
     private void getCommand(Player player, ArrayList<BoardModel.Command> commands){

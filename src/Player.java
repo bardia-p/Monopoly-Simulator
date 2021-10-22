@@ -13,7 +13,9 @@ public class Player {
     private List<Property> properties;
     private int numDoubles;
     private boolean rollAgain;
-    private boolean hasToPayRent;
+    private StatusEnum rentStatus;
+
+    public enum StatusEnum {NO_RENT, UNPAID_RENT, PAID_RENT};
 
     Player(String name, String icon) {
         this.bankrupt = false;
@@ -24,8 +26,9 @@ public class Player {
         this.properties = new ArrayList<>();
         this.numDoubles = 0;
         this.rollAgain = false;
-        this.hasToPayRent = false;
+        this.rentStatus = StatusEnum.NO_RENT;
     }
+
 
     public int getCash() {
         return this.cash;
@@ -97,12 +100,16 @@ public class Player {
         this.rollAgain = rollAgain;
     }
 
-    public void setHasToPayRent(boolean debt){
-        this.hasToPayRent = debt;
+    public void setRentStatus(StatusEnum rentStatus) {
+        this.rentStatus = rentStatus;
     }
 
-    public boolean gethasToPayRent(){
-        return this.hasToPayRent;
+    public StatusEnum getRentStatus() {
+        return rentStatus;
+    }
+
+    public List<Property> getProperties() {
+        return properties;
     }
 
     @Override
@@ -113,7 +120,6 @@ public class Player {
                 ", icon='" + icon + '\'' +
                 ", cash=" + cash + '\'' +
                 ", position=" + position + '\'' +
-                ", currentProperty=" + currentProperty.getName() + '\'' +
                 ", properties=" + properties +
                 '}';
     }

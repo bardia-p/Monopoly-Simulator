@@ -21,13 +21,15 @@ public class BoardListener implements BoardView {
 
     @Override
     public void handleRoll(int die1, int die2, Player player){
-        System.out.println("Rolling dice for " + player.getIcon());
+        System.out.println("\nRolling dice for " + player.getIcon().toUpperCase());
         System.out.printf("You rolled a %d and a %d\n", die1, die2);
     }
 
     @Override
     public void showCurrentProperty(Player player){
-        System.out.printf("Player %s is currently at %s\n", player.getIcon(), player.getCurrentProperty().getName());
+        System.out.printf("Player %s is currently at %s\n",
+                player.getIcon().toUpperCase(),
+                player.getCurrentProperty().getName());
     }
 
     @Override
@@ -70,13 +72,21 @@ public class BoardListener implements BoardView {
     }
 
     @Override
-    public void handlePayRent(Property property, Player renter) {
-        System.out.printf("You have successfully paid %d$ to %s\n",property.getRent(), property.getOwner());
-    }
+    public void handlePayRent(Property property, Player renter, boolean result) {
 
-    @Override
-    public void handleCantPayRent(Property property, Player renter){
-        System.out.printf("You cannot currently pay rent to %s. Rent costs %d$ and you only have %d$ remaining\n",property.getOwner(),property.getRent(),renter.getCash());
+        if (result){
+            System.out.printf("You have successfully paid %d$ to %s\n",
+                    property.getRent(),
+                    property.getOwner().getIcon());
+        }
+        else{
+            System.out.printf("You cannot currently pay rent to %s. Rent costs %d$ and you only have %d$ remaining\n",
+                    property.getOwner().getIcon(),
+                    property.getRent(),
+                    renter.getCash());
+        }
+
+
     }
 
     public static void main(String[] args) {
