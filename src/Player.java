@@ -114,13 +114,22 @@ public class Player {
 
     @Override
     public String toString() {
-        return "Player{" +
-                "bankrupt=" + bankrupt +
-                ", name='" + name + '\'' +
-                ", icon='" + icon + '\'' +
-                ", cash=" + cash + '\'' +
-                ", position=" + position + '\'' +
-                ", properties=" + properties +
-                '}';
+        String playerInfo;
+
+        playerInfo = "\tbankrupt=" + bankrupt +
+                "\n\tname='" + name + '\'' +
+                "\n\ticon='" + icon + '\'' +
+                "\n\tcash=" + cash + '\'' +
+                "\n\tposition=" + position + '\'' +
+                "\n\tproperties= { ";
+
+        for (Property property: properties)
+        {
+            playerInfo += property.toString() + "\n\t\t\t\t";
+        }
+
+        playerInfo += " }";
+
+        return playerInfo;
     }
 }

@@ -35,7 +35,23 @@ public class BoardController  {
         System.out.println("INITIALIZE GAME DATA");
         Scanner scan = new Scanner(System.in);
         System.out.print("How many people will be playing? ");
-        int numPlayers = scan.nextInt();
+        int numPlayers = 0;
+
+        String findNumPlayers = scan.nextLine();
+
+        int flag = 1;
+        while (flag == 1) {
+            try{
+                numPlayers = Integer.parseInt(findNumPlayers);
+                flag = 0;
+            }catch(NumberFormatException e){
+                System.out.println("Sorry try again!");
+                System.out.print("How many people will be playing? ");
+                findNumPlayers = scan.nextLine();
+            }
+
+        }
+
         boardModel.setNumPlayers(numPlayers);
     }
 
@@ -48,7 +64,6 @@ public class BoardController  {
             String name = scan2.nextLine();
 
             do {
-                Scanner scan3 = new Scanner(System.in);
                 System.out.printf("Choose an icon <%s>: ", getListOfIconsUpper());
                 icon = scan2.nextLine().toLowerCase();
             } while (!(remainingIcons.contains(icon)));
@@ -57,6 +72,7 @@ public class BoardController  {
             remainingIcons.remove(icon);
         }
         System.out.println("-------------------------------------------------------------");
+        System.out.println("LETS BEGIN!");
 
     }
 
@@ -100,15 +116,17 @@ public class BoardController  {
     }
 
     private void getCommand(Player player, ArrayList<BoardModel.Command> commands){
-        System.out.println("Here is a list of the available commands: ");
+        System.out.print("Choose one of the following commands: ");
         String availableCommands = getListAvailableOfCommands(commands);
         System.out.println(availableCommands);
+        System.out.print("Enter your command: ");
 
         Scanner scan = new Scanner(System.in);
         String command = scan.nextLine().toLowerCase();
 
         while (!(availableCommands.contains(command))) {
             System.out.println("Sorry try again!");
+            System.out.print("Enter your command: ");
             command = scan.nextLine().toLowerCase();
         }
 

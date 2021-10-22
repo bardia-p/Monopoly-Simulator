@@ -9,7 +9,7 @@ public class BoardModel {
     private  int[] dice;
     private  int numPlayers;
 
-    private final int SIZE_OF_BOARD = 23;
+    private final int SIZE_OF_BOARD = 24;
 
     private List<BoardView> views;
 
@@ -262,6 +262,10 @@ public class BoardModel {
             player.setRentStatus(Player.StatusEnum.NO_RENT);
         }
         turn = null;
+
+        for (BoardView view: views) {
+            view.handleCurrentPlayerChange();
+        }
     }
 
     public void setDoubleRoll(Player player){

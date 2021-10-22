@@ -21,13 +21,14 @@ public class BoardListener implements BoardView {
 
     @Override
     public void handleRoll(int die1, int die2, Player player){
-        System.out.println("\nRolling dice for " + player.getIcon().toUpperCase());
-        System.out.printf("You rolled a %d and a %d\n", die1, die2);
+        System.out.println("\nRolling dice for: " + player.getIcon().toUpperCase());
+        System.out.printf("---> You rolled a %d and a %d\n", die1, die2);
+        System.out.printf("---> Total: %d\n\n", die1 + die2);
     }
 
     @Override
     public void showCurrentProperty(Player player){
-        System.out.printf("Player %s is currently at %s\n",
+        System.out.printf("Player %s is currently at: %s\n",
                 player.getIcon().toUpperCase(),
                 player.getCurrentProperty().getName());
     }
@@ -35,25 +36,26 @@ public class BoardListener implements BoardView {
     @Override
     public void handleBuyProperty(Player player, Property property, boolean result) {
         if (result){
-            System.out.printf("Player %s bought %s\n", player.getIcon(), property.getName());
+            System.out.printf("\nPlayer %s bought %s\n", player.getIcon().toUpperCase(), property.getName());
         } else {
-            System.out.printf("Player %s cannot afford %s\n", player.getIcon(), property.getName());
+            System.out.printf("\nPlayer %s cannot afford %s\n", player.getIcon().toUpperCase(), property.getName());
         }
     }
 
     @Override
     public void handleSellProperty(Player player, Property property, boolean result) {
         if (result){
-            System.out.printf("Player %s sold %s\n", player.getIcon(), property.getName());
+            System.out.printf("\nPlayer %s sold %s\n", player.getIcon().toUpperCase(), property.getName());
         } else {
-            System.out.printf("Player %s cannot sell %s\n", player.getIcon(), property.getName());
+            System.out.printf("\nPlayer %s cannot sell %s\n", player.getIcon().toUpperCase(), property.getName());
         }
     }
 
     @Override
     public void handleGetPlayerStatus(Player player) {
-        System.out.printf("Displaying the status of player: %s\n", player.getIcon());
+        System.out.printf("\nDisplaying the status of player: %s\n", player.getIcon().toUpperCase());
         System.out.println(player);
+        System.out.println("");
     }
 
     @Override
@@ -87,6 +89,11 @@ public class BoardListener implements BoardView {
         }
 
 
+    }
+
+    @Override
+    public void handleCurrentPlayerChange() {
+        System.out.println("\n+++++++++Passing Dice To Next Player+++++++++");
     }
 
     public static void main(String[] args) {

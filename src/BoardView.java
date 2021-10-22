@@ -12,4 +12,5 @@ public interface BoardView {
     void handleRollingDoubles(Player player);
     void handleWelcomeMonopoly();
     void handlePayRent(Property property, Player renter, boolean result);
+    void handleCurrentPlayerChange();
 }
