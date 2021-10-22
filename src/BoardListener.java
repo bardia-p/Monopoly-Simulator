@@ -57,6 +57,16 @@ public class BoardListener implements BoardView {
         System.out.printf("Player %s rolled a double\n", player.getIcon());
     }
 
+    @Override
+    public void handleWelcomeMonopoly() {
+        System.out.println("WELCOME TO MONOPOLY");
+        System.out.println("-------------------------------------------------------------");
+        System.out.println("In this interactive business game you will try to outwit your\n" +
+                "opponents by making them go bankrupt while purchasing properties\n" +
+                "around the board. Spend wisely and aim for a TOTAL MONOPOLY.");
+        System.out.println("-------------------------------------------------------------");
+    }
+
     public static void main(String[] args) {
         new BoardListener();
     }

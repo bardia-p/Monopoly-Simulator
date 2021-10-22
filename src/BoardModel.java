@@ -81,13 +81,14 @@ public class BoardModel {
 
     public void play(){
         constructBoard();
+        initializeMonopoly();
         getNumPlayers();
         initiatePlayers();
 
         while(!gameFinish){
             for (Player player: players){
                 turn = player;
-                System.out.printf("Current turn: %s\n", turn.getIcon());
+                System.out.printf("\nCurrent turn: %s\n", turn.getIcon());
                 if (!player.isBankrupt()){
                     roll(player);
 
@@ -102,6 +103,12 @@ public class BoardModel {
     private void initiatePlayers(){
         for (BoardView view : views) {
             view.handleBoardUpdate(new BoardEvent(this, Status.INITIALIZE_PLAYERS, numPlayers));
+        }
+    }
+
+    private void initializeMonopoly(){
+        for (BoardView view : views) {
+            view.handleWelcomeMonopoly();
         }
     }
 

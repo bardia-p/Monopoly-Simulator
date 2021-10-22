@@ -32,8 +32,9 @@ public class BoardController  {
     }
 
     private void getNumPlayers(){
+        System.out.println("INITIALIZE GAME DATA");
         Scanner scan = new Scanner(System.in);
-        System.out.println("How many people will be playing?");
+        System.out.print("How many people will be playing? ");
         int numPlayers = scan.nextInt();
         boardModel.setNumPlayers(numPlayers);
     }
@@ -43,18 +44,19 @@ public class BoardController  {
 
         for (int i = 0; i < numPlayers; i++){
             Scanner scan2 = new Scanner(System.in);
-            System.out.printf("What's player %d's name?\n", i + 1);
+            System.out.printf("What's player %d's name? ", i + 1);
             String name = scan2.nextLine();
 
             do {
                 Scanner scan3 = new Scanner(System.in);
-                System.out.printf("Choose an icon: %s\n", getListOfIconsUpper());
+                System.out.printf("Choose an icon <%s>: ", getListOfIconsUpper());
                 icon = scan2.nextLine().toLowerCase();
             } while (!(remainingIcons.contains(icon)));
 
             boardModel.addPlayer(new Player(name, icon));
             remainingIcons.remove(icon);
         }
+        System.out.println("-------------------------------------------------------------");
 
     }
 
@@ -65,7 +67,8 @@ public class BoardController  {
         for (String icon : remainingIcons){
             upperCaseIcon += icon.toUpperCase() + ", ";
         }
-        return upperCaseIcon;
+
+        return upperCaseIcon.substring(0, upperCaseIcon.length() - 2);
     }
 
     private String getListAvailableOfCommands(ArrayList<BoardModel.Command> commands){
