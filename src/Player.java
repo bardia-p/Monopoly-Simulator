@@ -11,8 +11,9 @@ public class Player {
     private int position;
     private Property currentProperty;
     private List<Property> properties;
-    private int numDubbles;
+    private int numDoubles;
     private boolean rollAgain;
+    private boolean hasToPayRent;
 
     Player(String name, String icon) {
         this.bankrupt = false;
@@ -21,12 +22,17 @@ public class Player {
         this.cash = 1500;
         this.position = 0;
         this.properties = new ArrayList<>();
-        this.numDubbles = 0;
+        this.numDoubles = 0;
         this.rollAgain = false;
+        this.hasToPayRent = false;
     }
 
     public int getCash() {
         return this.cash;
+    }
+
+    public void pay(int amount){
+        this.cash -= amount;
     }
 
     public void buyProperty(Property property){
@@ -76,11 +82,11 @@ public class Player {
     }
 
     public int getNumDubbles(){
-        return numDubbles;
+        return numDoubles;
     }
 
     public void setNumDubbles(int newNumDubbles){
-        this.numDubbles = newNumDubbles;
+        this.numDoubles = newNumDubbles;
     }
 
     public boolean hasAnotherRoll(){
@@ -89,6 +95,14 @@ public class Player {
 
     public void setRollAgain(boolean rollAgain){
         this.rollAgain = rollAgain;
+    }
+
+    public void setHasToPayRent(boolean debt){
+        this.hasToPayRent = debt;
+    }
+
+    public boolean gethasToPayRent(){
+        return this.hasToPayRent;
     }
 
     @Override

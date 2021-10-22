@@ -20,7 +20,7 @@ public class BoardModel {
 
     public enum Status {GET_NUM_PLAYERS, INITIALIZE_PLAYERS, GET_COMMAND}
 
-    public enum Command{BUY, SELL, STATUS, PASS, ROLL_AGAIN}
+    public enum Command{BUY, SELL, PAY_RENT, STATUS, PASS, ROLL_AGAIN}
 
 
     public BoardModel(){
@@ -32,46 +32,46 @@ public class BoardModel {
 
     private void constructBoard(){
         properties.addAll(Arrays.asList(
-                new Property("GO",0),
-                new Property("Mediterranean Avenue",60),
+                new Property("GO",0,0,false),
+                new Property("Mediterranean Avenue",60,2),
                 // Community Chest here
-                new Property("Baltic Avenue",60),
+                new Property("Baltic Avenue",60,4),
                 // Income Tax
                 // Reading Railroad
-                new Property("Oriental Avenue",100),
+                new Property("Oriental Avenue",100,6),
                 // Chance Card
-                new Property("Vermont Avenue",100),
-                new Property("Connecticut Avenue",120),
+                new Property("Vermont Avenue",100,6),
+                new Property("Connecticut Avenue",120,8),
                 // JAIL!
-                new Property("St. Charles Place",140),
+                new Property("St. Charles Place",140,10),
                 // Electric Company
-                new Property("States Avenue",140),
-                new Property("Virginia Avenue",160),
+                new Property("States Avenue",140,10),
+                new Property("Virginia Avenue",160,12),
                 // Pennsylvania Railroad
-                new Property("St. James Place",180),
+                new Property("St. James Place",180,14),
                 // Community Chest
-                new Property("Tennessee Avenue",180),
-                new Property("New York Avenue",200),
+                new Property("Tennessee Avenue",180,14),
+                new Property("New York Avenue",200,16),
                 // FREE PARKING
-                new Property("Kentucky Avenue",220),
+                new Property("Kentucky Avenue",220,18),
                 // Chance Card
-                new Property("Indiana Avenue",220),
-                new Property("Illinois Avenue",240),
+                new Property("Indiana Avenue",220,18),
+                new Property("Illinois Avenue",240,20),
                 // B. & O. Railroad
-                new Property("Atlantic Avenue",260),
-                new Property("Ventnor Avenue",260),
+                new Property("Atlantic Avenue",260,22),
+                new Property("Ventnor Avenue",260,22),
                 // Waterworks
-                new Property("Marvin Garden",280),
+                new Property("Marvin Garden",280,24),
                 // GO TO JAIL ->
-                new Property("Pacific Avenue",300),
-                new Property("North Carolina Avenue",300),
+                new Property("Pacific Avenue",300,26),
+                new Property("North Carolina Avenue",300,26),
                 // Community Chest
-                new Property("Pennsylvania Avenue",320),
+                new Property("Pennsylvania Avenue",320,28),
                 // Shortline Railroad
                 // Chance Card
-                new Property("Park Place",350),
+                new Property("Park Place",350,35),
                 // Luxury Tax
-                new Property("Boardwalk",500)
+                new Property("Boardwalk",500,50)
         ));
 
         for (int i = 0; i < properties.size(); i++){
@@ -88,7 +88,7 @@ public class BoardModel {
         while(!gameFinish){
             for (Player player: players){
                 turn = player;
-                System.out.printf("\nCurrent turn: %s\n", turn.getIcon());
+                System.out.printf("\nCurrent turn: %s\n", turn.getIcon().toUpperCase());
                 if (!player.isBankrupt()){
                     roll(player);
 
@@ -124,21 +124,33 @@ public class BoardModel {
 
         commands.add(BoardModel.Command.STATUS);
 
-        if (currentProperty.getOwner() == player){
-            commands.add(BoardModel.Command.SELL);
-        } else if (currentProperty.getOwner() == null && player.getCash() >= currentProperty.getPrice()) {
-            commands.add(BoardModel.Command.BUY);
-        }
+        //when implementing GUI player will need a way to roll manually
 
-        if (player.hasAnotherRoll()){
-            commands.add(Command.ROLL_AGAIN);
-        } else {
+        if(currentProperty.getOwner() != player && currentProperty.getOwner() != null) {
+            commands.add(BoardModel.Command.PAY_RENT);
             commands.add(BoardModel.Command.PASS);
         }
 
-        for (BoardView view : views) {
-            view.handleBoardUpdate(new BoardEvent(this, BoardModel.Status.GET_COMMAND, player, commands));
+        //The player must pay rent before doing anything else
+        else {
+            if (currentProperty.getOwner() == player){
+                commands.add(BoardModel.Command.SELL);
+            } else if (currentProperty.getOwner() == null && player.getCash() >= currentProperty.getPrice()) {
+                commands.add(BoardModel.Command.BUY);
+            }
+
+            if (player.hasAnotherRoll()){
+                commands.add(Command.ROLL_AGAIN);
+            } else {
+                commands.add(BoardModel.Command.PASS);
+            }
+
+            for (BoardView view : views) {
+                view.handleBoardUpdate(new BoardEvent(this, BoardModel.Status.GET_COMMAND, player, commands));
+            }
         }
+
+
 
     }
 
@@ -215,7 +227,29 @@ public class BoardModel {
         }
     }
 
-    public void passTurn(){
+    public void payRent(Property property, Player player){
+        //If the player can't pay rent inform them
+        if(player.getCash() < property.getRent()){
+            for (BoardView view: views) {
+                view.handleCantPayRent(property, player);
+            }
+        }
+
+        //Player paying rent
+        property.getOwner().getMoney(property.getRent());
+        player.pay(property.getRent());
+        player.setHasToPayRent(false);
+
+        //Inform player they have paid rent
+        for (BoardView view: views) {
+            view.handlePayRent(property, player);
+        }
+    }
+
+    public void passTurn(Player player){
+        if(player.gethasToPayRent()){
+            player.setBankrupt(true);
+        }
         turn = null;
     }
 

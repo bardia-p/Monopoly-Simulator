@@ -1,5 +1,7 @@
 // Bardia Parmoun & Kyra Lothrop
 
+import java.sql.SQLOutput;
+
 public class BoardListener implements BoardView {
 
     BoardModel model;
@@ -65,6 +67,16 @@ public class BoardListener implements BoardView {
                 "opponents by making them go bankrupt while purchasing properties\n" +
                 "around the board. Spend wisely and aim for a TOTAL MONOPOLY.");
         System.out.println("-------------------------------------------------------------");
+    }
+
+    @Override
+    public void handlePayRent(Property property, Player renter) {
+        System.out.printf("You have successfully paid %d$ to %s\n",property.getRent(), property.getOwner());
+    }
+
+    @Override
+    public void handleCantPayRent(Property property, Player renter){
+        System.out.printf("You cannot currently pay rent to %s. Rent costs %d$ and you only have %d$ remaining\n",property.getOwner(),property.getRent(),renter.getCash());
     }
 
     public static void main(String[] args) {

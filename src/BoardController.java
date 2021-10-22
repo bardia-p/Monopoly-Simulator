@@ -75,16 +75,24 @@ public class BoardController  {
         String availableCommands = "";
 
         for (BoardModel.Command command: commands){
-            if(command == BoardModel.Command.BUY){
-                availableCommands += "buy, ";
-            } if(command == BoardModel.Command.SELL){
-                availableCommands += "sell, ";
-            } if(command == BoardModel.Command.STATUS){
-                availableCommands += "status, ";
-            } if(command == BoardModel.Command.PASS){
-                availableCommands += "pass, ";
-            } if(command == BoardModel.Command.ROLL_AGAIN){
-                availableCommands += "roll, ";
+            switch(command) {
+                case BUY:
+                    availableCommands += "buy, ";
+                    break;
+                case SELL:
+                    availableCommands += "sell, ";
+                    break;
+                case STATUS:
+                    availableCommands += "status, ";
+                    break;
+                case PASS:
+                    availableCommands += "pass, ";
+                    break;
+                case ROLL_AGAIN:
+                    availableCommands += "roll, ";
+                    break;
+                case PAY_RENT:
+                    availableCommands += "pay rent, ";
             }
         }
         return availableCommands;
@@ -108,11 +116,13 @@ public class BoardController  {
         } else if (command.equals("sell")){
             boardModel.sellProperty(player.getCurrentProperty(), player);
         } else if (command.equals("pass")){
-            boardModel.passTurn();
+            boardModel.passTurn(player);
         } else if (command.equals("status")){
             boardModel.getStatus(player);
         } else if (command.equals("roll")){
             boardModel.roll(player);
+        } else if (command.equals("pay rent")){
+            boardModel.payRent(player.getCurrentProperty(), player);
         }
     }
 
