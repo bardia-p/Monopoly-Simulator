@@ -32,46 +32,46 @@ public class BoardModel {
 
     private void constructBoard(){
         properties.addAll(Arrays.asList(
-                new Property("GO"),
-                new Property("Mediterranean Avenue"),
+                new Property("GO",0),
+                new Property("Mediterranean Avenue",60),
                 // Community Chest here
-                new Property("Baltic Avenue"),
+                new Property("Baltic Avenue",60),
                 // Income Tax
                 // Reading Railroad
-                new Property("Oriental Avenue"),
+                new Property("Oriental Avenue",100),
                 // Chance Card
-                new Property("Vermont Avenue"),
-                new Property("Connecticut Avenue"),
+                new Property("Vermont Avenue",100),
+                new Property("Connecticut Avenue",120),
                 // JAIL!
-                new Property("St. Charles Place"),
+                new Property("St. Charles Place",140),
                 // Electric Company
-                new Property("States Avenue"),
-                new Property("Virginia Avenue"),
+                new Property("States Avenue",140),
+                new Property("Virginia Avenue",160),
                 // Pennsylvania Railroad
-                new Property("St. James Place"),
+                new Property("St. James Place",180),
                 // Community Chest
-                new Property("Tennessee Avenue"),
-                new Property("New York Avenue"),
+                new Property("Tennessee Avenue",180),
+                new Property("New York Avenue",200),
                 // FREE PARKING
-                new Property("Kentucky Avenue"),
+                new Property("Kentucky Avenue",220),
                 // Chance Card
-                new Property("Indiana Avenue"),
-                new Property("Illinois Avenue"),
+                new Property("Indiana Avenue",220),
+                new Property("Illinois Avenue",240),
                 // B. & O. Railroad
-                new Property("Atlantic Avenue"),
-                new Property("Ventnor Avenue"),
+                new Property("Atlantic Avenue",260),
+                new Property("Ventnor Avenue",260),
                 // Waterworks
-                new Property("Marvin Garden"),
+                new Property("Marvin Garden",280),
                 // GO TO JAIL ->
-                new Property("Pacific Avenue"),
-                new Property("North Carolina Avenue"),
+                new Property("Pacific Avenue",300),
+                new Property("North Carolina Avenue",300),
                 // Community Chest
-                new Property("Pennsylvania Avenue"),
+                new Property("Pennsylvania Avenue",320),
                 // Shortline Railroad
                 // Chance Card
-                new Property("Park Place"),
+                new Property("Park Place",350),
                 // Luxury Tax
-                new Property("Boardwalk")
+                new Property("Boardwalk",500)
         ));
 
         for (int i = 0; i < properties.size(); i++){

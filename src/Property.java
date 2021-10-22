@@ -7,10 +7,10 @@ public class Property {
     private int rent;
     private int propertyIndex;
 
-    Property(String name){
+    Property(String name, int price){
         this.name = name;
+        this.price = price;
         this.propertyOwner = null;
-        this.price = 0;
         this.rent = 100;
     }
 
