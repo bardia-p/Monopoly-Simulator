@@ -53,7 +53,7 @@ public class BoardModel {
 
     private void constructBoard(){
         cells.addAll(Arrays.asList(
-                new Property("GO",0,0, bank),
+                new Go(200),
                 new Property("Mediterranean Avenue",60,2),
                 // Community Chest here
                 new Property("Baltic Avenue",60,4),
