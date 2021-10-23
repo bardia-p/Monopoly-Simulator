@@ -112,6 +112,17 @@ public class Player {
         return properties;
     }
 
+    public List<Property> getSellableProperties(){
+        ArrayList<Property> sellableProperties = new ArrayList<>();
+        for (Property property: properties){
+            if (!property.getRecentlyChanged()){
+                sellableProperties.add(property);
+            }
+        }
+
+        return sellableProperties;
+    }
+
     @Override
     public String toString() {
         String playerInfo;

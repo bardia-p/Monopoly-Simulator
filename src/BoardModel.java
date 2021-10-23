@@ -132,14 +132,14 @@ public class BoardModel {
                         player.getRentStatus() == Player.StatusEnum.NO_RENT)) {
             commands.add(BoardModel.Command.PAY_RENT);
             player.setRentStatus(Player.StatusEnum.UNPAID_RENT);
-
-        } else if (currentProperty.getOwner() == player && !currentProperty.getRecentlyChanged()){
-                commands.add(BoardModel.Command.SELL);
-
         } else if (currentProperty.getOwner() == null &&
                 player.getCash() >= currentProperty.getPrice() &&
                 !currentProperty.getRecentlyChanged()) {
                 commands.add(BoardModel.Command.BUY);
+        }
+
+        if (player.getSellableProperties().size() > 0){
+            commands.add(BoardModel.Command.SELL);
         }
 
         if (player.hasAnotherRoll() && player.getRentStatus() != Player.StatusEnum.UNPAID_RENT){

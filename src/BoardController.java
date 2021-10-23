@@ -1,6 +1,7 @@
 // Sarah Chow 101143033
 // Owen VanDusen 101152022
 
+import java.sql.SQLOutput;
 import java.util.*;
 
 public class BoardController  {
@@ -136,7 +137,7 @@ public class BoardController  {
         if (command.equals("buy")){
             boardModel.buyProperty(player.getCurrentProperty(), player);
         } else if (command.equals("sell")){
-            boardModel.sellProperty(player.getCurrentProperty(), player);
+            loadSellPropertiesUI(player);
         } else if (command.equals("pass")){
             boardModel.passTurn(player);
         } else if (command.equals("status")){
@@ -150,8 +151,35 @@ public class BoardController  {
         }
     }
 
-    private void getPlayerStatus(Player player){
-        System.out.println(player);
-    }
+    private void loadSellPropertiesUI(Player player) {
+        System.out.println("Here are the list of the properties that you can sell: ");
+        String sellableProperties = "";
 
+        for (Property property : player.getSellableProperties()){
+            sellableProperties += property.getName() + ", ";
+        }
+
+        sellableProperties += "cancel";
+        System.out.println(sellableProperties);
+
+        System.out.print("Enter the name of the property: ");
+
+        Scanner scan = new Scanner(System.in);
+        String command = scan.nextLine();
+
+        while (!(sellableProperties.contains(command))) {
+            System.out.println("Sorry try again!");
+            System.out.print("Enter the name of the property: ");
+            command = scan.nextLine();
+        }
+
+        if (!command.equals("cancel")){
+            for (Property property: player.getSellableProperties()){
+                if (property.getName().equals(command)){
+                    boardModel.sellProperty(property, player);
+                    return;
+                }
+            }
+        }
+    }
 }

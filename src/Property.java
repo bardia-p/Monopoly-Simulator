@@ -9,8 +9,6 @@ public class Property {
     private boolean buyable;
     private boolean recentlyChanged;
 
-
-
     Property(String name, int price, int rent, boolean buyable, Player propertyOwner){
         this(name, price, rent, buyable);
         this.propertyOwner = propertyOwner;
