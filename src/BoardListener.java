@@ -1,7 +1,8 @@
 // Bardia Parmoun & Kyra Lothrop
 
-import java.sql.SQLOutput;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class BoardListener implements BoardView {
@@ -130,6 +131,24 @@ public class BoardListener implements BoardView {
     @Override
     public void handleCurrentPlayerChange() {
         System.out.println("\n+++++++++Passing Dice To Next Player+++++++++");
+    }
+
+    @Override
+    public void handleForFeitedPlayer(Player player) {
+        System.out.printf("Player %s has forfeited the game!\n", player.getIcon().toUpperCase());
+    }
+
+    @Override
+    public void handleWinner(List<Player> players) {
+        System.out.println("The game is over");
+        Collections.sort(players, Comparator.comparingInt(Player::getRank));
+
+        System.out.printf("Player %s won the game!\n", players.get(0).getIcon().toUpperCase());
+        for (Player player: players){
+            if (player.isBankrupt()) {
+                System.out.printf("Player %s has the rank %d\n", player.getIcon().toUpperCase(), player.getRank());
+            }
+        }
     }
 
     public static void main(String[] args) {
