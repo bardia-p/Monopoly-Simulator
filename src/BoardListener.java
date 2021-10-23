@@ -30,10 +30,10 @@ public class BoardListener implements BoardView {
     }
 
     @Override
-    public void showCurrentProperty(Player player){
+    public void showCurrentCell(Player player){
         System.out.printf("Player %s is currently at: %s\n",
                 player.getIcon().toUpperCase(),
-                player.getCurrentProperty().getName());
+                player.getCurrentCell().getName());
     }
 
     @Override
@@ -92,9 +92,9 @@ public class BoardListener implements BoardView {
     }
 
     @Override
-    public void handleGetCellStatus(Property property){
-        System.out.printf("\nDisplaying the status of the current cell: %s\n", property.getName());
-        System.out.println(property);
+    public void handleGetCellStatus(BoardCell currentCell){
+        System.out.printf("\nDisplaying the status of the current cell: %s\n",currentCell.getName());
+        System.out.println(currentCell);
         System.out.println("");
     }
 
@@ -114,16 +114,16 @@ public class BoardListener implements BoardView {
     }
 
     @Override
-    public void handlePayRent(Property property, Player renter, boolean result) {
+    public void handlePayFees(BoardCell boardCell, Player renter, int fees,  boolean result) {
         if (result){
             System.out.printf("You have successfully paid %d$ to %s\n",
-                    property.getRent(),
-                    property.getOwner().getIcon());
+                    fees,
+                    boardCell.getOwner().getIcon());
         }
         else{
-            System.out.printf("You cannot currently pay rent to %s. Rent costs %d$ and you only have %d$ remaining\n",
-                    property.getOwner().getIcon(),
-                    property.getRent(),
+            System.out.printf("You cannot currently pay fees to %s. Rent costs %d$ and you only have %d$ remaining\n",
+                    boardCell.getOwner().getIcon(),
+                    fees,
                     renter.getCash());
         }
     }

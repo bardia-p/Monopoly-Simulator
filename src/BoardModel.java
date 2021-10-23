@@ -3,7 +3,7 @@
 import java.util.*;
 
 public class BoardModel {
-    private  List<Property> properties;
+    private  List<BoardCell> cells;
     private  List<Player> players;
     private  int[] dice;
     private  int numPlayers;
@@ -29,7 +29,8 @@ public class BoardModel {
         PASS ("pass"),
         ROLL_AGAIN ("roll"),
         CELL_STATUS ("cell status"),
-        FORFEIT ("forfeit");
+        FORFEIT ("forfeit"),
+        PAY_TAX ("pay tax");
 
         private String stringCommand;
 
@@ -44,59 +45,55 @@ public class BoardModel {
 
     public BoardModel(){
         views = new ArrayList<>();
-        properties = new ArrayList<>();
+        cells = new ArrayList<>();
         players = new ArrayList<>();
         dice =  new int[2];
         bank = new Player("Bank", "Bank");
     }
 
     private void constructBoard(){
-        properties.addAll(Arrays.asList(
-                new Property("GO",0,0,false, bank),
-                new Property("Mediterranean Avenue",60,2, true),
+        cells.addAll(Arrays.asList(
+                new Property("GO",0,0, bank),
+                new Property("Mediterranean Avenue",60,2),
                 // Community Chest here
-                new Property("Baltic Avenue",60,4, true),
-                new Property( "Income Tax", 0, 200, false, bank),
+                new Property("Baltic Avenue",60,4),
+                new IncomeTax( "Income Tax", 200, bank),
                 // Reading Railroad
-                new Property("Oriental Avenue",100,6, true),
+                new Property("Oriental Avenue",100,6),
                 // Chance Card
-                new Property("Vermont Avenue",100,6, true),
-                new Property("Connecticut Avenue",120,8, true),
+                new Property("Vermont Avenue",100,6),
+                new Property("Connecticut Avenue",120,8),
                 // JAIL!
-                new Property("St. Charles Place",140,10, true),
+                new Property("St. Charles Place",140,10),
                 // Electric Company
-                new Property("States Avenue",140,10, true),
-                new Property("Virginia Avenue",160,12, true),
+                new Property("States Avenue",140,10),
+                new Property("Virginia Avenue",160,12),
                 // Pennsylvania Railroad
-                new Property("St. James Place",180,14, true),
+                new Property("St. James Place",180,14),
                 // Community Chest
-                new Property("Tennessee Avenue",180,14, true),
-                new Property("New York Avenue",200,16, true),
+                new Property("Tennessee Avenue",180,14),
+                new Property("New York Avenue",200,16),
                 // FREE PARKING
-                new Property("Kentucky Avenue",220,18, true),
+                new Property("Kentucky Avenue",220,18),
                 // Chance Card
-                new Property("Indiana Avenue",220,18, true),
-                new Property("Illinois Avenue",240,20, true),
+                new Property("Indiana Avenue",220,18),
+                new Property("Illinois Avenue",240,20),
                 // B. & O. Railroad
-                new Property("Atlantic Avenue",260,22, true),
-                new Property("Ventnor Avenue",260,22, true),
+                new Property("Atlantic Avenue",260,22),
+                new Property("Ventnor Avenue",260,22),
                 // Waterworks
-                new Property("Marvin Garden",280,24, true),
+                new Property("Marvin Garden",280,24),
                 // GO TO JAIL ->
-                new Property("Pacific Avenue",300,26, true),
-                new Property("North Carolina Avenue",300,26, true),
+                new Property("Pacific Avenue",300,26),
+                new Property("North Carolina Avenue",300,26),
                 // Community Chest
-                new Property("Pennsylvania Avenue",320,28, true),
+                new Property("Pennsylvania Avenue",320,28),
                 // Shortline Railroad
                 // Chance Card
-                new Property("Park Place",350,35, true),
+                new Property("Park Place",350,35),
                 // Luxury Tax
-                new Property("Boardwalk",500,50, true)
+                new Property("Boardwalk",500,50)
         ));
-
-        for (int i = 0; i < properties.size(); i++){
-            properties.get(i).setPropertyIndex(i);
-        }
     }
 
     public void addBoardView (BoardView view){
@@ -113,7 +110,7 @@ public class BoardModel {
 
 
     public void addPlayer(Player player){
-        player.setCurrentProperty(this.properties.get(0));
+        player.setCurrentCell(this.cells.get(0));
         this.players.add(player);
     }
 
@@ -132,30 +129,41 @@ public class BoardModel {
     }
 
     public void getCommand(Player player){
-        Property currentProperty = player.getCurrentProperty();
+        BoardCell currentCell = player.getCurrentCell();
         ArrayList<BoardModel.Command> commands = new ArrayList<>();
 
-        // Handles the buying command by checking to see if you can afford it
-        // and the property has not been sold by you recently (you cannot buy back the property you just sold).
-        if (currentProperty.getOwner() == null &&
-                player.getCash() >= currentProperty.getPrice() &&
-                !currentProperty.getRecentlyChanged()) {
-            commands.add(BoardModel.Command.BUY);
-        }
-        // Checks to see if the property has an owner and if you have paid the rent for it.
-        else if (currentProperty.getOwner() != player && currentProperty.getOwner() != null &&
-        player.getRentStatus() != Player.StatusEnum.PAID_RENT) {
-            commands.add(BoardModel.Command.PAY_RENT);
-            player.setRentStatus(Player.StatusEnum.UNPAID_RENT);
+        if (currentCell.getType() == BoardCell.CellType.PROPERTY){
+            Property currentProperty = (Property) currentCell;
+
+            // Handles the buying command by checking to see if you can afford it
+            // and the property has not been sold by you recently (you cannot buy back the property you just sold).
+            if (currentProperty.getOwner() == null &&
+                    player.getCash() >= currentProperty.getPrice() &&
+                    !currentProperty.getRecentlyChanged()) {
+                commands.add(BoardModel.Command.BUY);
+            }
         }
 
+        // Checks to see if the sell has an owner and if you have paid the fees for it.
+        if (currentCell.getOwner() != player && currentCell.getOwner() != null &&
+                player.getFeesStatus() != Player.StatusEnum.PAID_FEES) {
+            if (currentCell.getType() == BoardCell.CellType.PROPERTY){
+                commands.add(BoardModel.Command.PAY_RENT);
+            } else if (currentCell.getType() == BoardCell.CellType.INCOME_TAX){
+                commands.add(BoardModel.Command.PAY_TAX);
+            }
+            player.setFeesStatus(Player.StatusEnum.UNPAID_FEES);
+        }
+
+
+
         // Handles selling the property
-        if (player.getSellableProperties().size() > 0){
+        if (player.getProperties(true).size() > 0){
             commands.add(BoardModel.Command.SELL);
         }
 
         // If the player has paid their rent they can pass or roll again.
-        if (player.getRentStatus() != Player.StatusEnum.UNPAID_RENT) {
+        if (player.getFeesStatus() != Player.StatusEnum.UNPAID_FEES) {
             if (player.hasAnotherRoll()) {
                 commands.add(Command.ROLL_AGAIN);
             } else {
@@ -200,9 +208,9 @@ public class BoardModel {
     public void move(Player player, int amountToMove){
         int newPlayerPosition = (player.getPosition() + amountToMove) % SIZE_OF_BOARD;
         player.setPosition(newPlayerPosition);
-        player.setCurrentProperty(properties.get(newPlayerPosition));
+        player.setCurrentCell(cells.get(newPlayerPosition));
         for (BoardView view : views) {
-            view.showCurrentProperty(player);
+            view.showCurrentCell(player);
         }
     }
 
@@ -245,41 +253,50 @@ public class BoardModel {
 
     public void getCellStatus(){
         for (BoardView view : views) {
-            view.handleGetCellStatus(turn.getCurrentProperty());
+            view.handleGetCellStatus(turn.getCurrentCell());
         }
     }
 
-    public void payRent(Property property, Player player){
+    public void payFees(BoardCell boardCell, Player player){
         boolean result = false;
 
+        int fees = 0;
+        if (boardCell.getType() == BoardCell.CellType.PROPERTY){
+            fees = ((Property) boardCell).getRent();
+        } else if (boardCell.getType() == BoardCell.CellType.INCOME_TAX){
+            fees = ((IncomeTax) boardCell).getTax();
+        }
+
         //If the player can't pay rent inform them
-        if(player.getCash() < property.getRent()){
-            player.setRentStatus(Player.StatusEnum.UNPAID_RENT);
+        if(player.getCash() < fees){
+            player.setFeesStatus(Player.StatusEnum.UNPAID_FEES);
         }
         else{
-            property.getOwner().getMoney(property.getRent());
-            player.pay(property.getRent());
-            player.setRentStatus(Player.StatusEnum.PAID_RENT);
+            boardCell.getOwner().getMoney(fees);
+            player.pay(fees);
+            player.setFeesStatus(Player.StatusEnum.PAID_FEES);
             result = true;
         }
 
 
         //Inform player they have paid rent
         for (BoardView view: views) {
-            view.handlePayRent(property, player, result);
+            view.handlePayFees(boardCell, player, fees, result);
         }
     }
 
-    public void passTurn(Player player){
-        // Remove the recently changed from the player's properties.
-        for (Property property : player.getProperties()){
-                if (property.getRecentlyChanged()){
-                    property.toggleRecentlyChanged(); // Set all to false
-                }
-            }
 
-        // Reset the player rent status/
-        player.setRentStatus(Player.StatusEnum.NO_RENT);
+    public void passTurn(Player player){
+        // Remove the recently changed from the player's cells.
+        for (Property property : player.getProperties(false)){
+            if (property.getRecentlyChanged()){
+                property.toggleRecentlyChanged(); // Set all to false
+            }
+        }
+
+        // Reset the player rent statuses
+        player.setFeesStatus(Player.StatusEnum.NO_FEES);
+        player.resetNumDoubles();
 
         // Reset the turn.
         turn = null;
@@ -290,8 +307,8 @@ public class BoardModel {
     }
 
     public void setDoubleRoll(Player player){
-        player.setRentStatus(Player.StatusEnum.NO_RENT);
-        player.setNumDubbles(player.getNumDubbles()+1);
+        player.setFeesStatus(Player.StatusEnum.NO_FEES);
+        player.addNumDoubles();
         player.setRollAgain(true);
 
         for (BoardView view : views) {

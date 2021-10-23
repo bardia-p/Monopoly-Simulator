@@ -120,7 +120,7 @@ public class BoardController  {
         }
 
         if (command.equals(BoardModel.Command.BUY.getStringCommand())){
-            boardModel.buyProperty(player.getCurrentProperty(), player);
+            boardModel.buyProperty((Property) player.getCurrentCell(), player);
         } else if (command.equals(BoardModel.Command.SELL.getStringCommand())){
             loadSellPropertiesUI(player);
         } else if (command.equals(BoardModel.Command.PASS.getStringCommand())){
@@ -130,11 +130,13 @@ public class BoardController  {
         } else if (command.equals(BoardModel.Command.BOARD_STATUS.getStringCommand())) {
             boardModel.getBoardStatus();
         } else if (command.equals(BoardModel.Command.CELL_STATUS.getStringCommand())){
-                boardModel.getCellStatus();
+            boardModel.getCellStatus();
         } else if (command.equals(BoardModel.Command.ROLL_AGAIN.getStringCommand())){
             boardModel.roll(player);
-        } else if (command.equals(BoardModel.Command.PAY_RENT.getStringCommand())){
-            boardModel.payRent(player.getCurrentProperty(), player);
+        } else if (command.equals(BoardModel.Command.PAY_RENT.getStringCommand())) {
+            boardModel.payFees(player.getCurrentCell(), player);
+        } else if (command.equals(BoardModel.Command.PAY_TAX.getStringCommand())){
+                boardModel.payFees(player.getCurrentCell(), player);
         } else if (command.equals(BoardModel.Command.FORFEIT.getStringCommand())){
             boardModel.forfeit(player);
         }
@@ -144,7 +146,7 @@ public class BoardController  {
         System.out.println("Here are the list of the properties that you can sell: ");
         String sellableProperties = "";
 
-        for (Property property : player.getSellableProperties()){
+        for (Property property : player.getProperties(true)){
             sellableProperties += property.getName() + ", ";
         }
 
@@ -154,17 +156,17 @@ public class BoardController  {
         System.out.print("Enter the name of the property: ");
 
         Scanner scan = new Scanner(System.in);
-        String command = scan.nextLine();
+        String command = scan.nextLine().toLowerCase();
 
-        while (!(sellableProperties.contains(command))) {
+        while (!(sellableProperties.toLowerCase().contains(command))) {
             System.out.println("Sorry try again!");
             System.out.print("Enter the name of the property: ");
             command = scan.nextLine();
         }
 
         if (!command.equals("cancel")){
-            for (Property property: player.getSellableProperties()){
-                if (property.getName().equals(command)){
+            for (Property property: player.getProperties(true)){
+                if (property.getName().toLowerCase().equals(command)){
                     boardModel.sellProperty(property, player);
                     return;
                 }

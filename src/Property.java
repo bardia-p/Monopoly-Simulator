@@ -1,58 +1,29 @@
 // Bardia Parmoun & Kyra Lothrop
 
-public class Property {
-    private String name;
-    private Player propertyOwner;
+public class Property extends BoardCell {
+
     private int price;
     private int rent;
-    private int propertyIndex;
-    private boolean buyable;
     private boolean recentlyChanged;
 
-    Property(String name, int price, int rent, boolean buyable, Player propertyOwner){
-        this(name, price, rent, buyable);
-        this.propertyOwner = propertyOwner;
+    Property(String name, int price, int rent, Player propertyOwner){
+        this(name, price, rent);
+        super.setOwner(propertyOwner);
     }
 
-    Property(String name, int price, int rent, boolean buyable){
-        this.name = name;
+    Property(String name, int price, int rent){
+        super(name, null, CellType.PROPERTY);
         this.price = price;
-        this.rent = 200;
-        this.buyable = buyable;
-        this.propertyOwner = null;
+        this.rent = rent;
         this.recentlyChanged = false;
-    }
-
-    public void setPropertyIndex(int propertyIndex) {
-        this.propertyIndex = propertyIndex;
-    }
-
-    public Player getOwner() {
-        return this.propertyOwner;
     }
 
     public int getPrice() {
         return this.price;
     }
 
-    public String getName(){
-        return name;
-    }
-
-    public void setOwner(Player player) {
-        this.propertyOwner = player;
-    }
-
     public int getRent(){
         return this.rent;
-    }
-
-    public int getPropertyIndex() {
-        return propertyIndex;
-    }
-
-    public boolean isBuyable() {
-        return buyable;
     }
 
     public void toggleRecentlyChanged(){
@@ -65,15 +36,14 @@ public class Property {
 
     @Override
     public String toString() {
-        String propertyInfo = "\n\tname='" + name + '\'' +
-                "\n\tprice='" + price + '\'' +
-                "\n\trent='" + rent + '\'' +
-                "\n\tproperty index='" + propertyIndex + '\'';
+        String propertyInfo = "\n\t\tname='" + super.getName() + '\'' +
+                "\n\t\tprice='" + price + '\'' +
+                "\n\t\trent='" + rent + '\'';
 
-        if (propertyOwner != null){
-            propertyInfo += "\n\tproperty owner='" + propertyOwner.getIcon() + '\'';
+        if (super.getOwner() != null){
+            propertyInfo += "\n\t\tproperty owner='" + super.getOwner().getIcon() + '\'';
         } else {
-            propertyInfo += "\n\tproperty owner='no owner'";
+            propertyInfo += "\n\t\tproperty owner='no owner'";
         }
         return propertyInfo;
     }
