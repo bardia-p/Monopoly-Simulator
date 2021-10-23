@@ -1,6 +1,5 @@
 // Bardia Parmoun & Kyra Lothrop
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class BoardModel {
@@ -19,7 +18,7 @@ public class BoardModel {
 
     private Player bank;
 
-    public enum Status {GET_NUM_PLAYERS, INITIALIZE_PLAYERS, GET_COMMAND }
+    public enum Status {GET_NUM_PLAYERS, INITIALIZE_PLAYERS, GET_COMMAND}
 
     public enum Command{
         BUY ("buy"),
@@ -29,8 +28,8 @@ public class BoardModel {
         BOARD_STATUS ("board status"),
         PASS ("pass"),
         ROLL_AGAIN ("roll"),
-        CELL_STATUS ("cell status");
-
+        CELL_STATUS ("cell status"),
+        FORFEIT ("forfeit");
 
         private String stringCommand;
 
@@ -136,30 +135,41 @@ public class BoardModel {
         Property currentProperty = player.getCurrentProperty();
         ArrayList<BoardModel.Command> commands = new ArrayList<>();
 
-        commands.add(BoardModel.Command.STATUS);
-        commands.add(BoardModel.Command.BOARD_STATUS);
-        commands.add(BoardModel.Command.CELL_STATUS);
-
-        if(currentProperty.getOwner() != player && currentProperty.getOwner() != null &&
-                (player.getRentStatus() == Player.StatusEnum.UNPAID_RENT ||
-                        player.getRentStatus() == Player.StatusEnum.NO_RENT)) {
-            commands.add(BoardModel.Command.PAY_RENT);
-            player.setRentStatus(Player.StatusEnum.UNPAID_RENT);
-        } else if (currentProperty.getOwner() == null &&
+        // Handles the buying command by checking to see if you can afford it
+        // and the property has not been sold by you recently (you cannot buy back the property you just sold).
+        if (currentProperty.getOwner() == null &&
                 player.getCash() >= currentProperty.getPrice() &&
                 !currentProperty.getRecentlyChanged()) {
-                commands.add(BoardModel.Command.BUY);
+            commands.add(BoardModel.Command.BUY);
+        }
+        // Checks to see if the property has an owner and if you have paid the rent for it.
+        else if (currentProperty.getOwner() != player && currentProperty.getOwner() != null &&
+        player.getRentStatus() != Player.StatusEnum.PAID_RENT) {
+            commands.add(BoardModel.Command.PAY_RENT);
+            player.setRentStatus(Player.StatusEnum.UNPAID_RENT);
         }
 
+        // Handles selling the property
         if (player.getSellableProperties().size() > 0){
             commands.add(BoardModel.Command.SELL);
         }
 
-        if (player.hasAnotherRoll() && player.getRentStatus() != Player.StatusEnum.UNPAID_RENT){
-            commands.add(Command.ROLL_AGAIN);
-        } else {
-            commands.add(BoardModel.Command.PASS);
+        // If the player has paid their rent they can pass or roll again.
+        if (player.getRentStatus() != Player.StatusEnum.UNPAID_RENT) {
+            if (player.hasAnotherRoll()) {
+                commands.add(Command.ROLL_AGAIN);
+            } else {
+                commands.add(BoardModel.Command.PASS);
+            }
         }
+
+        // Handles the status commands.
+        commands.add(BoardModel.Command.STATUS);
+        commands.add(BoardModel.Command.BOARD_STATUS);
+        commands.add(BoardModel.Command.CELL_STATUS);
+
+        // Handling forfeiting the game and declaring bankruptcy.
+        commands.add(Command.FORFEIT);
 
         sendBoardUpdate(new BoardEvent(this, BoardModel.Status.GET_COMMAND, player, commands));
     }
@@ -261,17 +271,17 @@ public class BoardModel {
     }
 
     public void passTurn(Player player){
-        if(player.getRentStatus() == Player.StatusEnum.UNPAID_RENT) {
-            player.setBankrupt(true);
-        }
-        else{
-            for (Property property : player.getProperties()){
+        // Remove the recently changed from the player's properties.
+        for (Property property : player.getProperties()){
                 if (property.getRecentlyChanged()){
                     property.toggleRecentlyChanged(); // Set all to false
                 }
             }
-            player.setRentStatus(Player.StatusEnum.NO_RENT);
-        }
+
+        // Reset the player rent status/
+        player.setRentStatus(Player.StatusEnum.NO_RENT);
+
+        // Reset the turn.
         turn = null;
 
         for (BoardView view: views) {
@@ -286,6 +296,23 @@ public class BoardModel {
 
         for (BoardView view : views) {
             view.handleRollingDoubles(player);
+        }
+    }
+
+    public void forfeit(Player player) {
+        player.setBankrupt();
+        player.setRank(numPlayers--);
+
+        for (BoardView view : views) {
+            view.handleForFeitedPlayer(player);
+        }
+
+        passTurn(player);
+    }
+
+    public void gameOver(){
+        for (BoardView view : views) {
+            view.handleWinner(players);
         }
     }
 
@@ -305,7 +332,16 @@ public class BoardModel {
                         getCommand(player);
                     }
                 }
+
+                if (numPlayers == 1){
+                    gameFinish = true;
+                    break;
+                }
             }
+
+
         }
+
+        gameOver();
     }
 }

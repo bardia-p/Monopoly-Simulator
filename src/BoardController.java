@@ -1,7 +1,6 @@
 // Sarah Chow 101143033
 // Owen VanDusen 101152022
 
-import java.sql.SQLOutput;
 import java.util.*;
 
 public class BoardController  {
@@ -42,15 +41,22 @@ public class BoardController  {
 
         int flag = 1;
         while (flag == 1) {
-            try{
+            try {
                 numPlayers = Integer.parseInt(findNumPlayers);
-                flag = 0;
-            }catch(NumberFormatException e){
+                if (numPlayers > 1 && numPlayers < remainingIcons.size() + 1){
+                    flag = 0;
+                }
+            } catch(NumberFormatException e){
+                flag = 1;
+            }
+
+            if (flag == 1){
                 System.out.println("Sorry try again!");
+                System.out.printf("The number of players should be an integer between 1 and less than %d\n",
+                        remainingIcons.size() + 1);
                 System.out.print("How many people will be playing? ");
                 findNumPlayers = scan.nextLine();
             }
-
         }
 
         boardModel.setNumPlayers(numPlayers);
@@ -129,6 +135,8 @@ public class BoardController  {
             boardModel.roll(player);
         } else if (command.equals(BoardModel.Command.PAY_RENT.getStringCommand())){
             boardModel.payRent(player.getCurrentProperty(), player);
+        } else if (command.equals(BoardModel.Command.FORFEIT.getStringCommand())){
+            boardModel.forfeit(player);
         }
     }
 

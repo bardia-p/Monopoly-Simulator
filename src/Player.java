@@ -14,6 +14,7 @@ public class Player {
     private int numDoubles;
     private boolean rollAgain;
     private StatusEnum rentStatus;
+    private int rank;
 
     public enum StatusEnum {NO_RENT, UNPAID_RENT, PAID_RENT};
 
@@ -27,6 +28,7 @@ public class Player {
         this.numDoubles = 0;
         this.rollAgain = false;
         this.rentStatus = StatusEnum.NO_RENT;
+        this.rank = 0;
     }
 
 
@@ -48,8 +50,12 @@ public class Player {
         this.cash += property.getPrice();
     }
 
-    public void setBankrupt(boolean isBankrupt){
-        this.bankrupt = isBankrupt;
+    public void setBankrupt(){
+        this.bankrupt = true;
+        this.cash = 0;
+        for (Property property: properties){
+            property.setOwner(null);
+        }
     }
 
     public boolean isBankrupt(){
@@ -121,6 +127,14 @@ public class Player {
         }
 
         return sellableProperties;
+    }
+
+    public void setRank (int rank){
+        this.rank = rank;
+    }
+
+    public int getRank(){
+        return rank;
     }
 
     @Override
