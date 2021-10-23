@@ -15,4 +15,6 @@ public interface BoardView {
     void handleWelcomeMonopoly();
     void handlePayRent(Property property, Player renter, boolean result);
     void handleCurrentPlayerChange();
+    void handleForFeitedPlayer(Player player);
+    void handleWinner(List<Player> player);
 }

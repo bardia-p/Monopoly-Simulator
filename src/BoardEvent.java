@@ -16,6 +16,11 @@ public class BoardEvent extends EventObject {
         this.commands = commands;
     }
 
+    public BoardEvent(BoardModel model, BoardModel.Status type, Player player){
+        this(model, type);
+        this.player = player;
+    }
+
     public BoardEvent(BoardModel model, BoardModel.Status type, int value){
         this(model, type);
         this.value = value;
