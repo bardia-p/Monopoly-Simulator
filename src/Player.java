@@ -136,7 +136,7 @@ public class Player {
 
         for (Property property: properties)
         {
-            playerInfo += property.toString() + "\n\t\t\t\t";
+            playerInfo += property.toString() + "\n\t";
         }
 
         playerInfo += " }";

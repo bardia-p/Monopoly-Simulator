@@ -65,15 +65,15 @@ public class Property {
 
     @Override
     public String toString() {
-        String propertyInfo = "\n\tname='" + name + '\'' +
-                "\n\tprice='" + price + '\'' +
-                "\n\trent='" + rent + '\'' +
-                "\n\tproperty index='" + propertyIndex + '\'';
+        String propertyInfo = "\n\t\tname='" + name + '\'' +
+                "\n\t\tprice='" + price + '\'' +
+                "\n\t\trent='" + rent + '\'' +
+                "\n\t\tproperty index='" + propertyIndex + '\'';
 
         if (propertyOwner != null){
-            propertyInfo += "\n\tproperty owner='" + propertyOwner.getIcon() + '\'';
+            propertyInfo += "\n\t\tproperty owner='" + propertyOwner.getIcon() + '\'';
         } else {
-            propertyInfo += "\n\tproperty owner='no owner'";
+            propertyInfo += "\n\t\tproperty owner='no owner'";
         }
         return propertyInfo;
     }
