@@ -23,8 +23,6 @@ public class Property {
         this.recentlyChanged = false;
     }
 
-
-
     public void setPropertyIndex(int propertyIndex) {
         this.propertyIndex = propertyIndex;
     }
@@ -67,14 +65,16 @@ public class Property {
 
     @Override
     public String toString() {
-        return "Property{" +
-                "name='" + name + '\'' +
-                ", propertyOwner=" + propertyOwner.getIcon() +
-                ", price=" + price +
-                ", rent=" + rent +
-                ", propertyIndex=" + propertyIndex +
-                '}';
+        String propertyInfo = "\n\tname='" + name + '\'' +
+                "\n\tprice='" + price + '\'' +
+                "\n\trent='" + rent + '\'' +
+                "\n\tproperty index='" + propertyIndex + '\'';
+
+        if (propertyOwner != null){
+            propertyInfo += "\n\tproperty owner='" + propertyOwner.getIcon() + '\'';
+        } else {
+            propertyInfo += "\n\tproperty owner='no owner'";
+        }
+        return propertyInfo;
     }
-
-
 }
