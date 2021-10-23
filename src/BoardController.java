@@ -1,6 +1,7 @@
 // Sarah Chow 101143033
 // Owen VanDusen 101152022
 
+import java.sql.SQLOutput;
 import java.util.*;
 
 public class BoardController  {
@@ -115,7 +116,7 @@ public class BoardController  {
         if (command.equals(BoardModel.Command.BUY.getStringCommand())){
             boardModel.buyProperty(player.getCurrentProperty(), player);
         } else if (command.equals(BoardModel.Command.SELL.getStringCommand())){
-            boardModel.sellProperty(player.getCurrentProperty(), player);
+            loadSellPropertiesUI(player);
         } else if (command.equals(BoardModel.Command.PASS.getStringCommand())){
             boardModel.passTurn(player);
         } else if (command.equals(BoardModel.Command.STATUS.getStringCommand())){
@@ -128,6 +129,38 @@ public class BoardController  {
             boardModel.roll(player);
         } else if (command.equals(BoardModel.Command.PAY_RENT.getStringCommand())){
             boardModel.payRent(player.getCurrentProperty(), player);
+        }
+    }
+
+    private void loadSellPropertiesUI(Player player) {
+        System.out.println("Here are the list of the properties that you can sell: ");
+        String sellableProperties = "";
+
+        for (Property property : player.getSellableProperties()){
+            sellableProperties += property.getName() + ", ";
+        }
+
+        sellableProperties += "cancel";
+        System.out.println(sellableProperties);
+
+        System.out.print("Enter the name of the property: ");
+
+        Scanner scan = new Scanner(System.in);
+        String command = scan.nextLine();
+
+        while (!(sellableProperties.contains(command))) {
+            System.out.println("Sorry try again!");
+            System.out.print("Enter the name of the property: ");
+            command = scan.nextLine();
+        }
+
+        if (!command.equals("cancel")){
+            for (Property property: player.getSellableProperties()){
+                if (property.getName().equals(command)){
+                    boardModel.sellProperty(property, player);
+                    return;
+                }
+            }
         }
     }
 }
