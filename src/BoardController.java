@@ -144,7 +144,7 @@ public class BoardController  {
         System.out.println("Here are the list of the properties that you can sell: ");
         String sellableProperties = "";
 
-        for (Property property : player.getSellableProperties()){
+        for (Property property : player.getProperties(true)){
             sellableProperties += property.getName() + ", ";
         }
 
@@ -163,7 +163,7 @@ public class BoardController  {
         }
 
         if (!command.equals("cancel")){
-            for (Property property: player.getSellableProperties()){
+            for (Property property: player.getProperties(true)){
                 if (property.getName().toLowerCase().equals(command)){
                     boardModel.sellProperty(property, player);
                     return;

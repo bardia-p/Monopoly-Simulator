@@ -13,24 +13,58 @@
  *
  */
 
-
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class Player {
+    /**
+     * Keeps track of player name.
+     */
     private String name;
+    /**
+     * Keeps trach of player icon.
+     */
     private String icon;
+    /**
+     * Keeps track of player available money.
+     */
     private int cash;
+    /**
+     * Keeps track of player position on the board.
+     */
     private int position;
+    /**
+     * Keeps track of properties owned by the player.
+     */
     private List<Property> properties;
+    /**
+     * Keeps track of the property the play is currently standing on.
+     */
     private Property currentProperty;
+    /**
+     * Keeps track of whether the player needs to pay rent, and whether they have.
+     */
     private StatusEnum rentStatus;
+    /**
+     * Keeps track of how many doubles the player has rolled on their current turn.
+     */
     private int numDoubles;
+    /**
+     * Keeps track of whether player should roll again on their turn.
+     */
     private boolean rollAgain;
+    /**
+     * Keeps track of whether play is bankrupt.
+     */
     private boolean bankrupt;
+    /**
+     * keeps track of player rank after going bankrupt.
+     */
     private int rank;
 
+    /**
+     * Possible values of player rent status.
+     */
     public enum StatusEnum {NO_RENT, UNPAID_RENT, PAID_RENT};
 
     /**
@@ -211,24 +245,34 @@ public class Player {
      * Accessor to get all the player's properties.
      * @return all the user's properties, List<Property>
      */
-    public List<Property> getProperties() {
+    public List<Property> getProperties(boolean sellable) {
+        if(sellable){
+            ArrayList<Property> sellableProperties = new ArrayList<>();
+            for (Property property: properties){
+                if (!property.getRecentlyChanged()){
+                    sellableProperties.add(property);
+                }
+            }
+
+            return sellableProperties;
+        }
         return properties;
     }
 
     /**
-     * Method to get all the
+     * Method to get all the player's proterties that they are currently allowed to sell.
      * @return
      */
-    public List<Property> getSellableProperties(){
-        ArrayList<Property> sellableProperties = new ArrayList<>();
-        for (Property property: properties){
-            if (!property.getRecentlyChanged()){
-                sellableProperties.add(property);
-            }
-        }
-
-        return sellableProperties;
-    }
+//    public List<Property> getSellableProperties(){
+//        ArrayList<Property> sellableProperties = new ArrayList<>();
+//        for (Property property: properties){
+//            if (!property.getRecentlyChanged()){
+//                sellableProperties.add(property);
+//            }
+//        }
+//
+//        return sellableProperties;
+//    }
 
     public void setRank (int rank){
         this.rank = rank;

@@ -150,7 +150,7 @@ public class BoardModel {
         }
 
         // Handles selling the property
-        if (player.getSellableProperties().size() > 0){
+        if (player.getProperties(true).size() > 0){
             commands.add(BoardModel.Command.SELL);
         }
 
@@ -272,7 +272,7 @@ public class BoardModel {
 
     public void passTurn(Player player){
         // Remove the recently changed from the player's properties.
-        for (Property property : player.getProperties()){
+        for (Property property : player.getProperties(false)){
                 if (property.getRecentlyChanged()){
                     property.toggleRecentlyChanged(); // Set all to false
                 }
