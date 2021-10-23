@@ -13,17 +13,35 @@ public class BoardModel {
 
     private List<BoardView> views;
 
-
     private boolean gameFinish;
 
     private Player turn;
 
     private Player bank;
 
-    public enum Status {GET_NUM_PLAYERS, INITIALIZE_PLAYERS, GET_COMMAND}
+    public enum Status {GET_NUM_PLAYERS, INITIALIZE_PLAYERS, GET_COMMAND }
 
-    public enum Command{BUY, SELL, PAY_RENT, STATUS, BOARD_STATUS, PASS, ROLL_AGAIN}
+    public enum Command{
+        BUY ("buy"),
+        SELL ("sell"),
+        PAY_RENT ("pay rent"),
+        STATUS ("status"),
+        BOARD_STATUS ("board status"),
+        PASS ("pass"),
+        ROLL_AGAIN ("roll"),
+        CELL_STATUS ("cell status");
 
+
+        private String stringCommand;
+
+        Command(String stringCommand){
+            this.stringCommand = stringCommand;
+        }
+
+        public String getStringCommand(){
+            return stringCommand;
+        }
+    }
 
     public BoardModel(){
         views = new ArrayList<>();
@@ -82,42 +100,36 @@ public class BoardModel {
         }
     }
 
-    public void play(){
-        constructBoard();
-        initializeMonopoly();
-        getNumPlayers();
-        initiatePlayers();
+    public void addBoardView (BoardView view){
+        views.add(view);
+    }
 
-        while(!gameFinish){
-            for (Player player: players){
-                turn = player;
-                if (!player.isBankrupt()){
-                    roll(player);
+    public void removeBoardView (BoardView view){
+        views.remove(view);
+    }
 
-                    while (turn != null){
-                        getCommand(player);
-                    }
-                }
-            }
+    public void setNumPlayers(int numPlayers){
+        this.numPlayers = numPlayers;
+    }
+
+
+    public void addPlayer(Player player){
+        player.setCurrentProperty(this.properties.get(0));
+        this.players.add(player);
+    }
+
+    private void sendBoardUpdate(BoardEvent boardEvent){
+        for (BoardView view : views) {
+            view.handleBoardUpdate(boardEvent);
         }
     }
 
     private void initiatePlayers(){
-        for (BoardView view : views) {
-            view.handleBoardUpdate(new BoardEvent(this, Status.INITIALIZE_PLAYERS, numPlayers));
-        }
-    }
-
-    private void initializeMonopoly(){
-        for (BoardView view : views) {
-            view.handleWelcomeMonopoly();
-        }
+        sendBoardUpdate(new BoardEvent(this, Status.INITIALIZE_PLAYERS, numPlayers));
     }
 
     public void getNumPlayers() {
-        for (BoardView view : views) {
-            view.handleBoardUpdate(new BoardEvent(this, Status.GET_NUM_PLAYERS));
-        }
+        sendBoardUpdate(new BoardEvent(this, Status.GET_NUM_PLAYERS));
     }
 
     public void getCommand(Player player){
@@ -126,6 +138,7 @@ public class BoardModel {
 
         commands.add(BoardModel.Command.STATUS);
         commands.add(BoardModel.Command.BOARD_STATUS);
+        commands.add(BoardModel.Command.CELL_STATUS);
 
         if(currentProperty.getOwner() != player && currentProperty.getOwner() != null &&
                 (player.getRentStatus() == Player.StatusEnum.UNPAID_RENT ||
@@ -148,28 +161,13 @@ public class BoardModel {
             commands.add(BoardModel.Command.PASS);
         }
 
+        sendBoardUpdate(new BoardEvent(this, BoardModel.Status.GET_COMMAND, player, commands));
+    }
+
+    private void initializeMonopoly(){
         for (BoardView view : views) {
-            view.handleBoardUpdate(new BoardEvent(this, BoardModel.Status.GET_COMMAND, player, commands));
+            view.handleWelcomeMonopoly();
         }
-
-    }
-
-    public void setNumPlayers(int numPlayers){
-        this.numPlayers = numPlayers;
-    }
-
-
-    public void addPlayer(Player player){
-        player.setCurrentProperty(this.properties.get(0));
-        this.players.add(player);
-    }
-
-    public void addBoardView (BoardView view){
-        views.add(view);
-    }
-
-    public void removeBoardView (BoardView view){
-        views.remove(view);
     }
 
     public void roll(Player player){
@@ -235,6 +233,12 @@ public class BoardModel {
         }
     }
 
+    public void getCellStatus(){
+        for (BoardView view : views) {
+            view.handleGetCellStatus(turn.getCurrentProperty());
+        }
+    }
+
     public void payRent(Property property, Player player){
         boolean result = false;
 
@@ -282,6 +286,26 @@ public class BoardModel {
 
         for (BoardView view : views) {
             view.handleRollingDoubles(player);
+        }
+    }
+
+    public void play(){
+        constructBoard();
+        initializeMonopoly();
+        getNumPlayers();
+        initiatePlayers();
+
+        while(!gameFinish){
+            for (Player player: players){
+                turn = player;
+                if (!player.isBankrupt()){
+                    roll(player);
+
+                    while (turn != null){
+                        getCommand(player);
+                    }
+                }
+            }
         }
     }
 }
