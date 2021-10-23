@@ -17,7 +17,7 @@ public class Property {
     Property(String name, int price, int rent, boolean buyable){
         this.name = name;
         this.price = price;
-        this.rent = 200;
+        this.rent = rent;
         this.buyable = buyable;
         this.propertyOwner = null;
         this.recentlyChanged = false;

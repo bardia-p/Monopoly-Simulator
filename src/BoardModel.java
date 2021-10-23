@@ -278,8 +278,9 @@ public class BoardModel {
                 }
             }
 
-        // Reset the player rent status/
+        // Reset the player rent statuses
         player.setRentStatus(Player.StatusEnum.NO_RENT);
+        player.resetNumDoubles();
 
         // Reset the turn.
         turn = null;
@@ -291,7 +292,7 @@ public class BoardModel {
 
     public void setDoubleRoll(Player player){
         player.setRentStatus(Player.StatusEnum.NO_RENT);
-        player.setNumDubbles(player.getNumDubbles()+1);
+        player.addNumDoubles();
         player.setRollAgain(true);
 
         for (BoardView view : views) {
