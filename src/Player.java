@@ -18,11 +18,11 @@ public class Player {
     /**
      * Keeps track of player name.
      */
-    private String name;
+    private final String name;
     /**
      * Keeps track of player icon.
      */
-    private String icon;
+    private final String icon;
     /**
      * Keeps track of player available money.
      */
@@ -34,15 +34,15 @@ public class Player {
     /**
      * Keeps track of properties owned by the player.
      */
-    private List<Property> properties;
+    private final List<Property> properties;
     /**
      * Keeps track of the property the play is currently standing on.
      */
-    private Property currentProperty;
+    private BoardCell currentCell;
     /**
      * Keeps track of whether the player needs to pay rent, and whether they have.
      */
-    private StatusEnum rentStatus;
+    private StatusEnum feesStatus;
     /**
      * Keeps track of how many doubles the player has rolled on their current turn.
      */
@@ -61,9 +61,9 @@ public class Player {
     private int rank;
 
     /**
-     * Possible values of player rent status.
+     * Possible values of player debt status.
      */
-    public enum StatusEnum {NO_RENT, UNPAID_RENT, PAID_RENT}
+    public enum StatusEnum {NO_FEES, UNPAID_FEES, PAID_FEES}
 
     /**
      * Constructor for Player, sets all values.
@@ -83,10 +83,9 @@ public class Player {
         this.properties = new ArrayList<>();
         this.numDoubles = 0;
         this.rollAgain = false;
-        this.rentStatus = StatusEnum.NO_RENT;
+        this.feesStatus = StatusEnum.NO_FEES;
         this.rank = 0;
     }
-
 
     /**
      * Method to deduct the amount the player must pay.
@@ -176,20 +175,20 @@ public class Player {
 
     /**
      * Accessor to set the current property of the player on the board.
+     * @param currentCell the property the player is currently on, Property
      * @author Kyra Lothrop 101145872
-     * @param currentProperty the property the player is currently on, Property
      */
-    public void setCurrentProperty(Property currentProperty){
-        this.currentProperty = currentProperty;
+    public void setCurrentCell(BoardCell currentCell){
+        this.currentCell = currentCell;
     }
 
     /**
-     * Accessor to get the current property of the player on the board.
+     * Accessor to get the current cell of the player on the board.
      * @author Kyra Lothrop 101145872
-     * @return the property the player is on, Property
+     * @return the cell the player is on, BoardCell
      */
-    public Property getCurrentProperty(){
-        return currentProperty;
+    public BoardCell getCurrentCell(){
+        return currentCell;
     }
 
     /**
@@ -201,18 +200,18 @@ public class Player {
         return this.cash;
     }
 
+    //This method will be needed when Jail is implemented :)
     /**
      * Accessor to get the number of doubles.
      * @author Owen VanDusen 101152022
      * @return number of doubles the player has rolled, int
      */
-    //This method will be needed when Jail is implemented :)
     public int getNumDoubles(){
         return numDoubles;
     }
 
     /**
-     * Accessor to add a value to the number of doubles.
+     * Method to add a value to the number of doubles.
      * @author Owen VanDusen 101152022
      */
     public void addNumDoubles(){
@@ -220,7 +219,7 @@ public class Player {
     }
 
     /**
-     * Accessor to reset number of doubles to 0.
+     * Method to reset number of doubles to 0.
      * @author Owen VanDusen 101152022
      */
     public void resetNumDoubles(){
@@ -246,12 +245,12 @@ public class Player {
     }
 
     /**
-     * Accessor to set the rent status of the player (no rent, paid, unpaid).
+     * Accessor to set the rent status of the player (no rent, paid, unpaid)
      * @author Kyra Lothrop 101145872
-     * @param rentStatus status to be set, StatusEnum
+     * @param feesStatus status to be set, StatusEnum
      */
-    public void setRentStatus(StatusEnum rentStatus) {
-        this.rentStatus = rentStatus;
+    public void setFeesStatus(StatusEnum feesStatus) {
+        this.feesStatus = feesStatus;
     }
 
     /**
@@ -259,8 +258,8 @@ public class Player {
      * @author Kyra Lothrop 101145872
      * @return the rent status of the player, StatusEnum
      */
-    public StatusEnum getRentStatus() {
-        return rentStatus;
+    public StatusEnum getFeesStatus() {
+        return feesStatus;
     }
 
     /**
@@ -314,14 +313,14 @@ public class Player {
                 "\n\ticon='" + icon + '\'' +
                 "\n\tcash='" + cash + '\'' +
                 "\n\tposition='" + position + '\'' +
-                "\n\tproperties= { ";
+                "\n\tproperties= { \n\t\t";
 
         for (Property property: properties)
         {
-            playerInfo += property.toString() + "\n\t";
+            playerInfo += property.getName() + "\n\t\t";
         }
 
-        playerInfo += " }";
+        playerInfo += " \b\b}";
 
         return playerInfo;
     }

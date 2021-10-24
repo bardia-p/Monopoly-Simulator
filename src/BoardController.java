@@ -20,7 +20,7 @@ public class BoardController  {
     /**
      * Keeps track of the remaining icons that the players can pick from
      */
-    private ArrayList<String>  remainingIcons;
+    private final ArrayList<String>  remainingIcons;
 
     /**
      * Constructor for the BoardController, populates the array list with all possible icons.
@@ -49,12 +49,10 @@ public class BoardController  {
      */
     public void eventListener(BoardEvent e){
         boardModel = (BoardModel) e.getSource();
-        if (e.getType() == BoardModel.Status.GET_NUM_PLAYERS){
-            getNumPlayers();
-        } else if (e.getType() == BoardModel.Status.INITIALIZE_PLAYERS){
-            initializePlayers(e.getValue());
-        } else if (e.getType() == BoardModel.Status.GET_COMMAND){
-            getCommand(e.getPlayer(), e.getCommands());
+        switch (e.getType()) {
+            case GET_NUM_PLAYERS -> getNumPlayers();
+            case INITIALIZE_PLAYERS -> initializePlayers(e.getValue());
+            case GET_COMMAND -> getCommand(e.getPlayer(), (ArrayList<BoardModel.Command>) e.getCommands());
         }
     }
 
@@ -156,7 +154,7 @@ public class BoardController  {
      * Takes the desired command from the player as a text input.
      * @author Sarah Chow 101143033
      * @param player the current player, Player
-     * @param commands possible actions the user can take in their current position, ArrayList<BoardModel.Command>ArrayList<BoardModel.Command>
+     * @param commands possible actions the user can take in their current position, ArrayList<BoardModel.Command>
      */
     private void getCommand(Player player, ArrayList<BoardModel.Command> commands){
         System.out.print("Choose one of the following commands: ");
@@ -174,7 +172,7 @@ public class BoardController  {
         }
 
         if (command.equals(BoardModel.Command.BUY.getStringCommand())){
-            boardModel.buyProperty(player.getCurrentProperty(), player);
+            boardModel.buyProperty((Property) player.getCurrentCell(), player);
         } else if (command.equals(BoardModel.Command.SELL.getStringCommand())){
             loadSellPropertiesUI(player);
         } else if (command.equals(BoardModel.Command.PASS.getStringCommand())){
@@ -184,11 +182,13 @@ public class BoardController  {
         } else if (command.equals(BoardModel.Command.BOARD_STATUS.getStringCommand())) {
             boardModel.getBoardStatus();
         } else if (command.equals(BoardModel.Command.CELL_STATUS.getStringCommand())){
-                boardModel.getCellStatus();
+            boardModel.getCellStatus();
         } else if (command.equals(BoardModel.Command.ROLL_AGAIN.getStringCommand())){
             boardModel.roll(player);
-        } else if (command.equals(BoardModel.Command.PAY_RENT.getStringCommand())){
-            boardModel.payRent(player.getCurrentProperty(), player);
+        } else if (command.equals(BoardModel.Command.PAY_RENT.getStringCommand())) {
+            boardModel.payFees(player.getCurrentCell(), player);
+        } else if (command.equals(BoardModel.Command.PAY_TAX.getStringCommand())){
+            boardModel.payFees(player.getCurrentCell(), player);
         } else if (command.equals(BoardModel.Command.FORFEIT.getStringCommand())){
             boardModel.forfeit(player);
         }
