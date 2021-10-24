@@ -9,4 +9,4 @@
 *.xml
 out/
 .idea/
-Monopoly-Simulator.iml
+*.iml

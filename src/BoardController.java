@@ -1,12 +1,35 @@
-// Sarah Chow 101143033
-// Owen VanDusen 101152022
+/**
+ * SYSC 3110 - Milestone 1 BoardController Class
+ *
+ * This document is the BoardController, as per the MVC model, the BoardController handles user input and passes off
+ * the information to the BoardModel class. This class has a boardModel and an array list of remaining icons.
+ *
+ * @author Sarah Chow 101143033
+ * @author Kyra Lothrop 101145872
+ * @author Bardia Parmoun 101143006
+ * @author Owen VanDusen 101152022
+ * @version 1.0
+ */
 
 import java.util.*;
 
 public class BoardController  {
+    /**
+     * Keeps track of the board model.
+     */
     private BoardModel boardModel;
+    /**
+     * Keeps track of the remaining icons that the players can pick from
+     */
     private ArrayList<String>  remainingIcons;
 
+    /**
+     * Constructor for the BoardController, populates the array list with all possible icons.
+     * @author Sarah Chow 101143033
+     * @author Kyra Lothrop 101145872
+     * @author Bardia Parmoun 101143006
+     * @author Owen VanDusen 101152022
+     */
     public BoardController(){
         remainingIcons = new ArrayList<>(Arrays.asList(
                 "boot",
@@ -20,6 +43,10 @@ public class BoardController  {
         ));
     }
 
+    /**
+     *
+     * @param e
+     */
     public void eventListener(BoardEvent e){
         boardModel = (BoardModel) e.getSource();
         if (e.getType() == BoardModel.Status.GET_NUM_PLAYERS){
