@@ -1,7 +1,7 @@
-public class IncomeTax extends BoardCell{
+public class Tax extends BoardCell{
     private int tax;
 
-    IncomeTax (String name, int tax, Player owner){
+    Tax(String name, int tax, Player owner){
         super(name, owner, CellType.INCOME_TAX);
         this.tax = tax;
     }

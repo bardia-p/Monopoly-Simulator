@@ -2,7 +2,7 @@ public class Go extends BoardCell {
     private int reward;
 
     public Go(int fee){
-        super("GO", null, CellType.INCOME_TAX);
+        super("GO", null, CellType.GO);
         this.reward = reward;
     }
 

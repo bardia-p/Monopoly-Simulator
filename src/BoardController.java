@@ -22,12 +22,16 @@ public class BoardController  {
 
     public void eventListener(BoardEvent e){
         boardModel = (BoardModel) e.getSource();
-        if (e.getType() == BoardModel.Status.GET_NUM_PLAYERS){
-            getNumPlayers();
-        } else if (e.getType() == BoardModel.Status.INITIALIZE_PLAYERS){
-            initializePlayers(e.getValue());
-        } else if (e.getType() == BoardModel.Status.GET_COMMAND){
-            getCommand(e.getPlayer(), e.getCommands());
+        switch (e.getType()){
+            case GET_NUM_PLAYERS:
+                getNumPlayers();
+                break;
+            case INITIALIZE_PLAYERS:
+                initializePlayers(e.getValue());
+                break;
+            case GET_COMMAND:
+                getCommand(e.getPlayer(), e.getCommands());
+                break;
         }
     }
 
@@ -136,7 +140,7 @@ public class BoardController  {
         } else if (command.equals(BoardModel.Command.PAY_RENT.getStringCommand())) {
             boardModel.payFees(player.getCurrentCell(), player);
         } else if (command.equals(BoardModel.Command.PAY_TAX.getStringCommand())){
-                boardModel.payFees(player.getCurrentCell(), player);
+            boardModel.payFees(player.getCurrentCell(), player);
         } else if (command.equals(BoardModel.Command.FORFEIT.getStringCommand())){
             boardModel.forfeit(player);
         }

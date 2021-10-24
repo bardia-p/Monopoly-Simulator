@@ -8,7 +8,7 @@ public class BoardModel {
     private  int[] dice;
     private  int numPlayers;
 
-    private final int SIZE_OF_BOARD = 24;
+    private final int SIZE_OF_BOARD = 25;
 
     private List<BoardView> views;
 
@@ -18,7 +18,9 @@ public class BoardModel {
 
     private Player bank;
 
-    public enum Status {GET_NUM_PLAYERS, INITIALIZE_PLAYERS, GET_COMMAND}
+    public enum Status {GET_NUM_PLAYERS, INITIALIZE_MONOPOLY, INITIALIZE_PLAYERS, GET_COMMAND, PLAYER_ROLL,
+        PLAYER_DOUBLE_ROLL, PLAYER_MOVE, BUY, SELL, PAY_FEES, PLAYER_STATUS, CELL_STATUS, BOARD_STATUS, PLAYER_FORFEIT,
+        PASS_TURN, GAME_OVER}
 
     public enum Command{
         BUY ("buy"),
@@ -49,6 +51,9 @@ public class BoardModel {
         players = new ArrayList<>();
         dice =  new int[2];
         bank = new Player("Bank", "Bank");
+        gameFinish = false;
+        turn = null;
+        numPlayers = 0;
     }
 
     private void constructBoard(){
@@ -57,7 +62,7 @@ public class BoardModel {
                 new Property("Mediterranean Avenue",60,2),
                 // Community Chest here
                 new Property("Baltic Avenue",60,4),
-                new IncomeTax( "Income Tax", 200, bank),
+                new Tax( "Income Tax", 200, bank),
                 // Reading Railroad
                 new Property("Oriental Avenue",100,6),
                 // Chance Card
@@ -91,7 +96,7 @@ public class BoardModel {
                 // Shortline Railroad
                 // Chance Card
                 new Property("Park Place",350,35),
-                // Luxury Tax
+                new Tax( "Luxury Tax", 100, bank),
                 new Property("Boardwalk",500,50)
         ));
     }
@@ -183,9 +188,7 @@ public class BoardModel {
     }
 
     private void initializeMonopoly(){
-        for (BoardView view : views) {
-            view.handleWelcomeMonopoly();
-        }
+        sendBoardUpdate(new BoardEvent(this, Status.INITIALIZE_MONOPOLY));
     }
 
     public void roll(Player player){
@@ -198,9 +201,7 @@ public class BoardModel {
             setDoubleRoll(player);
         }
 
-        for (BoardView view : views) {
-            view.handleRoll(dice[0], dice[1], player);
-        }
+        sendBoardUpdate(new BoardEvent(this, Status.PLAYER_ROLL, player, dice));
 
         move(player, dice[0] + dice[1]);
     }
@@ -209,9 +210,8 @@ public class BoardModel {
         int newPlayerPosition = (player.getPosition() + amountToMove) % SIZE_OF_BOARD;
         player.setPosition(newPlayerPosition);
         player.setCurrentCell(cells.get(newPlayerPosition));
-        for (BoardView view : views) {
-            view.showCurrentCell(player);
-        }
+
+        sendBoardUpdate(new BoardEvent(this, Status.PLAYER_MOVE, player));
     }
 
     public void buyProperty(Property property, Player player){
@@ -224,9 +224,8 @@ public class BoardModel {
             result = true;
         }
 
-        for (BoardView view : views) {
-            view.handleBuyProperty(player, property, result);
-        }
+        sendBoardUpdate(new BoardEvent(this, Status.BUY, player, property, result));
+
     }
 
     public void sellProperty(Property property, Player player){
@@ -234,37 +233,30 @@ public class BoardModel {
         property.toggleRecentlyChanged();
         property.setOwner(null);
 
-        for (BoardView view : views) {
-            view.handleSellProperty(player, property, true);
-        }
+        sendBoardUpdate(new BoardEvent(this, Status.SELL, player, property, true));
     }
 
     public void getStatus(Player player){
-        for (BoardView view : views) {
-            view.handleGetPlayerStatus(player);
-        }
+        sendBoardUpdate(new BoardEvent(this, Status.PLAYER_STATUS, player));
     }
 
     public void getBoardStatus(){
-        for (BoardView view : views) {
-            view.handleGetBoardStatus(this.players);
-        }
+        sendBoardUpdate(new BoardEvent(this, Status.BOARD_STATUS, players));
     }
 
     public void getCellStatus(){
-        for (BoardView view : views) {
-            view.handleGetCellStatus(turn.getCurrentCell());
-        }
+        sendBoardUpdate(new BoardEvent(this, Status.CELL_STATUS, turn.getCurrentCell()));
     }
 
     public void payFees(BoardCell boardCell, Player player){
         boolean result = false;
 
         int fees = 0;
+
         if (boardCell.getType() == BoardCell.CellType.PROPERTY){
             fees = ((Property) boardCell).getRent();
         } else if (boardCell.getType() == BoardCell.CellType.INCOME_TAX){
-            fees = ((IncomeTax) boardCell).getTax();
+            fees = ((Tax) boardCell).getTax();
         }
 
         //If the player can't pay rent inform them
@@ -278,11 +270,8 @@ public class BoardModel {
             result = true;
         }
 
-
         //Inform player they have paid rent
-        for (BoardView view: views) {
-            view.handlePayFees(boardCell, player, fees, result);
-        }
+        sendBoardUpdate(new BoardEvent(this, Status.PAY_FEES, player, fees, result));
     }
 
 
@@ -301,9 +290,7 @@ public class BoardModel {
         // Reset the turn.
         turn = null;
 
-        for (BoardView view: views) {
-            view.handleCurrentPlayerChange();
-        }
+        sendBoardUpdate(new BoardEvent(this, Status.PASS_TURN, player));
     }
 
     public void setDoubleRoll(Player player){
@@ -311,26 +298,19 @@ public class BoardModel {
         player.addNumDoubles();
         player.setRollAgain(true);
 
-        for (BoardView view : views) {
-            view.handleRollingDoubles(player);
-        }
+        sendBoardUpdate(new BoardEvent(this, Status.PLAYER_DOUBLE_ROLL, player));
     }
 
     public void forfeit(Player player) {
         player.setBankrupt();
         player.setRank(numPlayers--);
 
-        for (BoardView view : views) {
-            view.handleForFeitedPlayer(player);
-        }
-
+        sendBoardUpdate(new BoardEvent(this, Status.PLAYER_FORFEIT, player));
         passTurn(player);
     }
 
     public void gameOver(){
-        for (BoardView view : views) {
-            view.handleWinner(players);
-        }
+        sendBoardUpdate(new BoardEvent(this, Status.GAME_OVER, players));
     }
 
     public void play(){
@@ -355,8 +335,6 @@ public class BoardModel {
                     break;
                 }
             }
-
-
         }
 
         gameOver();

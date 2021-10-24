@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface BoardView {
     void handleBoardUpdate(BoardEvent e);
-    void handleRoll(int die1, int die2, Player player);
+    void handleRoll(int[] dice, Player player);
     void showCurrentCell(Player player);
     void handleBuyProperty(Player player, Property property, boolean result);
     void handleSellProperty(Player player, Property property, boolean result);

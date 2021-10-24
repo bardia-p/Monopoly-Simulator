@@ -19,11 +19,55 @@ public class BoardListener implements BoardView {
 
     @Override
     public void handleBoardUpdate(BoardEvent e) {
-        controller.eventListener(e);
+        switch (e.getType()) {
+            case PLAYER_ROLL:
+                handleRoll(e.getDice(), e.getPlayer());
+                break;
+            case PLAYER_MOVE:
+                showCurrentCell(e.getPlayer());
+                break;
+            case BUY:
+                handleBuyProperty(e.getPlayer(), (Property) e.getBoardCell(), e.getResult());
+                break;
+            case SELL:
+                handleSellProperty(e.getPlayer(), (Property) e.getBoardCell(), e.getResult());
+                break;
+            case PLAYER_STATUS:
+                handleGetPlayerStatus(e.getPlayer());
+                break;
+            case BOARD_STATUS:
+                handleGetBoardStatus(e.getPlayers());
+                break;
+            case CELL_STATUS:
+                handleGetCellStatus(e.getBoardCell());
+                break;
+            case PLAYER_DOUBLE_ROLL:
+                handleRollingDoubles(e.getPlayer());
+                break;
+            case INITIALIZE_MONOPOLY:
+                handleWelcomeMonopoly();
+                break;
+            case PAY_FEES:
+                handlePayFees(e.getPlayer().getCurrentCell(), e.getPlayer(), e.getValue(), e.getResult());
+                break;
+            case PASS_TURN:
+                handleCurrentPlayerChange();
+                break;
+            case PLAYER_FORFEIT:
+                handleForFeitedPlayer(e.getPlayer());
+                break;
+            case GAME_OVER:
+                handleWinner(e.getPlayers());
+                break;
+            default:
+                controller.eventListener(e);
+        }
     }
 
     @Override
-    public void handleRoll(int die1, int die2, Player player){
+    public void handleRoll(int[] dice, Player player){
+        int die1 = dice[0];
+        int die2 = dice[1];
         System.out.println("\nRolling dice for: " + player.getIcon().toUpperCase());
         System.out.printf("---> You rolled a %d and a %d\n", die1, die2);
         System.out.printf("---> Total: %d\n\n", die1 + die2);
@@ -93,7 +137,7 @@ public class BoardListener implements BoardView {
 
     @Override
     public void handleGetCellStatus(BoardCell currentCell){
-        System.out.printf("\nDisplaying the status of the current cell: %s\n",currentCell.getName());
+        System.out.printf("\nDisplaying the status of the current cell: %s\n", currentCell.getName());
         System.out.println(currentCell);
         System.out.println("");
     }
@@ -114,7 +158,7 @@ public class BoardListener implements BoardView {
     }
 
     @Override
-    public void handlePayFees(BoardCell boardCell, Player renter, int fees,  boolean result) {
+    public void handlePayFees(BoardCell boardCell, Player player, int fees,  boolean result) {
         if (result){
             System.out.printf("You have successfully paid %d$ to %s\n",
                     fees,
@@ -124,7 +168,7 @@ public class BoardListener implements BoardView {
             System.out.printf("You cannot currently pay fees to %s. Rent costs %d$ and you only have %d$ remaining\n",
                     boardCell.getOwner().getIcon(),
                     fees,
-                    renter.getCash());
+                    player.getCash());
         }
     }
 
