@@ -26,8 +26,7 @@ Owen VanDusen - 101152022
 
 ## Known Issues
 <ul>
-  <li>issue1...</li>
-  <li>issue2...</li>
+  <li></li>
 </ul>
 
 ## Roadmap Ahead
