@@ -160,8 +160,7 @@ public class BoardController  {
      * Takes the desired command from the player as a text input.
      * @author Sarah Chow 101143033
      * @param player the current player, Player
-     * @param commands possible actions the user can take in their current position,
-     *                 ArrayList<BoardModel.Command>ArrayList<BoardModel.Command>
+     * @param commands possible actions the user can take in their current position, ArrayList<BoardModel.Command>
      */
     private void getCommand(Player player, ArrayList<BoardModel.Command> commands){
         System.out.print("Choose one of the following commands: ");
@@ -201,6 +200,11 @@ public class BoardController  {
         }
     }
 
+    /**
+     * Create a UI to display owned properties to the owner and present the chance to sell them.
+     * @author Bardia Parmoun 101143006
+     * @param player the player who is giving inputs, Player
+     */
     private void loadSellPropertiesUI(Player player) {
         System.out.println("Here are the list of the properties that you can sell: ");
         String sellableProperties = "";

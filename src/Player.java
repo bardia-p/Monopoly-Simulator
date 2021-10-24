@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * SYSC 3110 - Milestone 1 Player Class
  *
@@ -10,19 +13,14 @@
  * @author Bardia Parmoun 101143006
  * @author Owen VanDusen 101152022
  * @version 1.0
- *
  */
-
-import java.util.ArrayList;
-import java.util.List;
-
 public class Player {
     /**
      * Keeps track of player name.
      */
     private String name;
     /**
-     * Keeps trach of player icon.
+     * Keeps track of player icon.
      */
     private String icon;
     /**
@@ -69,6 +67,10 @@ public class Player {
 
     /**
      * Constructor for Player, sets all values.
+     * @author Sarah Chow 101143033
+     * @author Kyra Lothrop 101145872
+     * @author Bardia Parmoun 101143006
+     * @author Owen VanDusen 101152022
      * @param name Player name, String
      * @param icon Player icon, String
      */
@@ -85,9 +87,9 @@ public class Player {
         this.rank = 0;
     }
 
-
     /**
      * Method to deduct the amount the player must pay.
+     * @author Bardia Parmoun 101143006
      * @param amount amount to pay, int
      */
     public void pay(int amount){
@@ -96,6 +98,7 @@ public class Player {
 
     /**
      * Method to purchase a property.
+     * @author Sarah Chow 101143033
      * @param property property object to be purchased, Property
      */
     public void buyProperty(Property property){
@@ -105,6 +108,7 @@ public class Player {
 
     /**
      * Method to sell a property.
+     * @author Sarah Chow 101143033
      * @param property property object to be sold, Property
      */
     public void sellProperty(Property property){
@@ -114,6 +118,7 @@ public class Player {
 
     /**
      * Method to set a player to be bankrupt.
+     * @author Owen VanDusen 101152022
      */
     public void setBankrupt(){
         this.bankrupt = true;
@@ -125,6 +130,7 @@ public class Player {
 
     /**
      * Method to check if a player is bankrupt
+     * @author Owen VanDusen 101152022
      * @return whether the player is bankrupt, boolean
      */
     public boolean isBankrupt(){
@@ -133,6 +139,7 @@ public class Player {
 
     /**
      * Method to receive rental payment.
+     * @author bardia Parmoun 101143006
      * @param rentMoney amount to be paid for rent, int
      */
     public void getMoney(int rentMoney){
@@ -141,6 +148,7 @@ public class Player {
 
     /**
      * Accessor to get the icon of the player.
+     * @author Bardia Parmoun 101143006
      * @return icon of player, String
      */
     public String getIcon(){
@@ -149,6 +157,7 @@ public class Player {
 
     /**
      * Accessor to set the position of the player on the board.
+     * @author Bardia Parmoun 101143006
      * @param newPosition the new position of the player, int
      */
     public void setPosition(int newPosition){
@@ -157,6 +166,7 @@ public class Player {
 
     /**
      * Accessor to get the position of the player on the board.
+     * @author Sarah Chow 101143033
      * @return the position of the player, int
      */
     public int getPosition(){
@@ -166,14 +176,16 @@ public class Player {
     /**
      * Accessor to set the current property of the player on the board.
      * @param currentCell the property the player is currently on, Property
+     * @author Kyra Lothrop 101145872
      */
     public void setCurrentCell(BoardCell currentCell){
         this.currentCell = currentCell;
     }
 
     /**
-     * Accessor to get the current property of the player on the board.
-     * @return the property the player is on, Property
+     * Accessor to get the current cell of the player on the board.
+     * @author Kyra Lothrop 101145872
+     * @return the cell the player is on, BoardCell
      */
     public BoardCell getCurrentCell(){
         return currentCell;
@@ -181,14 +193,17 @@ public class Player {
 
     /**
      * Accessor for cash attribute.
+     * @author Bardia Parmoun 101143006
      * @return cash value, int
      */
     public int getCash() {
         return this.cash;
     }
 
+    //This method will be needed when Jail is implemented :)
     /**
      * Accessor to get the number of doubles.
+     * @author Owen VanDusen 101152022
      * @return number of doubles the player has rolled, int
      */
     public int getNumDoubles(){
@@ -197,6 +212,7 @@ public class Player {
 
     /**
      * Method to add a value to the number of doubles.
+     * @author Owen VanDusen 101152022
      */
     public void addNumDoubles(){
         this.numDoubles += 1;
@@ -204,6 +220,7 @@ public class Player {
 
     /**
      * Method to reset number of doubles to 0.
+     * @author Owen VanDusen 101152022
      */
     public void resetNumDoubles(){
         this.numDoubles = 0;
@@ -212,6 +229,8 @@ public class Player {
     /**
      * Accessor to determine if the player has another roll.
      * @return if the player has another roll, booleam
+     * @author Owen VanDusen 101152022
+     * @return if the player has another roll, boolean
      */
     public boolean hasAnotherRoll(){
         return rollAgain;
@@ -219,6 +238,7 @@ public class Player {
 
     /**
      * Accessor to set if the user rolls again.
+     * @author Owen VanDusen 101152022
      * @param rollAgain if the user rolls again, boolean
      */
     public void setRollAgain(boolean rollAgain){
@@ -227,6 +247,7 @@ public class Player {
 
     /**
      * Accessor to set the rent status of the player (no rent, paid, unpaid)
+     * @author Kyra Lothrop 101145872
      * @param feesStatus status to be set, StatusEnum
      */
     public void setFeesStatus(StatusEnum feesStatus) {
@@ -235,6 +256,7 @@ public class Player {
 
     /**
      * Accessor to get the rent status of the player
+     * @author Kyra Lothrop 101145872
      * @return the rent status of the player, StatusEnum
      */
     public StatusEnum getFeesStatus() {
@@ -243,6 +265,7 @@ public class Player {
 
     /**
      * Accessor to get all the player's properties.
+     * @author Sarah Chow 101143033
      * @return all the user's properties, List<Property>
      */
     public List<Property> getProperties(boolean sellable) {
@@ -259,14 +282,29 @@ public class Player {
         return properties;
     }
 
+    /**
+     * Accessor to set the rank of the player when they go bankrupt.
+     * @author Kyra Lothrop 101145872
+     * @param rank status to be set, int
+     */
     public void setRank (int rank){
         this.rank = rank;
     }
 
+    /**
+     * Accessor method to get the player's rank.
+     * @author Kyra Lothrop 101145872
+     * @return the final rank of the player, int
+     */
     public int getRank(){
         return rank;
     }
 
+    /**
+     * Accessor method to package relevant information into a string.
+     * @author Bardia Parmoun 101143006
+     * @return the player's current information, String
+     */
     @Override
     public String toString() {
         String playerInfo;
@@ -276,14 +314,14 @@ public class Player {
                 "\n\ticon='" + icon + '\'' +
                 "\n\tcash='" + cash + '\'' +
                 "\n\tposition='" + position + '\'' +
-                "\n\tproperties= { ";
+                "\n\tproperties= { \n\t\t";
 
         for (Property property: properties)
         {
-            playerInfo += property.toString() + "\n\t";
+            playerInfo += property.getName() + "\n\t\t";
         }
 
-        playerInfo += " }";
+        playerInfo += " \b\b}";
 
         return playerInfo;
     }

@@ -7,7 +7,6 @@ import java.util.*;
  * the number of players, the size of the board, the board views, if the game has finished, the current turn,
  * the bank, the board statuses and the player commands. This is the primary brain class that handles
  * nearly all logic needed to make monopoly run.
- *
  * @author Sarah Chow 101143033
  * @author Kyra Lothrop 101145872
  * @author Bardia Parmoun 101143006
@@ -82,6 +81,7 @@ public class BoardModel {
             return stringCommand;
         }
     }
+
     /**
      * Constructor for BoardModel, sets all values
      * @author Sarah Chow 101143033
@@ -377,7 +377,7 @@ public class BoardModel {
      * @author Kyra Lothrop 101145872
      */
     public void getCellStatus(){
-        sendBoardUpdate(new BoardEvent(this, Status.CELL_STATUS, turn.getCurrentCell()));
+        sendBoardUpdate(new BoardEvent(this, Status.CELL_STATUS, turn));
     }
 
     /**
@@ -459,7 +459,6 @@ public class BoardModel {
     public void forfeit(Player player) {
         player.setBankrupt();
         player.setRank(numPlayers--);
-
         sendBoardUpdate(new BoardEvent(this, Status.PLAYER_FORFEIT, player));
         passTurn(player);
     }
@@ -490,11 +489,13 @@ public class BoardModel {
                 if (!player.isBankrupt()){
                     roll(player);
 
+                    // Keeps prompting the player for commands until their turn is over.
                     while (turn != null){
                         getCommand(player);
                     }
                 }
 
+                // Checks to see if the game is over
                 if (numPlayers == 1){
                     gameFinish = true;
                     break;
