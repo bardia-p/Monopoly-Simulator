@@ -1,3 +1,5 @@
+import java.util.*;
+
 /**
  * SYSC 3110 - Milestone 1 BoardController Class
  *
@@ -10,9 +12,6 @@
  * @author Owen VanDusen 101152022
  * @version 1.0
  */
-
-import java.util.*;
-
 public class BoardController  {
     /**
      * Keeps track of the board model.
@@ -44,8 +43,9 @@ public class BoardController  {
     }
 
     /**
-     *
-     * @param e
+     * Calls a different method depending on which board event was passed to the method
+     * @author Bardia Parmoun 101143006
+     * @param e a board event for GET_NUM_PLAYERS, INITIALIZE_PLAYERS, or GET_COMMAND, BoardEvent
      */
     public void eventListener(BoardEvent e){
         boardModel = (BoardModel) e.getSource();
@@ -58,6 +58,11 @@ public class BoardController  {
         }
     }
 
+    /**
+     * UI method to prompt for number of users playing the game, stores value as int to be used
+     * throughout the game.
+     * @author Owen VanDusen 101152022
+     */
     private void getNumPlayers(){
         System.out.println("INITIALIZE GAME DATA");
         Scanner scan = new Scanner(System.in);
@@ -89,6 +94,11 @@ public class BoardController  {
         boardModel.setNumPlayers(numPlayers);
     }
 
+    /**
+     * UI method to initialize players with their respective name and icon.
+     * @author Kyra Lothrop 101145872
+     * @param numPlayers number of players participating, int
+     */
     private void initializePlayers(int numPlayers){
         String icon;
 
@@ -110,6 +120,11 @@ public class BoardController  {
 
     }
 
+    /**
+     * Displays list of available icons in uppercase letters, looks nice on UI.
+     * @author Sarah Chow 101143033
+     * @return the remaining icons in uppercase form, String
+     */
     private String getListOfIconsUpper(){
 
         String upperCaseIcon = "";
@@ -121,6 +136,12 @@ public class BoardController  {
         return upperCaseIcon.substring(0, upperCaseIcon.length() - 2);
     }
 
+    /**
+     * Displays a list of available commands to the players
+     * @author Sarah Chow 101143033
+     * @param commands possible actions the user can take in their current position, ArrayList<BoardModel.Command>
+     * @return the list of commands in a string format for displaying
+     */
     private String getListAvailableOfCommands(ArrayList<BoardModel.Command> commands){
         String availableCommands = "";
 
@@ -131,6 +152,12 @@ public class BoardController  {
         return availableCommands.substring(0, availableCommands.length() - 2);
     }
 
+    /**
+     * Takes the desired command from the player as a text input.
+     * @author Sarah Chow 101143033
+     * @param player the current player, Player
+     * @param commands possible actions the user can take in their current position, ArrayList<BoardModel.Command>ArrayList<BoardModel.Command>
+     */
     private void getCommand(Player player, ArrayList<BoardModel.Command> commands){
         System.out.print("Choose one of the following commands: ");
         String availableCommands = getListAvailableOfCommands(commands);
@@ -167,6 +194,11 @@ public class BoardController  {
         }
     }
 
+    /**
+     * Create a UI to display owned properties to the owner and present the chance to sell them.
+     * @author Bardia Parmoun 101143006
+     * @param player the player who is giving inputs, Player
+     */
     private void loadSellPropertiesUI(Player player) {
         System.out.println("Here are the list of the properties that you can sell: ");
         String sellableProperties = "";

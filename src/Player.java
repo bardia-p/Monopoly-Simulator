@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * SYSC 3110 - Milestone 1 Player Class
  *
@@ -11,10 +14,6 @@
  * @author Owen VanDusen 101152022
  * @version 1.0
  */
-
-import java.util.ArrayList;
-import java.util.List;
-
 public class Player {
     /**
      * Keeps track of player name.
