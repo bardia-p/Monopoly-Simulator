@@ -305,7 +305,7 @@ public class BoardModel {
         player.setRank(numPlayers--);
 
         for (BoardView view : views) {
-            view.handleForFeitedPlayer(player);
+            view.handleForfeitedPlayer(player);
         }
 
         passTurn(player);

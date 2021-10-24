@@ -134,7 +134,7 @@ public class BoardListener implements BoardView {
     }
 
     @Override
-    public void handleForFeitedPlayer(Player player) {
+    public void handleForfeitedPlayer(Player player) {
         System.out.printf("Player %s has forfeited the game!\n", player.getIcon().toUpperCase());
     }
 
