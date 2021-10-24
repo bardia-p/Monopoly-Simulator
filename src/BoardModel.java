@@ -1,27 +1,65 @@
-// Bardia Parmoun & Kyra Lothrop
-
 import java.util.*;
 
+/**
+ * STSC 3110 - Milestone 1 BoardModel Class
+ *
+ * This document is the BoardModel. This class has a list of properties, a list of players, an array of dice,
+ * the number of players, the size of the board, the board views, if the game has finished, the current turn,
+ * the bank, the board statuses and the player commands. This is the primary brain class that handles
+ * nearly all logic needed to make monopoly run.
+ *
+ * @author Sarah Chow 101143033
+ * @author Kyra Lothrop 101145872
+ * @author Bardia Parmoun 101143006
+ * @author Owen VanDusen 101152022
+ * @version 1.0
+ */
 public class BoardModel {
+    /**
+     * Keeps track of the cells.
+     */
     private  List<BoardCell> cells;
+    /**
+     * Keeps track of the players.
+     */
     private  List<Player> players;
+    /**
+     * Keeps track of the dice rolls.
+     */
     private  int[] dice;
+    /**
+     * Keeps track of the number of players.
+     */
     private  int numPlayers;
-
+    /**
+     * Keeps track of the size of the board.
+     */
     private final int SIZE_OF_BOARD = 25;
-
+    /**
+     * Keeps track of the views.
+     */
     private List<BoardView> views;
-
+    /**
+     * Keeps track of when the game should end.
+     */
     private boolean gameFinish;
-
+    /**
+     * Keeps track of the current player turn.
+     */
     private Player turn;
-
+    /**
+     * Keeps track of the bank player.
+     */
     private Player bank;
-
+    /**
+     * Keeps track of the possible board statuses.
+     */
     public enum Status {GET_NUM_PLAYERS, INITIALIZE_MONOPOLY, INITIALIZE_PLAYERS, GET_COMMAND, PLAYER_ROLL,
         PLAYER_DOUBLE_ROLL, PLAYER_MOVE, BUY, SELL, PAY_FEES, PLAYER_STATUS, CELL_STATUS, BOARD_STATUS, PLAYER_FORFEIT,
         PASS_TURN, GAME_OVER}
-
+    /**
+     * Keeps track of the possible player commands.
+     */
     public enum Command{
         BUY ("buy"),
         SELL ("sell"),
@@ -44,7 +82,14 @@ public class BoardModel {
             return stringCommand;
         }
     }
-
+    /**
+     * Constructor for BoardModel, sets all values
+     * @author Sarah Chow 101143033
+     * @author Kyra Lothrop 101145872
+     * @author Bardia Parmoun 101143006
+     * @author Owen VanDusen 101152022
+     * @version 1.0
+     */
     public BoardModel(){
         views = new ArrayList<>();
         cells = new ArrayList<>();
@@ -56,6 +101,14 @@ public class BoardModel {
         numPlayers = 0;
     }
 
+    /**
+     * Constructor for BoardModel, sets all values
+     * @author Sarah Chow 101143033
+     * @author Kyra Lothrop 101145872
+     * @author Bardia Parmoun 101143006
+     * @author Owen VanDusen 101152022
+     * @version 1.0
+     */
     private void constructBoard(){
         cells.addAll(Arrays.asList(
                 new Go(200),
@@ -101,38 +154,75 @@ public class BoardModel {
         ));
     }
 
+    /**
+     * Accessor to add a view to the list of views.
+     * @author Owen VanDusen 101152022
+     * @param view the view of the board, BoardView
+     */
     public void addBoardView (BoardView view){
         views.add(view);
     }
 
+    /**
+     * Accessor to remove a view from the list of views.
+     * @author Owen VanDusen 101152022
+     * @param view the view of the board, BoardView
+     */
     public void removeBoardView (BoardView view){
         views.remove(view);
     }
 
+    /**
+     * Accessor to set the number of players starting in the game.
+     * @author Kyra Lothrop 101145872
+     * @param numPlayers number of players, int
+     */
     public void setNumPlayers(int numPlayers){
         this.numPlayers = numPlayers;
     }
 
-
+    /**
+     * Accessor to add a player to the board, starting on GO space.
+     * @author Bardia Parmoun 101143006
+     * @param player the current player, Player
+     */
     public void addPlayer(Player player){
         player.setCurrentCell(this.cells.get(0));
         this.players.add(player);
     }
 
+    /**
+     * Updates the views with a generated board event.
+     * @author Sarah Chow 101143033
+     * @param boardEvent the event occuring on the board, BoardEvent
+     */
     private void sendBoardUpdate(BoardEvent boardEvent){
         for (BoardView view : views) {
             view.handleBoardUpdate(boardEvent);
         }
     }
 
+    /**
+     * Generates a board event to create players for the game based on the number of players selected.
+     * @author Kyra Lothrop 101145872
+     */
     private void initiatePlayers(){
         sendBoardUpdate(new BoardEvent(this, Status.INITIALIZE_PLAYERS, numPlayers));
     }
 
+    /**
+     * Generates a board event to get the number of players intending to play the game.
+     * @author Owen VanDusen 101152022
+     */
     public void getNumPlayers() {
         sendBoardUpdate(new BoardEvent(this, Status.GET_NUM_PLAYERS));
     }
 
+    /**
+     * Determines which actions a player can take based on their current situation.
+     * @author Bardia Parmoun 101143006
+     * @param player the active player, Player
+     */
     public void getCommand(Player player){
         BoardCell currentCell = player.getCurrentCell();
         ArrayList<BoardModel.Command> commands = new ArrayList<>();
@@ -187,10 +277,20 @@ public class BoardModel {
         sendBoardUpdate(new BoardEvent(this, BoardModel.Status.GET_COMMAND, player, commands));
     }
 
+    /**
+     * Calls the view to output the startup message.
+     * @author Sarah Chow 101143033
+     */
     private void initializeMonopoly(){
         sendBoardUpdate(new BoardEvent(this, Status.INITIALIZE_MONOPOLY));
     }
 
+    /**
+     * Randomly sets the value of two integers between 1-6 to represent rolling two dice. If the player
+     * rolls doubles allows them to move again. Calls the move method to move the player.
+     * @author Kyra Lothrop 101145872
+     * @param player active player, Player
+     */
     public void roll(Player player){
         player.setRollAgain(false);
         Random rand = new Random();
@@ -206,6 +306,12 @@ public class BoardModel {
         move(player, dice[0] + dice[1]);
     }
 
+    /**
+     * Moves the player a number of spaces equal to the value of the dice rolled.
+     * @author Bardia Parmoun 101143006
+     * @param player the active player, Player
+     * @param amountToMove distance the player should move, int
+     */
     public void move(Player player, int amountToMove){
         int newPlayerPosition = (player.getPosition() + amountToMove) % SIZE_OF_BOARD;
         player.setPosition(newPlayerPosition);
@@ -214,6 +320,12 @@ public class BoardModel {
         sendBoardUpdate(new BoardEvent(this, Status.PLAYER_MOVE, player));
     }
 
+    /**
+     * Assigns an unowned property that the player landed on to the player if they choose to buy it.
+     * @author Owen VanDusen 101152022
+     * @param property property being bought, Property
+     * @param player player purchasing the property, Player
+     */
     public void buyProperty(Property property, Player player){
         boolean result = false;
         if (player.getCash() > property.getPrice()){
@@ -228,6 +340,13 @@ public class BoardModel {
 
     }
 
+    /**
+     * Sells a property owned by the active player and removes it from their owned properties if
+     * the property may be sold.
+     * @author Bardia Parmoun 101143006
+     * @param property property being sold, Property
+     * @param player player selling the property, Player
+     */
     public void sellProperty(Property property, Player player){
         player.sellProperty(property);
         property.toggleRecentlyChanged();
@@ -236,18 +355,38 @@ public class BoardModel {
         sendBoardUpdate(new BoardEvent(this, Status.SELL, player, property, true));
     }
 
+    /**
+     * Accessor to display the information of the current player.
+     * @author Sarah Chow 101143033
+     * @param player active player, Player
+     */
     public void getStatus(Player player){
         sendBoardUpdate(new BoardEvent(this, Status.PLAYER_STATUS, player));
     }
 
+    /**
+     * Accessor to display the information of the players on each view.
+     * @author Owen VanDusen 101152022
+     */
     public void getBoardStatus(){
         sendBoardUpdate(new BoardEvent(this, Status.BOARD_STATUS, players));
     }
 
+    /**
+     * Accessor to display the information of a specific cell on the board.
+     * @author Kyra Lothrop 101145872
+     */
     public void getCellStatus(){
         sendBoardUpdate(new BoardEvent(this, Status.CELL_STATUS, turn.getCurrentCell()));
     }
 
+    /**
+     * Action the player must take when landing on property owned by another player. Pays the
+     * rent of the property from the current player to the owner.
+     * @author Owen VanDusen 101152022
+     * @param boardCell board cell with the fees, BoardCell
+     * @param player player paying rent, Player
+     */
     public void payFees(BoardCell boardCell, Player player){
         boolean result = false;
 
@@ -274,7 +413,12 @@ public class BoardModel {
         sendBoardUpdate(new BoardEvent(this, Status.PAY_FEES, player, fees, result));
     }
 
-
+    /**
+     * Action the player takes to end their turn. Resets many temporary board changes so the
+     * next player can take actions as intended.
+     * @author Sarah Chow 101143033
+     * @param player active player, Player
+     */
     public void passTurn(Player player){
         // Remove the recently changed from the player's cells.
         for (Property property : player.getProperties(false)){
@@ -293,6 +437,11 @@ public class BoardModel {
         sendBoardUpdate(new BoardEvent(this, Status.PASS_TURN, player));
     }
 
+    /**
+     * Allows the player to move again if they rolled the same value on both dice.
+     * @author Sarah Chow 101143033
+     * @param player active player, Player
+     */
     public void setDoubleRoll(Player player){
         player.setFeesStatus(Player.StatusEnum.NO_FEES);
         player.addNumDoubles();
@@ -301,6 +450,12 @@ public class BoardModel {
         sendBoardUpdate(new BoardEvent(this, Status.PLAYER_DOUBLE_ROLL, player));
     }
 
+    /**
+     * Action taken by the player to remove them from the turn sequence. They immediately go
+     * bankrupt and assigned the next available rank in the end result of players.
+     * @author Bardia Parmoun 101143006
+     * @param player active player, Player
+     */
     public void forfeit(Player player) {
         player.setBankrupt();
         player.setRank(numPlayers--);
@@ -309,10 +464,20 @@ public class BoardModel {
         passTurn(player);
     }
 
+    /**
+     * Method called to finalize game results and output the player ranks.
+     * @author Owen VanDusen 101152022
+     */
     public void gameOver(){
         sendBoardUpdate(new BoardEvent(this, Status.GAME_OVER, players));
     }
 
+    /**
+     * Primary loop of the program. Alternates the active players based on the list generated
+     * and gets the actions they are able to take. Once there is only one player remaining finishes
+     * the game and exits the loop.
+     * @author Kyra Lothrop 101145872
+     */
     public void play(){
         constructBoard();
         initializeMonopoly();

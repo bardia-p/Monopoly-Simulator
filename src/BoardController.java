@@ -1,12 +1,34 @@
-// Sarah Chow 101143033
-// Owen VanDusen 101152022
-
 import java.util.*;
 
+/**
+ * SYSC 3110 - Milestone 1 BoardController Class
+ *
+ * This document is the BoardController, as per the MVC model, the BoardController handles user input and passes off
+ * the information to the BoardModel class. This class has a boardModel and an array list of remaining icons.
+ *
+ * @author Sarah Chow 101143033
+ * @author Kyra Lothrop 101145872
+ * @author Bardia Parmoun 101143006
+ * @author Owen VanDusen 101152022
+ * @version 1.0
+ */
 public class BoardController  {
+    /**
+     * Keeps track of the board model.
+     */
     private BoardModel boardModel;
+    /**
+     * Keeps track of the remaining icons that the players can pick from
+     */
     private ArrayList<String>  remainingIcons;
 
+    /**
+     * Constructor for the BoardController, populates the array list with all possible icons.
+     * @author Sarah Chow 101143033
+     * @author Kyra Lothrop 101145872
+     * @author Bardia Parmoun 101143006
+     * @author Owen VanDusen 101152022
+     */
     public BoardController(){
         remainingIcons = new ArrayList<>(Arrays.asList(
                 "boot",
@@ -20,6 +42,11 @@ public class BoardController  {
         ));
     }
 
+    /**
+     * Calls a different method depending on which board event was passed to the method
+     * @author Bardia Parmoun 101143006
+     * @param e a board event for GET_NUM_PLAYERS, INITIALIZE_PLAYERS, or GET_COMMAND, BoardEvent
+     */
     public void eventListener(BoardEvent e){
         boardModel = (BoardModel) e.getSource();
         switch (e.getType()){
@@ -35,6 +62,11 @@ public class BoardController  {
         }
     }
 
+    /**
+     * UI method to prompt for number of users playing the game, stores value as int to be used
+     * throughout the game.
+     * @author Owen VanDusen 101152022
+     */
     private void getNumPlayers(){
         System.out.println("INITIALIZE GAME DATA");
         Scanner scan = new Scanner(System.in);
@@ -66,6 +98,11 @@ public class BoardController  {
         boardModel.setNumPlayers(numPlayers);
     }
 
+    /**
+     * UI method to initialize players with their respective name and icon.
+     * @author Kyra Lothrop 101145872
+     * @param numPlayers number of players participating, int
+     */
     private void initializePlayers(int numPlayers){
         String icon;
 
@@ -87,6 +124,11 @@ public class BoardController  {
 
     }
 
+    /**
+     * Displays list of available icons in uppercase letters, looks nice on UI.
+     * @author Sarah Chow 101143033
+     * @return the remaining icons in uppercase form, String
+     */
     private String getListOfIconsUpper(){
 
         String upperCaseIcon = "";
@@ -98,6 +140,12 @@ public class BoardController  {
         return upperCaseIcon.substring(0, upperCaseIcon.length() - 2);
     }
 
+    /**
+     * Displays a list of available commands to the players
+     * @author Sarah Chow 101143033
+     * @param commands possible actions the user can take in their current position, ArrayList<BoardModel.Command>
+     * @return the list of commands in a string format for displaying
+     */
     private String getListAvailableOfCommands(ArrayList<BoardModel.Command> commands){
         String availableCommands = "";
 
@@ -108,6 +156,13 @@ public class BoardController  {
         return availableCommands.substring(0, availableCommands.length() - 2);
     }
 
+    /**
+     * Takes the desired command from the player as a text input.
+     * @author Sarah Chow 101143033
+     * @param player the current player, Player
+     * @param commands possible actions the user can take in their current position,
+     *                 ArrayList<BoardModel.Command>ArrayList<BoardModel.Command>
+     */
     private void getCommand(Player player, ArrayList<BoardModel.Command> commands){
         System.out.print("Choose one of the following commands: ");
         String availableCommands = getListAvailableOfCommands(commands);

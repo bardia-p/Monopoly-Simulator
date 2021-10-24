@@ -64,7 +64,7 @@ public class BoardListener implements BoardView {
         }
     }
 
-    public void handleRoll(int[] dice, Player player){
+    private void handleRoll(int[] dice, Player player){
         int die1 = dice[0];
         int die2 = dice[1];
         System.out.println("\nRolling dice for: " + player.getIcon().toUpperCase());
@@ -72,13 +72,13 @@ public class BoardListener implements BoardView {
         System.out.printf("---> Total: %d\n\n", die1 + die2);
     }
 
-    public void showCurrentCell(Player player){
+    private void showCurrentCell(Player player){
         System.out.printf("Player %s is currently at: %s\n",
                 player.getIcon().toUpperCase(),
                 player.getCurrentCell().getName());
     }
 
-    public void handleBuyProperty(Player player, Property property, boolean result) {
+    private void handleBuyProperty(Player player, Property property, boolean result) {
         if (result){
             System.out.printf("\nPlayer %s bought %s\n", player.getIcon().toUpperCase(), property.getName());
         } else {
@@ -86,7 +86,7 @@ public class BoardListener implements BoardView {
         }
     }
 
-    public void handleSellProperty(Player player, Property property, boolean result) {
+    private void handleSellProperty(Player player, Property property, boolean result) {
         if (result){
             System.out.printf("\nPlayer %s sold %s\n", player.getIcon().toUpperCase(), property.getName());
         } else {
@@ -94,13 +94,13 @@ public class BoardListener implements BoardView {
         }
     }
 
-    public void handleGetPlayerStatus(Player player) {
+    private void handleGetPlayerStatus(Player player) {
         System.out.printf("\nDisplaying the status of player: %s\n", player.getIcon().toUpperCase());
         System.out.println(player);
         System.out.println("");
     }
 
-    public void handleGetBoardStatus(List<Player> players) {
+    private void handleGetBoardStatus(List<Player> players) {
         System.out.printf("\nDisplaying the status of the board: \n");
 
         List<Player> bankruptPlayers = new ArrayList<>();
@@ -129,17 +129,17 @@ public class BoardListener implements BoardView {
         System.out.printf("\n");
     }
 
-    public void handleGetCellStatus(BoardCell currentCell){
+    private void handleGetCellStatus(BoardCell currentCell){
         System.out.printf("\nDisplaying the status of the current cell: %s\n", currentCell.getName());
         System.out.println(currentCell);
         System.out.println("");
     }
 
-    public void handleRollingDoubles(Player player){
+    private void handleRollingDoubles(Player player){
         System.out.printf("Player %s rolled a double\n", player.getIcon());
     }
 
-    public void handleWelcomeMonopoly() {
+    private void handleWelcomeMonopoly() {
         System.out.println("WELCOME TO MONOPOLY");
         System.out.println("-------------------------------------------------------------");
         System.out.println("In this interactive business game you will try to outwit your\n" +
@@ -148,7 +148,7 @@ public class BoardListener implements BoardView {
         System.out.println("-------------------------------------------------------------");
     }
 
-    public void handlePayFees(BoardCell boardCell, Player player, int fees,  boolean result) {
+    private void handlePayFees(BoardCell boardCell, Player player, int fees,  boolean result) {
         if (result){
             System.out.printf("You have successfully paid %d$ to %s\n",
                     fees,
@@ -162,15 +162,15 @@ public class BoardListener implements BoardView {
         }
     }
 
-    public void handleCurrentPlayerChange() {
+    private void handleCurrentPlayerChange() {
         System.out.println("\n+++++++++Passing Dice To Next Player+++++++++");
     }
 
-    public void handleForFeitedPlayer(Player player) {
+    private void handleForFeitedPlayer(Player player) {
         System.out.printf("Player %s has forfeited the game!\n", player.getIcon().toUpperCase());
     }
 
-    public void handleWinner(List<Player> players) {
+    private void handleWinner(List<Player> players) {
         System.out.println("The game is over");
         Collections.sort(players, Comparator.comparingInt(Player::getRank));
 

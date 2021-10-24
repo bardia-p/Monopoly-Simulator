@@ -14,6 +14,6 @@ public class Tax extends BoardCell{
     public String toString() {
         String cellInfo = "\n\t\tname='" + super.getName() + '\'' +
                 "\n\t\ttax='" + tax + '\'';
-        return null;
+        return cellInfo;
     }
 }
