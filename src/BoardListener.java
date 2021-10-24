@@ -29,6 +29,10 @@ public class BoardListener implements BoardView {
     /**
      * Constructor for the Board listener, creates the board model, adds the board listener to the board model,
      * creates the board controller and runs the play method.
+     * @author Sarah Chow 101143033
+     * @author Kyra Lothrop 101145872
+     * @author Bardia Parmoun 101143006
+     * @author Owen VanDusen 10115202
      */
     public BoardListener(){
         model = new BoardModel();
@@ -39,6 +43,7 @@ public class BoardListener implements BoardView {
 
     /**
      * Passes a BoardEvent to the BoardController to be interpreted.
+     * @author Bardia Parmoun 101143006
      * @param e the board event, BoardEvent
      */
     @Override
@@ -48,6 +53,7 @@ public class BoardListener implements BoardView {
 
     /**
      * Passes the values of both dice and the player to the BoardController to be interpreted.
+     * @author Sarah Chow 101143033
      * @param die1 value of first roll, int
      * @param die2 value of second roll, int
      * @param player player performing actions, Player
@@ -61,6 +67,7 @@ public class BoardListener implements BoardView {
 
     /**
      * Displays the name of the property the current player is standing on in the terminal.
+     * @author Sarah Chow 101143033
      * @param player player performing actions, Player
      */
     @Override
@@ -72,6 +79,7 @@ public class BoardListener implements BoardView {
 
     /**
      * Displays whether the current player can afford the property they attempted to buy or not.
+     * @author Owen VanDusen 101152022
      * @param player player performing actions, Player
      * @param property property that is in contention for purchasing, Property
      * @param result if the player can afford the property, boolean
@@ -87,6 +95,7 @@ public class BoardListener implements BoardView {
 
     /**
      * Displays whether the current player can sell the property they attempted to sell.
+     * @author Kyra Lothrop 101145872
      * @param player player performing actions, Player
      * @param property property that is in contention for selling, Property
      * @param result if the player can sell the property, boolean
@@ -102,6 +111,7 @@ public class BoardListener implements BoardView {
 
     /**
      * Displays the status of the current player.
+     * @author Owen VanDusen 101152022
      * @param player player performing actions, Player
      */
     @Override
@@ -113,6 +123,7 @@ public class BoardListener implements BoardView {
 
     /**
      * Displays the status of the current board.
+     * @author Kyra Lothrop 101145872
      * @param players player performing actions, Player
      */
     @Override
@@ -147,6 +158,7 @@ public class BoardListener implements BoardView {
 
     /**
      * Displays the information of the property the player is currently on.
+     * @auothr Bardia Parmoun 101143006
      * @param property property the player is on, Property
      */
     @Override
@@ -158,6 +170,7 @@ public class BoardListener implements BoardView {
 
     /**
      * Displays a prompt whenever a player rolls the same number on both dice.
+     * @author Bardia Parmoun 101143006
      * @param player player performing actions, Player
      */
     @Override
@@ -167,6 +180,7 @@ public class BoardListener implements BoardView {
 
     /**
      * Displays the introduction message.
+     * @author Sarah Chow 101143033
      */
     @Override
     public void handleWelcomeMonopoly() {
@@ -180,6 +194,7 @@ public class BoardListener implements BoardView {
 
     /**
      * Displays the status of a player trying to pay rent.
+     * @author Kyra Lothrop 101145872
      * @param property property being rented, Property
      * @param renter player paying rent, Player
      * @param result if the player can afford rent, boolean
@@ -201,6 +216,7 @@ public class BoardListener implements BoardView {
 
     /**
      * Displays a breaker to indicate change of turn.
+     * @author Owen VanDusen 101152022
      */
     @Override
     public void handleCurrentPlayerChange() {
@@ -209,6 +225,7 @@ public class BoardListener implements BoardView {
 
     /**
      * Displays a message informing that a player chose to forfeit the game.
+     * @author Sarah Chow 101143033
      * @param player player forfeiting, Player
      */
     @Override
@@ -218,6 +235,7 @@ public class BoardListener implements BoardView {
 
     /**
      * Displays the end of game statistics and the ordered rank of all players.
+     * @author Bardia Parmoun 101143006
      * @param players list of players in the order they forfeit the game, List<Player>
      */
     @Override
@@ -235,6 +253,7 @@ public class BoardListener implements BoardView {
 
     /**
      * Start of the program
+     * @author Kyra Lothrop 101145872
      * @param args args
      */
     public static void main(String[] args) {
