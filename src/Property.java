@@ -6,11 +6,6 @@ public class Property extends BoardCell {
     private int rent;
     private boolean recentlyChanged;
 
-    Property(String name, int price, int rent, Player propertyOwner){
-        this(name, price, rent);
-        super.setOwner(propertyOwner);
-    }
-
     Property(String name, int price, int rent){
         super(name, null, CellType.PROPERTY);
         this.price = price;

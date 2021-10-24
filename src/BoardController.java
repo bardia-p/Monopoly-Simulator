@@ -30,7 +30,7 @@ public class BoardController  {
                 initializePlayers(e.getValue());
                 break;
             case GET_COMMAND:
-                getCommand(e.getPlayer(), e.getCommands());
+                getCommand(e.getPlayer(), (ArrayList<BoardModel.Command>) e.getCommands());
                 break;
         }
     }

@@ -2,7 +2,7 @@ public class Tax extends BoardCell{
     private int tax;
 
     Tax(String name, int tax, Player owner){
-        super(name, owner, CellType.INCOME_TAX);
+        super(name, owner, CellType.TAX);
         this.tax = tax;
     }
 

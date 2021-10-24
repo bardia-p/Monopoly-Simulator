@@ -154,7 +154,7 @@ public class BoardModel {
                 player.getFeesStatus() != Player.StatusEnum.PAID_FEES) {
             if (currentCell.getType() == BoardCell.CellType.PROPERTY){
                 commands.add(BoardModel.Command.PAY_RENT);
-            } else if (currentCell.getType() == BoardCell.CellType.INCOME_TAX){
+            } else if (currentCell.getType() == BoardCell.CellType.TAX){
                 commands.add(BoardModel.Command.PAY_TAX);
             }
             player.setFeesStatus(Player.StatusEnum.UNPAID_FEES);
@@ -255,7 +255,7 @@ public class BoardModel {
 
         if (boardCell.getType() == BoardCell.CellType.PROPERTY){
             fees = ((Property) boardCell).getRent();
-        } else if (boardCell.getType() == BoardCell.CellType.INCOME_TAX){
+        } else if (boardCell.getType() == BoardCell.CellType.TAX){
             fees = ((Tax) boardCell).getTax();
         }
 

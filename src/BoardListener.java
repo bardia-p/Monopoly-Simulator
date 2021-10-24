@@ -64,7 +64,6 @@ public class BoardListener implements BoardView {
         }
     }
 
-    @Override
     public void handleRoll(int[] dice, Player player){
         int die1 = dice[0];
         int die2 = dice[1];
@@ -73,14 +72,12 @@ public class BoardListener implements BoardView {
         System.out.printf("---> Total: %d\n\n", die1 + die2);
     }
 
-    @Override
     public void showCurrentCell(Player player){
         System.out.printf("Player %s is currently at: %s\n",
                 player.getIcon().toUpperCase(),
                 player.getCurrentCell().getName());
     }
 
-    @Override
     public void handleBuyProperty(Player player, Property property, boolean result) {
         if (result){
             System.out.printf("\nPlayer %s bought %s\n", player.getIcon().toUpperCase(), property.getName());
@@ -89,7 +86,6 @@ public class BoardListener implements BoardView {
         }
     }
 
-    @Override
     public void handleSellProperty(Player player, Property property, boolean result) {
         if (result){
             System.out.printf("\nPlayer %s sold %s\n", player.getIcon().toUpperCase(), property.getName());
@@ -98,14 +94,12 @@ public class BoardListener implements BoardView {
         }
     }
 
-    @Override
     public void handleGetPlayerStatus(Player player) {
         System.out.printf("\nDisplaying the status of player: %s\n", player.getIcon().toUpperCase());
         System.out.println(player);
         System.out.println("");
     }
 
-    @Override
     public void handleGetBoardStatus(List<Player> players) {
         System.out.printf("\nDisplaying the status of the board: \n");
 
@@ -135,19 +129,16 @@ public class BoardListener implements BoardView {
         System.out.printf("\n");
     }
 
-    @Override
     public void handleGetCellStatus(BoardCell currentCell){
         System.out.printf("\nDisplaying the status of the current cell: %s\n", currentCell.getName());
         System.out.println(currentCell);
         System.out.println("");
     }
 
-    @Override
     public void handleRollingDoubles(Player player){
         System.out.printf("Player %s rolled a double\n", player.getIcon());
     }
 
-    @Override
     public void handleWelcomeMonopoly() {
         System.out.println("WELCOME TO MONOPOLY");
         System.out.println("-------------------------------------------------------------");
@@ -157,7 +148,6 @@ public class BoardListener implements BoardView {
         System.out.println("-------------------------------------------------------------");
     }
 
-    @Override
     public void handlePayFees(BoardCell boardCell, Player player, int fees,  boolean result) {
         if (result){
             System.out.printf("You have successfully paid %d$ to %s\n",
@@ -172,17 +162,14 @@ public class BoardListener implements BoardView {
         }
     }
 
-    @Override
     public void handleCurrentPlayerChange() {
         System.out.println("\n+++++++++Passing Dice To Next Player+++++++++");
     }
 
-    @Override
     public void handleForFeitedPlayer(Player player) {
         System.out.printf("Player %s has forfeited the game!\n", player.getIcon().toUpperCase());
     }
 
-    @Override
     public void handleWinner(List<Player> players) {
         System.out.println("The game is over");
         Collections.sort(players, Comparator.comparingInt(Player::getRank));

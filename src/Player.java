@@ -165,10 +165,10 @@ public class Player {
 
     /**
      * Accessor to set the current property of the player on the board.
-     * @param currentProperty the property the player is currently on, Property
+     * @param currentCell the property the player is currently on, Property
      */
-    public void setCurrentCell(BoardCell currentProperty){
-        this.currentCell = currentProperty;
+    public void setCurrentCell(BoardCell currentCell){
+        this.currentCell = currentCell;
     }
 
     /**
@@ -258,21 +258,6 @@ public class Player {
         }
         return properties;
     }
-
-    /**
-     * Method to get all the player's proterties that they are currently allowed to sell.
-     * @return
-     */
-//    public List<Property> getSellableProperties(){
-//        ArrayList<Property> sellableProperties = new ArrayList<>();
-//        for (Property property: properties){
-//            if (!property.getRecentlyChanged()){
-//                sellableProperties.add(property);
-//            }
-//        }
-//
-//        return sellableProperties;
-//    }
 
     public void setRank (int rank){
         this.rank = rank;

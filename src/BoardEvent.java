@@ -10,7 +10,7 @@ public class BoardEvent extends EventObject {
     private int value;
     private boolean result;
     private BoardCell boardCell;
-    private ArrayList<BoardModel.Command> commands;
+    private List<BoardModel.Command> commands;
     private int[] dice;
     private List<Player> players;
 
@@ -80,8 +80,8 @@ public class BoardEvent extends EventObject {
         return player;
     }
 
-    public ArrayList<BoardModel.Command> getCommands(){
-        return commands;
+    public List<BoardModel.Command> getCommands(){
+        return (ArrayList<BoardModel.Command>) commands;
     }
 
     public int getValue(){

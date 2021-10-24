@@ -3,7 +3,7 @@ public abstract class BoardCell {
     private Player owner;
     private CellType type;
 
-    public enum CellType {PROPERTY, GO, FREE_PARKING, JAIL, INCOME_TAX}
+    public enum CellType {PROPERTY, GO, FREE_PARKING, JAIL, TAX}
 
 
     public BoardCell(String name, Player owner, CellType type){
