@@ -15,11 +15,11 @@ public class Property extends BoardCell {
     /**
      * Keeps track of the property buying price.
      */
-    private int price;
+    private final int price;
     /**
      * Keeps track of the property rent.
      */
-    private int rent;
+    private final int rent;
     /**
      * Keeps track of whether a property attribute has been recently changed (Excluding self).
      */
@@ -84,15 +84,15 @@ public class Property extends BoardCell {
      */
     @Override
     public String toString() {
-        String propertyInfo = "\n\t\tname='" + super.getName() + '\'' +
-                "\n\t\tprice='" + price + '\'' +
-                "\n\t\trent='" + rent + '\'';
+        String propertyInfo = "\n\tname='" + super.getName() + '\'' +
+                "\n\tprice='" + price + '\'' +
+                "\n\trent='" + rent + '\'';
 
         if (super.getOwner() != null){
-            propertyInfo += "\n\t\tproperty owner='" + super.getOwner().getIcon() + '\'';
+            propertyInfo += "\n\tproperty owner='" + super.getOwner().getIcon() + '\'';
 
         } else {
-            propertyInfo += "\n\t\tproperty owner='no owner'";
+            propertyInfo += "\n\tproperty owner='no owner'";
         }
         return propertyInfo;
     }

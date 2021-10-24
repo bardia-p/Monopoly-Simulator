@@ -25,7 +25,7 @@ public class BoardEvent extends EventObject {
     /**
      * Keeps track of the event type that shall occur.
      */
-    private BoardModel.Status type;
+    private final BoardModel.Status type;
     /**
      * Keeps track of the player the event refers to.
      */

@@ -14,7 +14,7 @@ public abstract class BoardCell {
     /**
      * Keeps track of the cell name.
      */
-    private String name;
+    private final String name;
     /**
      * Keeps track of the cell owner.
      */
@@ -22,7 +22,7 @@ public abstract class BoardCell {
     /**
      * Keeps track of the cell type.
      */
-    private CellType type;
+    private final CellType type;
     /**
      * Keeps track of all the possible cell types.
      */

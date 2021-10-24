@@ -13,14 +13,14 @@ public class Go extends BoardCell {
     /**
      * Keeps track of the reward for passing Go.
      */
-    private int reward;
+    private final int reward;
 
     /**
      * The constructor for Go
      * @author Owen VanDusen 101152022
-     * @param fee keeps track of the Go reward, int
+     * @param reward keeps track of the Go reward, int
      */
-    public Go(int fee){
+    public Go(int reward){
         super("GO", null, CellType.GO);
         this.reward = reward;
     }
@@ -41,6 +41,6 @@ public class Go extends BoardCell {
      */
     @Override
     public String toString() {
-        return "\n\t\tname='" + super.getName() + '\'';
+        return "\n\tname='" + super.getName() + '\'';
     }
 }

@@ -1,6 +1,5 @@
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -49,47 +48,20 @@ public class BoardListener implements BoardView {
     @Override
     public void handleBoardUpdate(BoardEvent e) {
         switch (e.getType()) {
-            case PLAYER_ROLL:
-                handleRoll(e.getDice(), e.getPlayer());
-                break;
-            case PLAYER_MOVE:
-                showCurrentCell(e.getPlayer());
-                break;
-            case BUY:
-                handleBuyProperty(e.getPlayer(), (Property) e.getBoardCell(), e.getResult());
-                break;
-            case SELL:
-                handleSellProperty(e.getPlayer(), (Property) e.getBoardCell(), e.getResult());
-                break;
-            case PLAYER_STATUS:
-                handleGetPlayerStatus(e.getPlayer());
-                break;
-            case BOARD_STATUS:
-                handleGetBoardStatus(e.getPlayers());
-                break;
-            case CELL_STATUS:
-                handleGetCellStatus(e.getPlayer().getCurrentCell());
-                break;
-            case PLAYER_DOUBLE_ROLL:
-                handleRollingDoubles(e.getPlayer());
-                break;
-            case INITIALIZE_MONOPOLY:
-                handleWelcomeMonopoly();
-                break;
-            case PAY_FEES:
-                handlePayFees(e.getPlayer().getCurrentCell(), e.getPlayer(), e.getValue(), e.getResult());
-                break;
-            case PASS_TURN:
-                handleCurrentPlayerChange();
-                break;
-            case PLAYER_FORFEIT:
-                handleForFeitedPlayer(e.getPlayer());
-                break;
-            case GAME_OVER:
-                handleWinner(e.getPlayers());
-                break;
-            default:
-                controller.eventListener(e);
+            case PLAYER_ROLL -> handleRoll(e.getDice(), e.getPlayer());
+            case PLAYER_MOVE -> showCurrentCell(e.getPlayer());
+            case BUY -> handleBuyProperty(e.getPlayer(), (Property) e.getBoardCell(), e.getResult());
+            case SELL -> handleSellProperty(e.getPlayer(), (Property) e.getBoardCell(), e.getResult());
+            case PLAYER_STATUS -> handleGetPlayerStatus(e.getPlayer());
+            case BOARD_STATUS -> handleGetBoardStatus(e.getPlayers());
+            case CELL_STATUS -> handleGetCellStatus(e.getPlayer().getCurrentCell());
+            case PLAYER_DOUBLE_ROLL -> handleRollingDoubles(e.getPlayer());
+            case INITIALIZE_MONOPOLY -> handleWelcomeMonopoly();
+            case PAY_FEES -> handlePayFees(e.getPlayer().getCurrentCell(), e.getPlayer(), e.getValue(), e.getResult());
+            case PASS_TURN -> handleCurrentPlayerChange();
+            case PLAYER_FORFEIT -> handleForfeitedPlayer(e.getPlayer());
+            case GAME_OVER -> handleWinner(e.getPlayers());
+            default -> controller.eventListener(e);
         }
     }
 
@@ -102,6 +74,9 @@ public class BoardListener implements BoardView {
     private void handleRoll(int[] dice, Player player) {
         int die1 = dice[0];
         int die2 = dice[1];
+        System.out.println("\nRolling dice for: " + player.getIcon().toUpperCase());
+        System.out.printf("---> You rolled a %d and a %d\n", die1, die2);
+        System.out.printf("---> Total: %d\n\n", die1 + die2);
     }
 
     /**
@@ -152,8 +127,7 @@ public class BoardListener implements BoardView {
      */
     private void handleGetPlayerStatus(Player player) {
         System.out.printf("\nDisplaying the status of player: %s\n", player.getIcon().toUpperCase());
-        System.out.println(player);
-        System.out.println("");
+        System.out.println(player + "\n");
     }
 
     /**
@@ -162,16 +136,16 @@ public class BoardListener implements BoardView {
      * @param players player performing actions, Player
      */
     private void handleGetBoardStatus(List<Player> players) {
-        System.out.printf("\nDisplaying the status of the board: \n");
+        System.out.println("\nDisplaying the status of the board:");
 
         List<Player> bankruptPlayers = new ArrayList<>();
         List<Player> nonBankruptPlayers = new ArrayList<>();
 
         for (Player player: players){
-            if(player.isBankrupt() == true){
+            if(player.isBankrupt()){
                 bankruptPlayers.add(player);
             }
-            else if (player.isBankrupt() == false){
+            else if (!player.isBankrupt()){
                 nonBankruptPlayers.add(player);
             }
         }
@@ -186,19 +160,17 @@ public class BoardListener implements BoardView {
             System.out.printf("\tPlayer %s, $%d\n", nonBankruptPlayer.getIcon().toUpperCase(),
                     nonBankruptPlayer.getCash());
         }
-
-        System.out.printf("\n");
+        System.out.println("\n");
     }
 
     /**
      * Displays the information of the property the player is currently on.
-     * @auothr Bardia Parmoun 101143006
+     * @author Bardia Parmoun 101143006
      * @param currentCell property the player is on, BoardCell
      */
     private void handleGetCellStatus(BoardCell currentCell){
         System.out.printf("\nDisplaying the status of the current cell: %s\n", currentCell.getName());
-        System.out.println(currentCell);
-        System.out.println("");
+        System.out.println(currentCell + "\n");
     }
 
     /**
@@ -257,7 +229,7 @@ public class BoardListener implements BoardView {
      * @author Sarah Chow 101143033
      * @param player player forfeiting, Player
      */
-    private void handleForFeitedPlayer(Player player) {
+    private void handleForfeitedPlayer(Player player) {
         System.out.printf("Player %s has forfeited the game!\n", player.getIcon().toUpperCase());
     }
 
@@ -268,7 +240,7 @@ public class BoardListener implements BoardView {
      */
     private void handleWinner(List<Player> players) {
         System.out.println("The game is over");
-        Collections.sort(players, Comparator.comparingInt(Player::getRank));
+        players.sort(Comparator.comparingInt(Player::getRank));
 
         System.out.printf("Player %s won the game!\n", players.get(0).getIcon().toUpperCase());
         for (Player player: players){

@@ -18,11 +18,11 @@ public class Player {
     /**
      * Keeps track of player name.
      */
-    private String name;
+    private final String name;
     /**
      * Keeps track of player icon.
      */
-    private String icon;
+    private final String icon;
     /**
      * Keeps track of player available money.
      */
@@ -34,7 +34,7 @@ public class Player {
     /**
      * Keeps track of properties owned by the player.
      */
-    private List<Property> properties;
+    private final List<Property> properties;
     /**
      * Keeps track of the property the play is currently standing on.
      */
@@ -63,7 +63,7 @@ public class Player {
     /**
      * Possible values of player debt status.
      */
-    public enum StatusEnum {NO_FEES, UNPAID_FEES, PAID_FEES};
+    public enum StatusEnum {NO_FEES, UNPAID_FEES, PAID_FEES}
 
     /**
      * Constructor for Player, sets all values.
@@ -228,7 +228,6 @@ public class Player {
 
     /**
      * Accessor to determine if the player has another roll.
-     * @return if the player has another roll, booleam
      * @author Owen VanDusen 101152022
      * @return if the player has another roll, boolean
      */

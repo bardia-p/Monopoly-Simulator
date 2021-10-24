@@ -20,7 +20,7 @@ public class BoardController  {
     /**
      * Keeps track of the remaining icons that the players can pick from
      */
-    private ArrayList<String>  remainingIcons;
+    private final ArrayList<String>  remainingIcons;
 
     /**
      * Constructor for the BoardController, populates the array list with all possible icons.
@@ -49,16 +49,10 @@ public class BoardController  {
      */
     public void eventListener(BoardEvent e){
         boardModel = (BoardModel) e.getSource();
-        switch (e.getType()){
-            case GET_NUM_PLAYERS:
-                getNumPlayers();
-                break;
-            case INITIALIZE_PLAYERS:
-                initializePlayers(e.getValue());
-                break;
-            case GET_COMMAND:
-                getCommand(e.getPlayer(), (ArrayList<BoardModel.Command>) e.getCommands());
-                break;
+        switch (e.getType()) {
+            case GET_NUM_PLAYERS -> getNumPlayers();
+            case INITIALIZE_PLAYERS -> initializePlayers(e.getValue());
+            case GET_COMMAND -> getCommand(e.getPlayer(), (ArrayList<BoardModel.Command>) e.getCommands());
         }
     }
 

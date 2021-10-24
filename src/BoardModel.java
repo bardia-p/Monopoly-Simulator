@@ -1,7 +1,7 @@
 import java.util.*;
 
 /**
- * STSC 3110 - Milestone 1 BoardModel Class
+ * SYSC 3110 - Milestone 1 BoardModel Class
  *
  * This document is the BoardModel. This class has a list of properties, a list of players, an array of dice,
  * the number of players, the size of the board, the board views, if the game has finished, the current turn,
@@ -17,15 +17,15 @@ public class BoardModel {
     /**
      * Keeps track of the cells.
      */
-    private  List<BoardCell> cells;
+    private final List<BoardCell> cells;
     /**
      * Keeps track of the players.
      */
-    private  List<Player> players;
+    private final List<Player> players;
     /**
      * Keeps track of the dice rolls.
      */
-    private  int[] dice;
+    private final int[] dice;
     /**
      * Keeps track of the number of players.
      */
@@ -33,11 +33,11 @@ public class BoardModel {
     /**
      * Keeps track of the size of the board.
      */
-    private final int SIZE_OF_BOARD = 25;
+    private static final int SIZE_OF_BOARD = 25;
     /**
      * Keeps track of the views.
      */
-    private List<BoardView> views;
+    private final List<BoardView> views;
     /**
      * Keeps track of when the game should end.
      */
@@ -49,7 +49,7 @@ public class BoardModel {
     /**
      * Keeps track of the bank player.
      */
-    private Player bank;
+    private final Player bank;
     /**
      * Keeps track of the possible board statuses.
      */
@@ -71,7 +71,7 @@ public class BoardModel {
         FORFEIT ("forfeit"),
         PAY_TAX ("pay tax");
 
-        private String stringCommand;
+        private final String stringCommand;
 
         Command(String stringCommand){
             this.stringCommand = stringCommand;
@@ -88,7 +88,6 @@ public class BoardModel {
      * @author Kyra Lothrop 101145872
      * @author Bardia Parmoun 101143006
      * @author Owen VanDusen 101152022
-     * @version 1.0
      */
     public BoardModel(){
         views = new ArrayList<>();
@@ -107,7 +106,6 @@ public class BoardModel {
      * @author Kyra Lothrop 101145872
      * @author Bardia Parmoun 101143006
      * @author Owen VanDusen 101152022
-     * @version 1.0
      */
     private void constructBoard(){
         cells.addAll(Arrays.asList(
@@ -194,7 +192,7 @@ public class BoardModel {
     /**
      * Updates the views with a generated board event.
      * @author Sarah Chow 101143033
-     * @param boardEvent the event occuring on the board, BoardEvent
+     * @param boardEvent the event occurring on the board, BoardEvent
      */
     private void sendBoardUpdate(BoardEvent boardEvent){
         for (BoardView view : views) {

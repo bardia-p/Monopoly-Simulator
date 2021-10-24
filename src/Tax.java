@@ -14,7 +14,7 @@ public class Tax extends BoardCell{
     /**
      * Keeps track of the tax for the cell.
      */
-    private int tax;
+    private final int tax;
 
     /**
      * The main constructor for Tax.
@@ -44,8 +44,7 @@ public class Tax extends BoardCell{
      */
     @Override
     public String toString() {
-        String cellInfo = "\n\t\tname='" + super.getName() + '\'' +
-                "\n\t\ttax='" + tax + '\'';
-        return cellInfo;
+        return "\n\tname='" + super.getName() + '\'' +
+                "\n\ttax='" + tax + '\'';
     }
 }
