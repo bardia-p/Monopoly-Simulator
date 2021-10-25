@@ -1,4 +1,5 @@
 /**
+ * Group 3
  * SYSC 3110 - Milestone 1 BoardCell Class
  *
  * This document is the BoardCell. This class extends BoardCell and has a name, owner, and CellType.
