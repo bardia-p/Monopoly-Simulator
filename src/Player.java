@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Group 3
  * SYSC 3110 - Milestone 1 Player Class
  *
  * This document is the Player. This class has the name, icon, cash value,

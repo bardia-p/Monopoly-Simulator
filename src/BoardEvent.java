@@ -3,6 +3,7 @@ import java.util.EventObject;
 import java.util.List;
 
 /**
+ * Group 3
  * SYSC 3110 - Milestone 1 BoardEvent Class
  *
  * This document is the BoardEvent. This class has a BoardModel.Status type, a player, a value, a list of commands, a

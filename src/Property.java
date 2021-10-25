@@ -1,4 +1,5 @@
 /**
+ * Group 3
  * SYSC 3110 - Milestone 1 Property Class
  *
  * This document is the Property. This class extends BoardCell and has a price, rent, and if the property was

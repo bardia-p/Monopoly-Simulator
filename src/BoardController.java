@@ -1,6 +1,7 @@
 import java.util.*;
 
 /**
+ * Group 3
  * SYSC 3110 - Milestone 1 BoardController Class
  *
  * This document is the BoardController, as per the MVC model, the BoardController handles user input and passes off
