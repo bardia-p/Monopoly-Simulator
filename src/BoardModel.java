@@ -432,7 +432,9 @@ public class BoardModel {
         // Reset the turn.
         turn = null;
 
-        sendBoardUpdate(new BoardEvent(this, Status.PASS_TURN, player));
+        if (numPlayers >1) {
+            sendBoardUpdate(new BoardEvent(this, Status.PASS_TURN, player));
+        }
     }
 
     /**

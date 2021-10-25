@@ -12,8 +12,8 @@ import java.util.List;
  * is packaged inside of an event and is passed to the listener which is then either handled internally by the listener
  * or passed on to the controller.
  *
- * Events can come in different forms containing different kinds of information which os reason why this class has a lot
- * of constructors.
+ * Events can come in different forms containing different kinds of information which is the reason why this class has a
+ * lot of constructors.
  *
  * @author Sarah Chow 101143033
  * @author Kyra Lothrop 101145872
