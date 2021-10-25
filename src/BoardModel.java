@@ -1,6 +1,7 @@
 import java.util.*;
 
 /**
+ * Group 3
  * SYSC 3110 - Milestone 1 BoardModel Class
  *
  * This document is the BoardModel. This class has a list of properties, a list of players, an array of dice,

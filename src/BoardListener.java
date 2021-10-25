@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
+ * Group 3
  * SYSC 3110 - Milestone 1 BoardListener Class
  *
  * This document is the BoardListener. This class has the BoardModel and BoardController. BoardListener
