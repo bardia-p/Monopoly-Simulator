@@ -207,10 +207,10 @@ public class BoardListener implements BoardView {
         if (result){
             System.out.printf("You have successfully paid %d$ to %s\n",
                     fees,
-                    boardCell.getOwner().getIcon());
+                    boardCell.getOwner().getIcon().toUpperCase());
         }
         else{
-            System.out.printf("You cannot currently pay fees to %s. Rent costs %d$ and you only have %d$ remaining\n",
+            System.out.printf("You cannot currently pay fees to %s. You must pay %d$ and you only have %d$ remaining\n",
                     boardCell.getOwner().getIcon(),
                     fees,
                     player.getCash());
@@ -240,7 +240,8 @@ public class BoardListener implements BoardView {
      * @param players list of players in the order they forfeit the game, List<Player>
      */
     private void handleWinner(List<Player> players) {
-        System.out.println("The game is over");
+        System.out.println("-------------------------------------------------------------");
+        System.out.println("GAME OVER");
         players.sort(Comparator.comparingInt(Player::getRank));
 
         System.out.printf("Player %s won the game!\n", players.get(0).getIcon().toUpperCase());

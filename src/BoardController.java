@@ -202,6 +202,7 @@ public class BoardController  {
      */
     private void loadSellPropertiesUI(Player player) {
         System.out.println("Here are the list of the properties that you can sell: ");
+        System.out.println("Note: if you would no longer like to sell, use 'cancel'");
         String sellableProperties = "";
 
         for (Property property : player.getProperties(true)){
@@ -219,7 +220,7 @@ public class BoardController  {
         while (!(sellableProperties.toLowerCase().contains(command))) {
             System.out.println("Sorry try again!");
             System.out.print("Enter the name of the property: ");
-            command = scan.nextLine();
+            command = scan.nextLine().toLowerCase();
         }
 
         if (!command.equals("cancel")){
