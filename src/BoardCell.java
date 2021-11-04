@@ -26,6 +26,10 @@ public abstract class BoardCell {
     private final CellType type;
 
     private String imgName;
+
+    private static int indexCounter = 0;
+    private int index;
+
     /**
      * Keeps track of all the possible cell types.
      */
@@ -43,6 +47,7 @@ public abstract class BoardCell {
         this.owner = owner;
         this.type = type;
         this.imgName = imgName;
+        this.index = indexCounter++;
     }
 
     /**
@@ -90,5 +95,9 @@ public abstract class BoardCell {
 
     public String getImgName(){
         return imgName;
+    }
+
+    public int getIndex(){
+        return index;
     }
 }

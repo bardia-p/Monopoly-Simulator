@@ -1,10 +1,10 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.*;
 import java.util.List;
 
 /**
@@ -31,10 +31,17 @@ public class BoardFrame extends JFrame implements BoardView  {
     BoardController controller;
 
     private List<JPanel> boardCells;
+    private Map<Player, JLabel> playerLabels;
+
 
     public static final int SIZE = 11;
 
     public static final String BACKGROUND_COLOR = "#cbe4d0";
+
+    private JPanel mainPanel;
+
+    private JLayeredPane layeredPane;
+
 
     /**
      * Constructor for the Board listener, creates the board model, adds the board listener to the board model,
@@ -47,8 +54,24 @@ public class BoardFrame extends JFrame implements BoardView  {
     public BoardFrame(){
         super("Rich Uncle Pennybags!");
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        //this.setResizable(false);
+        setState(JFrame.NORMAL);
 
-        boardCells = new ArrayList<>();
+        layeredPane = new JLayeredPane();
+        layeredPane.setOpaque(true);
+        getContentPane().add(layeredPane);
+        addWindowListener(getWindowAdapter());
+        layeredPane.setPreferredSize(new Dimension(1000,750));
+        mainPanel = new JPanel();
+        mainPanel.setLayout(new GridBagLayout());
+        mainPanel.setBackground(Color.decode(BACKGROUND_COLOR));
+        mainPanel.setBounds(0, 0, 750, 750);
+
+        layeredPane.add(mainPanel,0);
+
+        playerLabels = new HashMap<>();
+
+        boardCells = new ArrayList<JPanel>();
 
         model = new BoardModel();
         model.addBoardView(this);
@@ -58,6 +81,16 @@ public class BoardFrame extends JFrame implements BoardView  {
 
         model.play();
 
+    }
+
+    private WindowAdapter getWindowAdapter() {
+        return new WindowAdapter() {
+            @Override
+            public void windowDeiconified(WindowEvent we) {
+                for (JLabel label: playerLabels.values())
+                layeredPane.moveToFront(label);
+            }
+        };
     }
 
     /**
@@ -82,7 +115,16 @@ public class BoardFrame extends JFrame implements BoardView  {
             case PLAYER_FORFEIT -> handleForfeitedPlayer(e.getPlayer());
             case GAME_OVER -> handleWinner(e.getPlayers());
             case INITIALIZE_BOARD -> constructBoard(e.getCells());
+            case CREATE_PLAYER_ICONS -> createPlayerLabels((ArrayList<Player>) e.getPlayers());
             default -> controller.eventListener(e);
+        }
+    }
+
+    private void createPlayerLabels(ArrayList<Player> players) {
+        for (Player p: players){
+            JLabel playerLabel = new JLabel();
+            playerLabels.put(p, playerLabel);
+            layeredPane.add(playerLabel);
         }
     }
 
@@ -93,9 +135,7 @@ public class BoardFrame extends JFrame implements BoardView  {
         int row_step = 0;
         int col_step = -1;
         int direction = GridBagConstraints.WEST;
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new GridBagLayout());
-        mainPanel.setBackground(Color.decode(BACKGROUND_COLOR));
+
         for (BoardCell cell: cells) {
             try{
                 if (cell.getName().equals("JAIL")){
@@ -127,15 +167,13 @@ public class BoardFrame extends JFrame implements BoardView  {
                 c.anchor = direction;
                 c.insets = new Insets(0,0,0,0);
 
-                JPanel panel = new JPanel();
+                JPanel panel = new JPanel(new BorderLayout());
                 panel.setBackground(Color.decode(BACKGROUND_COLOR));
 
                 panel.add(label);
                 boardCells.add(panel);
 
                 mainPanel.add(panel, c);
-
-                System.out.println(row + " " + col);
 
                 row += row_step;
                 col += col_step;
@@ -145,8 +183,8 @@ public class BoardFrame extends JFrame implements BoardView  {
             }
         }
 
-        JScrollPane productPanelWithScroll = new JScrollPane(mainPanel,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        JScrollPane productPanelWithScroll = new JScrollPane(layeredPane,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+               JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         // adding all the components to the frame
         this.getContentPane().add(productPanelWithScroll,BorderLayout.CENTER);
@@ -162,7 +200,7 @@ public class BoardFrame extends JFrame implements BoardView  {
     private void handleRoll(int[] dice, Player player) {
         int die1 = dice[0];
         int die2 = dice[1];
-        System.out.println("\nRolling dice for: " + player.getIcon().toUpperCase());
+        System.out.println("\nRolling dice for: " + player.getIconName().toUpperCase());
         System.out.printf("---> You rolled a %d and a %d\n", die1, die2);
         System.out.printf("---> Total: %d\n\n", die1 + die2);
     }
@@ -173,8 +211,32 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @param player player performing actions, Player
      */
     private void showCurrentCell(Player player){
+        if (!player.getIconImgPath().equals("")) {
+            try {
+                BufferedImage image = ImageIO.read(getClass().getResource(player.getIconImgPath()));
+                Image dimg = image.getScaledInstance(40,40, Image.SCALE_SMOOTH);
+                playerLabels.get(player).setIcon(new ImageIcon(dimg));
+                //playerLabel.setOpaque(true);
+                BoardCell currCell = player.getCurrentCell();
+
+                JPanel currentCell = boardCells.get(currCell.getIndex());
+
+                Rectangle cellPosition = currentCell.getBounds();
+
+                int index = (int) new ArrayList(playerLabels.keySet()).indexOf(player);
+                int x = cellPosition.x + 3*cellPosition.width/4 - 10 * (2 +index);
+                int y = cellPosition.y + 1*cellPosition.height/2 - 10 * (2 +index);
+                playerLabels.get(player).setBounds(x, y, 50, 50);
+                layeredPane.moveToFront(playerLabels.get(player));
+
+                this.pack();
+            } catch (IOException e) {
+                System.out.println("Could not load the player icon image");
+            }
+        }
+
         System.out.printf("Player %s is currently at: %s\n",
-                player.getIcon().toUpperCase(),
+                player.getIconName().toUpperCase(),
                 player.getCurrentCell().getName());
     }
 
@@ -187,9 +249,9 @@ public class BoardFrame extends JFrame implements BoardView  {
      */
     private void handleBuyProperty(Player player, Property property, boolean result) {
         if (result){
-            System.out.printf("\nPlayer %s bought %s\n", player.getIcon().toUpperCase(), property.getName());
+            System.out.printf("\nPlayer %s bought %s\n", player.getIconName().toUpperCase(), property.getName());
         } else {
-            System.out.printf("\nPlayer %s cannot afford %s\n", player.getIcon().toUpperCase(), property.getName());
+            System.out.printf("\nPlayer %s cannot afford %s\n", player.getIconName().toUpperCase(), property.getName());
         }
     }
 
@@ -202,9 +264,9 @@ public class BoardFrame extends JFrame implements BoardView  {
      */
     private void handleSellProperty(Player player, Property property, boolean result) {
          if (result){
-            System.out.printf("\nPlayer %s sold %s\n", player.getIcon().toUpperCase(), property.getName());
+            System.out.printf("\nPlayer %s sold %s\n", player.getIconName().toUpperCase(), property.getName());
         } else {
-            System.out.printf("\nPlayer %s cannot sell %s\n", player.getIcon().toUpperCase(), property.getName());
+            System.out.printf("\nPlayer %s cannot sell %s\n", player.getIconName().toUpperCase(), property.getName());
         }
     }
 
@@ -214,7 +276,7 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @param player player performing actions, Player
      */
     private void handleGetPlayerStatus(Player player) {
-        System.out.printf("\nDisplaying the status of player: %s\n", player.getIcon().toUpperCase());
+        System.out.printf("\nDisplaying the status of player: %s\n", player.getIconName().toUpperCase());
         System.out.println(player + "\n");
     }
 
@@ -240,12 +302,12 @@ public class BoardFrame extends JFrame implements BoardView  {
 
         System.out.println("\nBankrupt Players:");
         for (Player bankruptPlayer: bankruptPlayers){
-            System.out.printf("\tPlayer %s, $%d\n", bankruptPlayer.getIcon().toUpperCase(), bankruptPlayer.getCash());
+            System.out.printf("\tPlayer %s, $%d\n", bankruptPlayer.getIconName().toUpperCase(), bankruptPlayer.getCash());
         }
 
         System.out.println("\nNon Bankrupt Players:");
         for (Player nonBankruptPlayer: nonBankruptPlayers){
-            System.out.printf("\tPlayer %s, $%d\n", nonBankruptPlayer.getIcon().toUpperCase(),
+            System.out.printf("\tPlayer %s, $%d\n", nonBankruptPlayer.getIconName().toUpperCase(),
                     nonBankruptPlayer.getCash());
         }
         System.out.println("\n");
@@ -267,7 +329,7 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @param player player performing actions, Player
      */
     private void handleRollingDoubles(Player player){
-        System.out.printf("Player %s rolled a double\n", player.getIcon());
+        System.out.printf("Player %s rolled a double\n", player.getIconName());
     }
 
     /**
@@ -294,11 +356,11 @@ public class BoardFrame extends JFrame implements BoardView  {
         if (result){
             System.out.printf("You have successfully paid %d$ to %s\n",
                     fees,
-                    boardCell.getOwner().getIcon().toUpperCase());
+                    boardCell.getOwner().getIconName().toUpperCase());
         }
         else{
             System.out.printf("You cannot currently pay fees to %s. You must pay %d$ and you only have %d$ remaining\n",
-                    boardCell.getOwner().getIcon(),
+                    boardCell.getOwner().getIconName(),
                     fees,
                     player.getCash());
         }
@@ -318,7 +380,7 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @param player player forfeiting, Player
      */
     private void handleForfeitedPlayer(Player player) {
-        System.out.printf("Player %s has forfeited the game!\n", player.getIcon().toUpperCase());
+        System.out.printf("Player %s has forfeited the game!\n", player.getIconName().toUpperCase());
     }
 
     /**
@@ -331,10 +393,10 @@ public class BoardFrame extends JFrame implements BoardView  {
         System.out.println("GAME OVER");
         players.sort(Comparator.comparingInt(Player::getRank));
 
-        System.out.printf("Player %s won the game!\n", players.get(0).getIcon().toUpperCase());
+        System.out.printf("Player %s won the game!\n", players.get(0).getIconName().toUpperCase());
         for (Player player: players){
             if (player.isBankrupt()) {
-                System.out.printf("Player %s has the rank %d\n", player.getIcon().toUpperCase(), player.getRank());
+                System.out.printf("Player %s has the rank %d\n", player.getIconName().toUpperCase(), player.getRank());
             }
         }
     }

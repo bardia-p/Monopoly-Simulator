@@ -54,7 +54,7 @@ public class BoardModel {
     /**
      * Keeps track of the possible board statuses.
      */
-    public enum Status {GET_NUM_PLAYERS, INITIALIZE_BOARD, INITIALIZE_MONOPOLY, INITIALIZE_PLAYERS, GET_COMMAND, PLAYER_ROLL,
+    public enum Status {GET_NUM_PLAYERS, CREATE_PLAYER_ICONS, INITIALIZE_BOARD, INITIALIZE_MONOPOLY, INITIALIZE_PLAYERS, GET_COMMAND, PLAYER_ROLL,
         PLAYER_DOUBLE_ROLL, PLAYER_MOVE, BUY, SELL, PAY_FEES, PLAYER_STATUS, CELL_STATUS, BOARD_STATUS, PLAYER_FORFEIT,
         PASS_TURN, GAME_OVER}
     /**
@@ -83,6 +83,39 @@ public class BoardModel {
         }
     }
 
+    public enum Icon{
+        BOOT ("boot","images/icons/boot.png"),
+        IRON ("iron","images/icons/iron.png"),
+        SCOTTIE_DOG ("scottie dog","images/icons/scottie_dog.png"),
+        BATTLESHIP ("battleship", "images/icons/battleship.png"),
+        TOP_HAT ("top hat", "images/icons/top_hat.png"),
+        WHEELBORROW ("wheelborrow", "images/icons/wheelborrow.png"),
+        THIMBLE ("thimble","images/icons/thimble.png"),
+        BANK("bank", "");
+
+        private final String name;
+        private final String imgPath;
+        private boolean used;
+
+        Icon(String name, String imgPath){
+            this.name = name;
+            this.imgPath = imgPath;
+            this.used = false;
+        }
+
+        public String getImgPath(){
+            return imgPath;
+        }
+
+        public String getName(){ return name;}
+
+        public boolean getUsed(){return used;}
+
+        public void setUsed(){
+            used = true;
+        }
+    }
+
     /**
      * Constructor for BoardModel, sets all values
      * @author Sarah Chow 101143033
@@ -95,7 +128,7 @@ public class BoardModel {
         cells = new ArrayList<>();
         players = new ArrayList<>();
         dice =  new int[2];
-        bank = new Player("Bank", "Bank");
+        bank = new Player("Bank", Icon.BANK);
         gameFinish = false;
         turn = null;
         numPlayers = 0;
@@ -214,6 +247,11 @@ public class BoardModel {
      */
     private void initiatePlayers(){
         sendBoardUpdate(new BoardEvent(this, Status.INITIALIZE_PLAYERS, numPlayers));
+        sendBoardUpdate(new BoardEvent(this, players, Status.CREATE_PLAYER_ICONS));
+
+        for (Player p : players){
+            move(p, 0);
+        }
     }
 
     /**

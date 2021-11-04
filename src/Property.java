@@ -90,7 +90,7 @@ public class Property extends BoardCell {
                 "\n\trent='" + rent + '\'';
 
         if (super.getOwner() != null){
-            propertyInfo += "\n\tproperty owner='" + super.getOwner().getIcon() + '\'';
+            propertyInfo += "\n\tproperty owner='" + super.getOwner().getIconName() + '\'';
 
         } else {
             propertyInfo += "\n\tproperty owner='no owner'";
