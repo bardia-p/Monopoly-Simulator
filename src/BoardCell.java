@@ -24,10 +24,12 @@ public abstract class BoardCell {
      * Keeps track of the cell type.
      */
     private final CellType type;
+
+    private String imgName;
     /**
      * Keeps track of all the possible cell types.
      */
-    public enum CellType {PROPERTY, GO, FREE_PARKING, JAIL, TAX}
+    public enum CellType {PROPERTY, GO, FREE_PARKING, JAIL, TAX, UTILITY, RAILROAD, GO_TO_JAIL}
 
     /**
      * The constructor for board cell.
@@ -36,10 +38,11 @@ public abstract class BoardCell {
      * @param owner keeps track of the cell owner, Player
      * @param type keeps track of the cell type, CellType
      */
-    public BoardCell(String name, Player owner, CellType type){
+    public BoardCell(String name, Player owner, CellType type, String imgName){
         this.name = name;
         this.owner = owner;
         this.type = type;
+        this.imgName = imgName;
     }
 
     /**
@@ -83,5 +86,9 @@ public abstract class BoardCell {
      */
     public CellType getType(){
         return type;
+    }
+
+    public String getImgName(){
+        return imgName;
     }
 }

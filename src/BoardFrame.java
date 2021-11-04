@@ -1,13 +1,17 @@
-
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 /**
  * Group 3
- * SYSC 3110 - Milestone 1 BoardListener Class
+ * SYSC 3110 - Milestone 1 BoardFrame Class
  *
- * This document is the BoardListener. This class has the BoardModel and BoardController. BoardListener
+ * This document is the BoardFrame. This class has the BoardModel and BoardController. BoardFrame
  * handles outputting information for the user to see and formatting that output.
  *
  * @author Sarah Chow 101143033
@@ -16,7 +20,7 @@ import java.util.List;
  * @author Owen VanDusen 101152022
  * @version 1.0
  */
-public class BoardListener implements BoardView {
+public class BoardFrame extends JFrame implements BoardView  {
     /**
      * Keeps track of the board model.
      */
@@ -26,6 +30,12 @@ public class BoardListener implements BoardView {
      */
     BoardController controller;
 
+    private List<JPanel> boardCells;
+
+    public static final int SIZE = 11;
+
+    public static final String BACKGROUND_COLOR = "#cbe4d0";
+
     /**
      * Constructor for the Board listener, creates the board model, adds the board listener to the board model,
      * creates the board controller and runs the play method.
@@ -34,11 +44,20 @@ public class BoardListener implements BoardView {
      * @author Bardia Parmoun 101143006
      * @author Owen VanDusen 10115202
      */
-    public BoardListener(){
+    public BoardFrame(){
+        super("Rich Uncle Pennybags!");
+        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+        boardCells = new ArrayList<>();
+
         model = new BoardModel();
         model.addBoardView(this);
         controller = new BoardController();
+
+        this.setVisible(true);
+
         model.play();
+
     }
 
     /**
@@ -62,8 +81,76 @@ public class BoardListener implements BoardView {
             case PASS_TURN -> handleCurrentPlayerChange();
             case PLAYER_FORFEIT -> handleForfeitedPlayer(e.getPlayer());
             case GAME_OVER -> handleWinner(e.getPlayers());
+            case INITIALIZE_BOARD -> constructBoard(e.getCells());
             default -> controller.eventListener(e);
         }
+    }
+
+    private void constructBoard(List<BoardCell> cells) {
+        // Constructing the panels
+        int row = SIZE - 1;
+        int col = SIZE - 1;
+        int row_step = 0;
+        int col_step = -1;
+        int direction = GridBagConstraints.WEST;
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new GridBagLayout());
+        mainPanel.setBackground(Color.decode(BACKGROUND_COLOR));
+        for (BoardCell cell: cells) {
+            try{
+                if (cell.getName().equals("JAIL")){
+                    row = SIZE- 1;
+                    col = 0;
+                    row_step = -1;
+                    col_step = 0;
+                    direction = GridBagConstraints.NORTH;
+                } else if (cell.getName().equals("FREE PARKING")) {
+                    row = 0;
+                    col = 0;
+                    row_step = 0;
+                    col_step = 1;
+                    direction = GridBagConstraints.EAST;
+                } else if (cell.getName().equals("GO TO JAIL")) {
+                    row = 0;
+                    col = SIZE - 1;
+                    row_step = 1;
+                    col_step = 0;
+                    direction = GridBagConstraints.SOUTH;
+                }
+
+                BufferedImage image = ImageIO.read(getClass().getResource(cell.getImgName()));
+                JLabel label = new JLabel(new ImageIcon(image));
+                GridBagConstraints c = new GridBagConstraints();
+                c.gridx = col;
+                c.gridy = row;
+                c.fill = GridBagConstraints.HORIZONTAL;
+                c.anchor = direction;
+                c.insets = new Insets(0,0,0,0);
+
+                JPanel panel = new JPanel();
+                panel.setBackground(Color.decode(BACKGROUND_COLOR));
+
+                panel.add(label);
+                boardCells.add(panel);
+
+                mainPanel.add(panel, c);
+
+                System.out.println(row + " " + col);
+
+                row += row_step;
+                col += col_step;
+            } catch (IOException e) {
+                System.out.println(e);
+                System.out.println("Could not find the image!");;
+            }
+        }
+
+        JScrollPane productPanelWithScroll = new JScrollPane(mainPanel,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
+        // adding all the components to the frame
+        this.getContentPane().add(productPanelWithScroll,BorderLayout.CENTER);
+        this.pack();
     }
 
     /**
@@ -258,6 +345,6 @@ public class BoardListener implements BoardView {
      * @param args args
      */
     public static void main(String[] args) {
-        new BoardListener();
+        new BoardFrame();
     }
 }

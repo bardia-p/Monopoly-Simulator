@@ -56,6 +56,8 @@ public class BoardEvent extends EventObject {
      */
     private List<Player> players;
 
+    private List<BoardCell> cells;
+
     /**
      * Constructor for the Board event, instantiates the board model, the type of event, the relevant player, and the
      * command chosen by the player. Mainly used for getting the player's command
@@ -126,7 +128,7 @@ public class BoardEvent extends EventObject {
      * @param type the status enum, BoardModel.Status
      * @param players the list of the players, List<Player>
      */
-    public BoardEvent(BoardModel model, BoardModel.Status type, List<Player> players){
+    public BoardEvent(BoardModel model, List<Player> players, BoardModel.Status type){
         this(model, type);
         this.players = players;
     }
@@ -157,6 +159,11 @@ public class BoardEvent extends EventObject {
         this.value = value;
     }
 
+    public BoardEvent(BoardModel model, BoardModel.Status type, List<BoardCell> cells){
+        this(model, type);
+        this.cells = cells;
+    }
+
     /**
      * Constructor for the Board event, instantiates the board model and the type of event. Mainly used for events
      * that require no inputs such as a board status
@@ -174,6 +181,7 @@ public class BoardEvent extends EventObject {
         this.commands = new ArrayList<>();
         this.players = new ArrayList<>();
         this.dice = new int[2];
+        this.cells = new ArrayList<>();
     }
 
     /**
@@ -246,5 +254,9 @@ public class BoardEvent extends EventObject {
      */
     public int[] getDice(){
         return dice;
+    }
+
+    public List<BoardCell> getCells(){
+        return cells;
     }
 }

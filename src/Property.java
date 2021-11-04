@@ -36,8 +36,8 @@ public class Property extends BoardCell {
      * @param price Property price, int
      * @param rent Property rent, int
      */
-    Property(String name, int price, int rent){
-        super(name, null, CellType.PROPERTY);
+    Property(String name, int price, int rent, String imgName){
+        super(name, null, CellType.PROPERTY, imgName);
         this.price = price;
         this.rent = rent;
         this.recentlyChanged = false;
