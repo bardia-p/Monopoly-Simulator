@@ -51,6 +51,7 @@ public class BoardModel {
      * Keeps track of the bank player.
      */
     private final Player bank;
+
     /**
      * Keeps track of the possible board statuses.
      */
@@ -89,7 +90,7 @@ public class BoardModel {
         SCOTTIE_DOG ("scottie dog","images/icons/scottie_dog.png"),
         BATTLESHIP ("battleship", "images/icons/battleship.png"),
         TOP_HAT ("top hat", "images/icons/top_hat.png"),
-        WHEELBORROW ("wheelborrow", "images/icons/wheelborrow.png"),
+        WHEELBARROW ("wheelbarrow", "images/icons/wheelbarrow.png"),
         THIMBLE ("thimble","images/icons/thimble.png"),
         BANK("bank", "");
 
@@ -132,6 +133,18 @@ public class BoardModel {
         gameFinish = false;
         turn = null;
         numPlayers = 0;
+    }
+
+    public void sendCommand(String command) {
+        if(command.equals(BoardFrame.actionCommands.ROLL.getStringRep())){
+            roll(turn);
+        }
+        if(command.equals(BoardFrame.actionCommands.PASS.getStringRep())){
+            //passTurn(); //pass a player?
+        }
+        else if(command.equals(BoardFrame.actionCommands.NEW_GAME.getStringRep())){
+            play();
+        }
     }
 
     /**

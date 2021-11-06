@@ -1,3 +1,5 @@
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.*;
 
 /**
@@ -13,7 +15,7 @@ import java.util.*;
  * @author Owen VanDusen 101152022
  * @version 1.0
  */
-public class BoardController  {
+public class BoardController  implements ActionListener {
     /**
      * Keeps track of the board model.
      */
@@ -28,9 +30,9 @@ public class BoardController  {
      * @author Bardia Parmoun 101143006
      * @author Owen VanDusen 101152022
      */
-    public BoardController(){}
-
-
+    public BoardController(BoardModel bm){
+        boardModel = bm;
+    }
 
     /**
      * Calls a different method depending on which board event was passed to the method
@@ -234,5 +236,11 @@ public class BoardController  {
                 }
             }
         }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        String command = e.getActionCommand();
+        boardModel.sendCommand(command);
     }
 }

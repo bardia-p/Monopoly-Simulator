@@ -33,6 +33,13 @@ public class BoardFrame extends JFrame implements BoardView  {
     private List<JPanel> boardCells;
     private Map<Player, JLabel> playerLabels;
 
+    // JMenu
+    private JMenuBar menuBar;
+    private JMenu file;
+    private JMenuItem newGame;
+
+    // Commands
+    private List<JButton> commandButtons;
 
     public static final int SIZE = 11;
 
@@ -42,6 +49,24 @@ public class BoardFrame extends JFrame implements BoardView  {
 
     private JLayeredPane layeredPane;
 
+    public enum actionCommands {
+        ROLL("roll"),
+        NEW_GAME("newgame"),
+        PASS("pass");
+
+        private String stringRep;
+
+        actionCommands(String stringRep){
+            this.stringRep = stringRep;
+        }
+
+        public String getStringRep(){
+            return stringRep;
+        }
+
+    };
+
+    private static final int BOARD_SHIFT = 75;
 
     /**
      * Constructor for the Board listener, creates the board model, adds the board listener to the board model,
@@ -61,11 +86,11 @@ public class BoardFrame extends JFrame implements BoardView  {
         layeredPane.setOpaque(true);
         getContentPane().add(layeredPane);
         addWindowListener(getWindowAdapter());
-        layeredPane.setPreferredSize(new Dimension(1000,750));
+        layeredPane.setPreferredSize(new Dimension(1000,900));
         mainPanel = new JPanel();
         mainPanel.setLayout(new GridBagLayout());
         mainPanel.setBackground(Color.decode(BACKGROUND_COLOR));
-        mainPanel.setBounds(0, 0, 750, 750);
+        mainPanel.setBounds(0, 75, 750, 750);
 
         layeredPane.add(mainPanel,0);
 
@@ -75,8 +100,23 @@ public class BoardFrame extends JFrame implements BoardView  {
 
         model = new BoardModel();
         model.addBoardView(this);
-        controller = new BoardController();
+        controller = new BoardController(model);
 
+        // JMenu
+        menuBar = new JMenuBar();
+        menuBar.setBounds(0,0, 1000, 25);
+        file = new JMenu("File");
+        newGame = new JMenuItem("New Game");
+        file.add(newGame);
+        menuBar.add(file);
+        layeredPane.add(menuBar);
+        newGame.addActionListener(controller);
+        //newGame.setActionCommand(actionCommands.NEW_GAME.getStringRep());
+
+        //Commands
+        commandButtons = new ArrayList<>();
+
+        this.pack();
         this.setVisible(true);
 
         model.play();
@@ -87,6 +127,7 @@ public class BoardFrame extends JFrame implements BoardView  {
         return new WindowAdapter() {
             @Override
             public void windowDeiconified(WindowEvent we) {
+                layeredPane.moveToFront(mainPanel);
                 for (JLabel label: playerLabels.values())
                 layeredPane.moveToFront(label);
             }
@@ -129,6 +170,59 @@ public class BoardFrame extends JFrame implements BoardView  {
     }
 
     private void constructBoard(List<BoardCell> cells) {
+        // Commands
+        JPanel commandsPanel = new JPanel(new GridLayout(1,7));
+        commandsPanel.setBounds(0, 30, 600, 20);
+
+        JButton rollButton = new JButton("Roll");
+        rollButton.setEnabled(true);
+        rollButton.setActionCommand(actionCommands.ROLL.getStringRep());
+        rollButton.addActionListener(controller);
+        commandButtons.add(rollButton);
+
+        JButton passButton = new JButton("Pass");
+        passButton.setEnabled(true);
+        passButton.addActionListener(controller);
+        passButton.setActionCommand(actionCommands.PASS.getStringRep());
+        commandButtons.add(passButton);
+
+        JButton forfeitButton = new JButton("Forfeit");
+        forfeitButton.setEnabled(false);
+        forfeitButton.addActionListener(controller);
+        commandButtons.add(forfeitButton);
+
+
+        JButton buyButton = new JButton("Buy");
+        buyButton.setEnabled(false);
+        buyButton.addActionListener(controller);
+        commandButtons.add(buyButton);
+
+        JButton sellButton = new JButton("Sell");
+        sellButton.setEnabled(false);
+        sellButton.addActionListener(controller);
+        commandButtons.add(sellButton);
+
+        JButton payRentButton = new JButton("Pay Rent");
+        payRentButton.setEnabled(false);
+        payRentButton.addActionListener(controller);
+        commandButtons.add(payRentButton);
+
+        JButton payTaxButton = new JButton("PayTax");
+        payTaxButton.setEnabled(false);
+        payTaxButton.addActionListener(controller);
+        commandButtons.add(payTaxButton);
+
+
+        commandsPanel.add(rollButton);
+        commandsPanel.add(passButton);
+        commandsPanel.add(forfeitButton);
+        commandsPanel.add(buyButton);
+        commandsPanel.add(sellButton);
+        commandsPanel.add(payRentButton);
+        commandsPanel.add(payTaxButton);
+
+        layeredPane.add(commandsPanel);
+
         // Constructing the panels
         int row = SIZE - 1;
         int col = SIZE - 1;
@@ -222,10 +316,11 @@ public class BoardFrame extends JFrame implements BoardView  {
                 JPanel currentCell = boardCells.get(currCell.getIndex());
 
                 Rectangle cellPosition = currentCell.getBounds();
+                //System.out.println(cellPosition.x + " " + cellPosition.y);
 
                 int index = (int) new ArrayList(playerLabels.keySet()).indexOf(player);
-                int x = cellPosition.x + 3*cellPosition.width/4 - 10 * (2 +index);
-                int y = cellPosition.y + 1*cellPosition.height/2 - 10 * (2 +index);
+                int x = cellPosition.x + 3*cellPosition.width/4 - 30 - 5 * index;
+                int y = cellPosition.y + 1*cellPosition.height/2 - 30 - 5 * index + BOARD_SHIFT;
                 playerLabels.get(player).setBounds(x, y, 50, 50);
                 layeredPane.moveToFront(playerLabels.get(player));
 

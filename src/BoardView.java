@@ -11,6 +11,8 @@
  * @author Owen VanDusen 101152022
  * @version 1.0
  */
+
+
 public interface BoardView {
     void handleBoardUpdate(BoardEvent e);
 }
