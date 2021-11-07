@@ -193,20 +193,6 @@ public class BoardFrame extends JFrame implements BoardView  {
                 b.setEnabled(false);
             }
         }
-
-//        for (BoardModel.Command command: commands){
-//            availableCommands += command.getStringCommand() + ", ";
-//        }
-
-//        availableCommands = availableCommands.substring(0, availableCommands.length() - 2);
-//
-//        for(JButton b: commandButtons){
-//            if(b)
-//        }
-//        System.out.println("commands?");
-//        for (BoardModel.Command command: commands){
-//            availableCommands += command.getStringCommand() + ", ";
-//        }
     }
 
     private void getNumPlayers(){
@@ -392,11 +378,13 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @param result if the player can afford the property, boolean
      */
     private void handleBuyProperty(Player player, Property property, boolean result) {
+        String buyMessage = "";
         if (result){
-            System.out.printf("\nPlayer %s bought %s\n", player.getIconName().toUpperCase(), property.getName());
+            buyMessage = "Player " + player.getIconName().toUpperCase() + " bought " + property.getName();
         } else {
-            System.out.printf("\nPlayer %s cannot afford %s\n", player.getIconName().toUpperCase(), property.getName());
+            buyMessage = "Player " + player.getIconName().toUpperCase() + " cannot afford " + property.getName();
         }
+        JOptionPane.showMessageDialog(null, buyMessage, "BUY PROPERTY", JOptionPane.PLAIN_MESSAGE);
     }
 
     /**
@@ -481,12 +469,11 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @author Sarah Chow 101143033
      */
     private void handleWelcomeMonopoly() {
-        System.out.println("WELCOME TO MONOPOLY");
-        System.out.println("-------------------------------------------------------------");
-        System.out.println("In this interactive business game you will try to outwit your\n" +
+        String welcomeMessage = "In this interactive business game you will try to outwit your\n" +
                 "opponents by making them go bankrupt while purchasing properties\n" +
-                "around the board. Spend wisely and aim for a TOTAL MONOPOLY.");
-        System.out.println("-------------------------------------------------------------");
+                "around the board. Spend wisely and aim for a TOTAL MONOPOLY.";
+        JOptionPane.showMessageDialog(null, welcomeMessage, "WELCOME TO MONOPOLY",
+                JOptionPane.PLAIN_MESSAGE);
     }
 
     /**
@@ -497,17 +484,16 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @param result if the player can afford rent, boolean
      */
     private void handlePayFees(BoardCell boardCell, Player player, int fees,  boolean result) {
+        String feesMessage = "";
         if (result){
-            System.out.printf("You have successfully paid %d$ to %s\n",
-                    fees,
-                    boardCell.getOwner().getIconName().toUpperCase());
+            feesMessage = "You have successfully paid $" + fees + " to " +
+                    boardCell.getOwner().getIconName().toUpperCase();
         }
         else{
-            System.out.printf("You cannot currently pay fees to %s. You must pay %d$ and you only have %d$ remaining\n",
-                    boardCell.getOwner().getIconName(),
-                    fees,
-                    player.getCash());
+            feesMessage = "You cannot currently pay fees to " + boardCell.getOwner().getIconName()
+                    + ". You must pay $" + fees + " and you only have $" + player.getCash() + "remaining";
         }
+        JOptionPane.showMessageDialog(null, feesMessage, "PAY FEES", JOptionPane.PLAIN_MESSAGE);
     }
 
     /**
@@ -533,16 +519,17 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @param players list of players in the order they forfeit the game, List<Player>
      */
     private void handleWinner(List<Player> players) {
-        System.out.println("-------------------------------------------------------------");
-        System.out.println("GAME OVER");
+        String gameOverMessage = "";
         players.sort(Comparator.comparingInt(Player::getRank));
 
-        System.out.printf("Player %s won the game!\n", players.get(0).getIconName().toUpperCase());
+        gameOverMessage += "Player " + players.get(0).getIconName().toUpperCase() + " won the game!\n";
         for (Player player: players){
             if (player.isBankrupt()) {
-                System.out.printf("Player %s has the rank %d\n", player.getIconName().toUpperCase(), player.getRank());
+                gameOverMessage += "Player " + player.getIconName().toUpperCase() +
+                        " has the rank" + player.getRank() + "\n";
             }
         }
+        JOptionPane.showMessageDialog(null, gameOverMessage, "GAME OVER!", JOptionPane.PLAIN_MESSAGE);
     }
 
     /**

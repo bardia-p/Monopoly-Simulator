@@ -140,7 +140,7 @@ public class BoardModel {
             roll(turn); //works!
         }
         else if(command.equals(BoardFrame.actionCommands.PASS.getStringRep())){
-            passTurn(turn); // broken
+            passTurn(turn); // works!
         }
         else if(command.equals((BoardFrame.actionCommands.FORFEIT.getStringRep()))){
             forfeit(turn);  //works!
