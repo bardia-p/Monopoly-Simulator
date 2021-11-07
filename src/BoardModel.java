@@ -52,6 +52,7 @@ public class BoardModel {
      * Keeps track of the bank player.
      */
     private final Player bank;
+
     /**
      * Keeps track of the possible board statuses.
      */
@@ -71,7 +72,8 @@ public class BoardModel {
         ROLL_AGAIN ("roll"),
         CELL_STATUS ("cell status"),
         FORFEIT ("forfeit"),
-        PAY_TAX ("pay tax");
+        PAY_TAX ("pay tax"),
+        REPAINT("repaint");
 
         private final String stringCommand;
 
@@ -93,7 +95,7 @@ public class BoardModel {
         SCOTTIE_DOG ("scottie dog","images/icons/scottie_dog.png"),
         BATTLESHIP ("battleship", "images/icons/battleship.png"),
         TOP_HAT ("top hat", "images/icons/top_hat.png"),
-        WHEELBORROW ("wheelborrow", "images/icons/wheelborrow.png"),
+        WHEELBARROW ("wheelbarrow", "images/icons/wheelbarrow.png"),
         THIMBLE ("thimble","images/icons/thimble.png"),
         BANK("bank", "");
 
@@ -138,9 +140,42 @@ public class BoardModel {
         numPlayers = 0;
     }
 
+    /**
+     * Select what method to call based on the given command
+     * @author Kyra Lothrop 101145872
+     * @param command
+     */
     public void sendCommand(String command) {
-        if(command.equals(BoardFrame.actionCommands.REPAINT.getStringRep())){
-            repaint(turn); //works!
+        if(command.equals(Command.REPAINT.getStringCommand())){
+            repaint(turn);
+            getCommand(turn);
+        }
+        else if(command.equals(Command.ROLL_AGAIN.getStringCommand())){
+            roll(turn);
+            getCommand(turn);
+        }
+        else if(command.equals(Command.PASS.getStringCommand())){
+            passTurn(turn);
+            getCommand(turn);
+        }
+        else if(command.equals((Command.FORFEIT.getStringCommand()))){
+            forfeit(turn);
+        }
+        else if(command.equals((Command.BUY.getStringCommand()))){
+            buyProperty((Property) turn.getCurrentCell() , turn);
+            getCommand(turn);
+        }
+        else if(command.equals((Command.SELL.getStringCommand()))){
+            //sellProperty((Property) //must prompt user for what to sell
+            getCommand(turn);
+        }
+        else if(command.equals((Command.PAY_RENT.getStringCommand()))){
+            payFees((Property) turn.getCurrentCell(), turn);
+            getCommand(turn);
+        }
+        else if(command.equals((Command.PAY_TAX.getStringCommand()))){
+            payFees((Tax) turn.getCurrentCell(), turn);
+            getCommand(turn);
         }
     }
 
@@ -375,9 +410,9 @@ public class BoardModel {
         sendBoardUpdate(new BoardEvent(this, Status.PLAYER_MOVE, player, amountToMove, player.getPosition()));
         int newPlayerPosition = (player.getPosition() + amountToMove) % SIZE_OF_BOARD;
         player.setPosition(newPlayerPosition);
-
-        //debug
-        System.out.printf("Player %s is currently at: %s\n", player.getIconName(), cells.get(newPlayerPosition).getName());
+        player.setCurrentCell(cells.get(newPlayerPosition));
+//        //debug
+//        System.out.printf("Player %s is currently at: %s\n", player.getIconName(), cells.get(newPlayerPosition).getName());
     }
 
     /**
@@ -551,9 +586,11 @@ public class BoardModel {
                 if (!player.isBankrupt()){
                     roll(player);
 
+                    getCommand(player);
+
                     // Keeps prompting the player for commands until their turn is over.
                     while (turn != null){
-                        getCommand(player);
+
                     }
                 }
 
