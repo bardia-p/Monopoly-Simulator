@@ -72,7 +72,8 @@ public class BoardModel {
         ROLL_AGAIN ("roll"),
         CELL_STATUS ("cell status"),
         FORFEIT ("forfeit"),
-        PAY_TAX ("pay tax");
+        PAY_TAX ("pay tax"),
+        REPAINT("repaint");
 
         private final String stringCommand;
 
@@ -145,33 +146,36 @@ public class BoardModel {
      * @param command
      */
     public void sendCommand(String command) {
-        // change to switch statement?
-        if(command.equals(BoardFrame.actionCommands.REPAINT.getStringRep())){
-            repaint(turn); //works!
+        if(command.equals(Command.REPAINT.getStringCommand())){
+            repaint(turn);
+            getCommand(turn);
         }
-        else if(command.equals(BoardFrame.actionCommands.ROLL.getStringRep())){
+        else if(command.equals(Command.ROLL_AGAIN.getStringCommand())){
             roll(turn);
+            getCommand(turn);
         }
-        else if(command.equals(BoardFrame.actionCommands.PASS.getStringRep())){
+        else if(command.equals(Command.PASS.getStringCommand())){
             passTurn(turn);
+            getCommand(turn);
         }
-        else if(command.equals((BoardFrame.actionCommands.FORFEIT.getStringRep()))){
+        else if(command.equals((Command.FORFEIT.getStringCommand()))){
             forfeit(turn);
         }
-        else if(command.equals((BoardFrame.actionCommands.BUY.getStringRep()))){
+        else if(command.equals((Command.BUY.getStringCommand()))){
             buyProperty((Property) turn.getCurrentCell() , turn);
+            getCommand(turn);
         }
-        else if(command.equals((BoardFrame.actionCommands.SELL.getStringRep()))){
+        else if(command.equals((Command.SELL.getStringCommand()))){
             //sellProperty((Property) //must prompt user for what to sell
+            getCommand(turn);
         }
-        else if(command.equals((BoardFrame.actionCommands.PAY_RENT.getStringRep()))){
+        else if(command.equals((Command.PAY_RENT.getStringCommand()))){
             payFees((Property) turn.getCurrentCell(), turn);
+            getCommand(turn);
         }
-        else if(command.equals((BoardFrame.actionCommands.PAY_TAX.getStringRep()))){
+        else if(command.equals((Command.PAY_TAX.getStringCommand()))){
             payFees((Tax) turn.getCurrentCell(), turn);
-        }
-        else if(command.equals(BoardFrame.actionCommands.NEW_GAME.getStringRep())){
-            play(); // does not work for now
+            getCommand(turn);
         }
     }
 
@@ -582,9 +586,11 @@ public class BoardModel {
                 if (!player.isBankrupt()){
                     roll(player);
 
+                    getCommand(player);
+
                     // Keeps prompting the player for commands until their turn is over.
                     while (turn != null){
-                        getCommand(player);
+
                     }
                 }
 

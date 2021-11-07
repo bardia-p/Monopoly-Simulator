@@ -73,40 +73,10 @@ public class BoardFrame extends JFrame implements BoardView  {
      * Keeps track of how much the board should be shifted down based on the buttons above it.
      */
     private static final int BOARD_SHIFT_Y = 50;
-
-    // JMenu
-    private JMenuBar menuBar;
-    private JMenu file;
-    private JMenuItem newGame;
-
-    // Commands
-    private List<JButton> commandButtons;
-
     /**
-     * The enum used to keep track of all the possible commands
+     * List of command buttons.
      */
-    public enum actionCommands {
-        ROLL("roll"),
-        NEW_GAME("newgame"),
-        PASS("pass"),
-        FORFEIT("forfeit"),
-        BUY("buy"),
-        SELL("sell"),
-        PAY_RENT("payrent"),
-        PAY_TAX("paytax"),
-        REPAINT("repaint");
-
-        private String stringRep;
-
-        actionCommands(String stringRep){
-            this.stringRep = stringRep;
-        }
-
-        public String getStringRep(){
-            return stringRep;
-        }
-
-    };
+    private List<JButton> commandButtons;
 
     /**
      * Constructor for the Board listener, creates the board model, adds the board listener to the board model,
@@ -145,17 +115,6 @@ public class BoardFrame extends JFrame implements BoardView  {
 
         controller = new BoardController(model);
 
-        // JMenu
-        menuBar = new JMenuBar();
-        menuBar.setBounds(0,0, 1000, 25);
-        file = new JMenu("File");
-        newGame = new JMenuItem("New Game");
-        file.add(newGame);
-        menuBar.add(file);
-        layeredPane.add(menuBar);
-        newGame.addActionListener(controller);
-        //newGame.setActionCommand(actionCommands.NEW_GAME.getStringRep());
-
         commandButtons = new ArrayList<>();
 
         this.pack();
@@ -192,7 +151,6 @@ public class BoardFrame extends JFrame implements BoardView  {
             case GET_COMMAND -> updateAvailableCommands(e.getPlayer(), (ArrayList<BoardModel.Command>) e.getCommands());     //new
             case PLAYER_MOVE -> handlePlayerGUIMove(e.getPlayer(), e.getValue(), e.getValue2());
             case REPAINT_BOARD -> handleRepaintBoard();
-            default -> controller.eventListener(e);
         }
     }
 
@@ -218,12 +176,11 @@ public class BoardFrame extends JFrame implements BoardView  {
             int newPlayerPosition =  i % BoardModel.SIZE_OF_BOARD;
             showCurrentCell(player, newPlayerPosition);
             try{
-                TimeUnit.MILLISECONDS.sleep(200);
+                TimeUnit.MILLISECONDS.sleep(50);
             }
             catch(Exception e){
                 System.out.println("wait failed");
             }
-
         }
     }
 
@@ -241,6 +198,12 @@ public class BoardFrame extends JFrame implements BoardView  {
     }
 
 
+    /**
+     * Enables the command buttons based on what the user is allowed to do
+     * @author Kyra Lothrop 101145872
+     * @param player
+     * @param commands
+     */
     private void updateAvailableCommands(Player player, ArrayList<BoardModel.Command> commands){
         String availableCommands = "";
 
@@ -251,19 +214,18 @@ public class BoardFrame extends JFrame implements BoardView  {
         availableCommands = availableCommands.substring(0, availableCommands.length() - 2);
 
         for(JButton b: commandButtons){
-            if(b.getText().equals("Roll")){
-                b.setEnabled(true);
-            }
-            else if(availableCommands.contains(b.getText().toLowerCase())){
+            if(availableCommands.contains(b.getText().toLowerCase())){
                 b.setEnabled(true);
             }else{
                 b.setEnabled(false);
             }
         }
-
-
     }
 
+    /**
+     * Get the number of players from the user
+     * @author Kyra Lothrop 101145872
+     */
     private void getNumPlayers(){
         Integer[] numPlayerOptions = {2,3,4,5,6,7,8};
         int numPlayers = (Integer)JOptionPane.showInputDialog(null, "How many people will be playing?", "INITIALIZE GAME DATA",
@@ -271,13 +233,18 @@ public class BoardFrame extends JFrame implements BoardView  {
         model.setNumPlayers(numPlayers);
     }
 
+    /**
+     * Initialize the player names and icons based on user input
+     * @author Kyra Lothrop 101145872
+     * @param numPlayers
+     */
     private void initializePlayers(int numPlayers){
         for (int i = 0; i < numPlayers; i++){
             JTextField playerName = new JTextField();
             Object[] message = {
                     "What's player "+ (i+1) + "'s name?", playerName,
             };
-            int option = JOptionPane.showConfirmDialog(null, message, "Initialize player "+ (i+1), JOptionPane.OK_CANCEL_OPTION);
+            JOptionPane.showConfirmDialog(null, message, "Initialize player "+ (i+1), JOptionPane.OK_CANCEL_OPTION);
 
             Object[] iconOptions = getListOfIconsUpper();
             String playerIcon = (String) JOptionPane.showInputDialog(null, "Select player " + (i+1) + " icon" , "Select Icon",
@@ -287,20 +254,6 @@ public class BoardFrame extends JFrame implements BoardView  {
             model.addPlayer(new Player(playerName.getText(), findPlayerIcon(playerIcon.toLowerCase())));
 
         }
-
-//        for (int i = 0; i < numPlayers; i++){
-//            JTextField playerName = new JTextField();
-//            JTextField playerIcon = new JTextField();
-//            Object[] message = {
-//                    "What's player "+ (i+1) + "'s name?", playerName,
-//                    "Choose an icon: ", playerIcon,
-//            };
-//            int option = JOptionPane.showConfirmDialog(null, message, "Initialize player "+ (i+1), JOptionPane.OK_CANCEL_OPTION);
-//            if (option == JOptionPane.OK_OPTION)
-//            {
-//                model.addPlayer(new Player(playerName.getText(), controller.findPlayerIcon(playerIcon.getText().toLowerCase())));
-//            }
-//        }
     }
 
     /**
@@ -352,25 +305,25 @@ public class BoardFrame extends JFrame implements BoardView  {
             commandsPanel.add(commandButton);
 
             if (buttonsText[i].equals("Roll")){
-                commandButton.setActionCommand(actionCommands.ROLL.getStringRep());
+                commandButton.setActionCommand(BoardModel.Command.ROLL_AGAIN.getStringCommand());
             }
             else if(buttonsText[i].equals("Pass")){
-                commandButton.setActionCommand(actionCommands.PASS.getStringRep());
+                commandButton.setActionCommand(BoardModel.Command.PASS.getStringCommand());
             }
             else if(buttonsText[i].equals("Forfeit")){
-                commandButton.setActionCommand(actionCommands.FORFEIT.getStringRep());
+                commandButton.setActionCommand(BoardModel.Command.FORFEIT.getStringCommand());
             }
             else if(buttonsText[i].equals("Buy")){
-                commandButton.setActionCommand(actionCommands.BUY.getStringRep());
+                commandButton.setActionCommand(BoardModel.Command.BUY.getStringCommand());
             }
             else if(buttonsText[i].equals("Sell")){
-                commandButton.setActionCommand(actionCommands.SELL.getStringRep());
+                commandButton.setActionCommand(BoardModel.Command.SELL.getStringCommand());
             }
             else if(buttonsText[i].equals("Pay Rent")){
-                commandButton.setActionCommand(actionCommands.PAY_RENT.getStringRep());
+                commandButton.setActionCommand(BoardModel.Command.PAY_RENT.getStringCommand());
             }
             else if(buttonsText[i].equals("Pay Tax")){
-                commandButton.setActionCommand(actionCommands.PAY_TAX.getStringRep());
+                commandButton.setActionCommand(BoardModel.Command.PAY_TAX.getStringCommand());
             }
         }
         layeredPane.add(commandsPanel);
@@ -600,7 +553,7 @@ public class BoardFrame extends JFrame implements BoardView  {
         }
         else{
             feesMessage = "You cannot currently pay fees to " + boardCell.getOwner().getIconName()
-                    + ". You must pay $" + fees + " and you only have $" + player.getCash() + "remaining";
+                    + ". You must pay $" + fees + " and you only have $" + player.getCash() + " remaining";
         }
         JOptionPane.showMessageDialog(null, feesMessage, "PAY FEES", JOptionPane.PLAIN_MESSAGE);
     }
