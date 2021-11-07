@@ -1,5 +1,4 @@
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Group 3
@@ -35,7 +34,7 @@ public class BoardModel {
     /**
      * Keeps track of the size of the board.
      */
-    public static final int SIZE_OF_BOARD = 40;
+    private static final int SIZE_OF_BOARD = 25;
     /**
      * Keeps track of the views.
      */
@@ -55,9 +54,9 @@ public class BoardModel {
     /**
      * Keeps track of the possible board statuses.
      */
-    public enum Status {GET_NUM_PLAYERS, CREATE_PLAYER_ICONS, INITIALIZE_BOARD, INITIALIZE_MONOPOLY, INITIALIZE_PLAYERS, GET_COMMAND, PLAYER_ROLL,
+    public enum Status {GET_NUM_PLAYERS, INITIALIZE_MONOPOLY, INITIALIZE_PLAYERS, GET_COMMAND, PLAYER_ROLL,
         PLAYER_DOUBLE_ROLL, PLAYER_MOVE, BUY, SELL, PAY_FEES, PLAYER_STATUS, CELL_STATUS, BOARD_STATUS, PLAYER_FORFEIT,
-        PASS_TURN, REPAINT_BOARD, GAME_OVER}
+        PASS_TURN, GAME_OVER}
     /**
      * Keeps track of the possible player commands.
      */
@@ -85,42 +84,6 @@ public class BoardModel {
     }
 
     /**
-     * Keeps track of the player icons
-     */
-    public enum Icon{
-        BOOT ("boot","images/icons/boot.png"),
-        IRON ("iron","images/icons/iron.png"),
-        SCOTTIE_DOG ("scottie dog","images/icons/scottie_dog.png"),
-        BATTLESHIP ("battleship", "images/icons/battleship.png"),
-        TOP_HAT ("top hat", "images/icons/top_hat.png"),
-        WHEELBORROW ("wheelborrow", "images/icons/wheelborrow.png"),
-        THIMBLE ("thimble","images/icons/thimble.png"),
-        BANK("bank", "");
-
-        private final String name;
-        private final String imgPath;
-        private boolean used;
-
-        Icon(String name, String imgPath){
-            this.name = name;
-            this.imgPath = imgPath;
-            this.used = false;
-        }
-
-        public String getImgPath(){
-            return imgPath;
-        }
-
-        public String getName(){ return name;}
-
-        public boolean getUsed(){return used;}
-
-        public void setUsed(){
-            used = true;
-        }
-    }
-
-    /**
      * Constructor for BoardModel, sets all values
      * @author Sarah Chow 101143033
      * @author Kyra Lothrop 101145872
@@ -132,18 +95,11 @@ public class BoardModel {
         cells = new ArrayList<>();
         players = new ArrayList<>();
         dice =  new int[2];
-        bank = new Player("Bank", Icon.BANK);
+        bank = new Player("Bank", "Bank");
         gameFinish = false;
         turn = null;
         numPlayers = 0;
     }
-
-    public void sendCommand(String command) {
-        if(command.equals(BoardFrame.actionCommands.REPAINT.getStringRep())){
-            repaint(turn); //works!
-        }
-    }
-
 
     /**
      * Constructor for BoardModel, sets all values
@@ -154,54 +110,47 @@ public class BoardModel {
      */
     private void constructBoard(){
         cells.addAll(Arrays.asList(
-                new Go(200, "images/board/go.jpg"),
-                new Property("Mediterranean Avenue",60,2, "images/board/mediterranean.jpg"),
-                new EmptyCell("Community Chest", BoardCell.CellType.UTILITY, "images/board/chest_1.jpg"),
-                new Property("Baltic Avenue",60,4, "images/board/baltic.jpg"),
-                new Tax( "Income Tax", 200, bank, "images/board/income_tax.jpg"),
-                new EmptyCell("Reading Railroad", BoardCell.CellType.RAILROAD,
-                        "images/board/railroad_1.jpg"),
-                new Property("Oriental Avenue",100,6, "images/board/oriental.jpg"),
-                new EmptyCell("Chance Card", BoardCell.CellType.UTILITY, "images/board/chance_1.jpg"),
-                new Property("Vermont Avenue",100,6, "images/board/vermont.jpg"),
-                new Property("Connecticut Avenue",120,8, "images/board/connecticut.jpg"),
-                new EmptyCell("JAIL", BoardCell.CellType.JAIL, "images/board/jail.jpg"),
-                new Property("St. Charles Place",140,10, "images/board/st_charles.jpg"),
-                new EmptyCell("Electric Company", BoardCell.CellType.UTILITY, "images/board/electric.jpg"),
-                new Property("States Avenue",140,10, "images/board/states_avenue.jpg"),
-                new Property("Virginia Avenue",160,12, "images/board/virginia.jpg"),
-                new EmptyCell("Pennsylvania Railroad", BoardCell.CellType.RAILROAD,
-                        "images/board/railroad_2.jpg"),
-                new Property("St. James Place",180,14, "images/board/st_james.jpg"),
-                new EmptyCell("Community Chest", BoardCell.CellType.UTILITY, "images/board/chest_2.jpg"),
-                new Property("Tennessee Avenue",180,14, "images/board/tennessee.jpg"),
-                new Property("New York Avenue",200,16, "images/board/new_york.jpg"),
-                new EmptyCell("FREE PARKING", BoardCell.CellType.FREE_PARKING,
-                        "images/board/free_parking.jpg"),
-                new Property("Kentucky Avenue",220,18, "images/board/kentucky.jpg"),
-                new EmptyCell("Chance Card", BoardCell.CellType.UTILITY, "images/board/chance_2.jpg"),
-                new Property("Indiana Avenue",220,18, "images/board/indiana.jpg"),
-                new Property("Illinois Avenue",240,20, "images/board/illinois.jpg"),
-                new EmptyCell("B. & O. Railroad", BoardCell.CellType.RAILROAD,
-                        "images/board/railroad_3.jpg"),
-                new Property("Atlantic Avenue",260,22, "images/board/atlantic.jpg"),
-                new Property("Ventnor Avenue",260,22, "images/board/ventnor.jpg"),
-                new EmptyCell("Water Works", BoardCell.CellType.UTILITY, "images/board/water_works.jpg"),
-                new Property("Marvin Garden",280,24, "images/board/marvin.jpg"),
-                new EmptyCell("GO TO JAIL", BoardCell.CellType.GO_TO_JAIL, "images/board/go_to_jail.jpg"),
-                new Property("Pacific Avenue",300,26, "images/board/pacific.jpg"),
-                new Property("North Carolina Avenue",300,26, "images/board/north_carolina.jpg"),
-                new EmptyCell("Community Chest", BoardCell.CellType.UTILITY, "images/board/chest_3.jpg"),
-                new Property("Pennsylvania Avenue",320,28, "images/board/pennsylvania.jpg"),
-                new EmptyCell("Shortline Railroad", BoardCell.CellType.RAILROAD,
-                        "images/board/railroad_4.jpg"),
-                new EmptyCell("Chance Card", BoardCell.CellType.UTILITY, "images/board/chance_3.jpg"),
-                new Property("Park Place",350,35, "images/board/park_place.jpg"),
-                new Tax( "Luxury Tax", 100, bank, "images/board/luxury_tax.jpg"),
-                new Property("Boardwalk",500,50, "images/board/boardwalk.jpg")
+                new Go(200),
+                new Property("Mediterranean Avenue",60,2),
+                // Community Chest here
+                new Property("Baltic Avenue",60,4),
+                new Tax( "Income Tax", 200, bank),
+                // Reading Railroad
+                new Property("Oriental Avenue",100,6),
+                // Chance Card
+                new Property("Vermont Avenue",100,6),
+                new Property("Connecticut Avenue",120,8),
+                // JAIL!
+                new Property("St. Charles Place",140,10),
+                // Electric Company
+                new Property("States Avenue",140,10),
+                new Property("Virginia Avenue",160,12),
+                // Pennsylvania Railroad
+                new Property("St. James Place",180,14),
+                // Community Chest
+                new Property("Tennessee Avenue",180,14),
+                new Property("New York Avenue",200,16),
+                // FREE PARKING
+                new Property("Kentucky Avenue",220,18),
+                // Chance Card
+                new Property("Indiana Avenue",220,18),
+                new Property("Illinois Avenue",240,20),
+                // B. & O. Railroad
+                new Property("Atlantic Avenue",260,22),
+                new Property("Ventnor Avenue",260,22),
+                // Waterworks
+                new Property("Marvin Garden",280,24),
+                // GO TO JAIL ->
+                new Property("Pacific Avenue",300,26),
+                new Property("North Carolina Avenue",300,26),
+                // Community Chest
+                new Property("Pennsylvania Avenue",320,28),
+                // Shortline Railroad
+                // Chance Card
+                new Property("Park Place",350,35),
+                new Tax( "Luxury Tax", 100, bank),
+                new Property("Boardwalk",500,50)
         ));
-
-        sendBoardUpdate(new BoardEvent(this,Status.INITIALIZE_BOARD, cells));
     }
 
     /**
@@ -258,11 +207,6 @@ public class BoardModel {
      */
     private void initiatePlayers(){
         sendBoardUpdate(new BoardEvent(this, Status.INITIALIZE_PLAYERS, numPlayers));
-        sendBoardUpdate(new BoardEvent(this, players, Status.CREATE_PLAYER_ICONS));
-
-        for (Player p : players){
-            move(p, 0);
-        }
     }
 
     /**
@@ -340,10 +284,6 @@ public class BoardModel {
         sendBoardUpdate(new BoardEvent(this, Status.INITIALIZE_MONOPOLY));
     }
 
-    private void repaint(Player turn) {
-        sendBoardUpdate(new BoardEvent(this, Status.REPAINT_BOARD));
-    }
-
     /**
      * Randomly sets the value of two integers between 1-6 to represent rolling two dice. If the player
      * rolls doubles allows them to move again. Calls the move method to move the player.
@@ -372,12 +312,11 @@ public class BoardModel {
      * @param amountToMove distance the player should move, int
      */
     public void move(Player player, int amountToMove){
-        sendBoardUpdate(new BoardEvent(this, Status.PLAYER_MOVE, player, amountToMove, player.getPosition()));
         int newPlayerPosition = (player.getPosition() + amountToMove) % SIZE_OF_BOARD;
         player.setPosition(newPlayerPosition);
+        player.setCurrentCell(cells.get(newPlayerPosition));
 
-        //debug
-        System.out.printf("Player %s is currently at: %s\n", player.getIconName(), cells.get(newPlayerPosition).getName());
+        sendBoardUpdate(new BoardEvent(this, Status.PLAYER_MOVE, player));
     }
 
     /**
@@ -429,7 +368,7 @@ public class BoardModel {
      * @author Owen VanDusen 101152022
      */
     public void getBoardStatus(){
-        sendBoardUpdate(new BoardEvent(this, players, Status.BOARD_STATUS));
+        sendBoardUpdate(new BoardEvent(this, Status.BOARD_STATUS, players));
     }
 
     /**
@@ -530,7 +469,7 @@ public class BoardModel {
      * @author Owen VanDusen 101152022
      */
     public void gameOver(){
-        sendBoardUpdate(new BoardEvent(this, players, Status.GAME_OVER));
+        sendBoardUpdate(new BoardEvent(this, Status.GAME_OVER, players));
     }
 
     /**

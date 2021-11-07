@@ -1,8 +1,3 @@
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +23,7 @@ public class Player {
     /**
      * Keeps track of player icon.
      */
-    private final BoardModel.Icon icon;
+    private final String icon;
     /**
      * Keeps track of player available money.
      */
@@ -80,7 +75,7 @@ public class Player {
      * @param name Player name, String
      * @param icon Player icon, String
      */
-    Player(String name, BoardModel.Icon icon) {
+    Player(String name, String icon) {
         this.bankrupt = false;
         this.name = name;
         this.icon = icon;
@@ -153,21 +148,12 @@ public class Player {
     }
 
     /**
-     * Accessor to get the name of the icon of the player.
+     * Accessor to get the icon of the player.
      * @author Bardia Parmoun 101143006
      * @return icon of player, String
      */
-    public String getIconName(){
-        return icon.getName();
-    }
-
-    /**
-     * Accessor to get the image path of the icon of the player.
-     * @author Bardia Parmoun 101143006
-     * @return image path of player icon, String
-     */
-    public String getIconImgPath(){
-        return icon.getImgPath();
+    public String getIcon(){
+        return icon;
     }
 
     /**
