@@ -36,8 +36,8 @@ public class Property extends BoardCell {
      * @param price Property price, int
      * @param rent Property rent, int
      */
-    Property(String name, int price, int rent){
-        super(name, null, CellType.PROPERTY);
+    Property(String name, int price, int rent, String imgName){
+        super(name, null, CellType.PROPERTY, imgName);
         this.price = price;
         this.rent = rent;
         this.recentlyChanged = false;
@@ -90,7 +90,7 @@ public class Property extends BoardCell {
                 "\n\trent='" + rent + '\'';
 
         if (super.getOwner() != null){
-            propertyInfo += "\n\tproperty owner='" + super.getOwner().getIcon() + '\'';
+            propertyInfo += "\n\tproperty owner='" + super.getOwner().getIconName() + '\'';
 
         } else {
             propertyInfo += "\n\tproperty owner='no owner'";

@@ -25,9 +25,14 @@ public abstract class BoardCell {
      */
     private final CellType type;
     /**
+     * Keeps track of the image path of the cell.
+     */
+    private String imgPath;
+
+    /**
      * Keeps track of all the possible cell types.
      */
-    public enum CellType {PROPERTY, GO, FREE_PARKING, JAIL, TAX}
+    public enum CellType {PROPERTY, GO, FREE_PARKING, JAIL, TAX, UTILITY, RAILROAD, GO_TO_JAIL}
 
     /**
      * The constructor for board cell.
@@ -36,10 +41,11 @@ public abstract class BoardCell {
      * @param owner keeps track of the cell owner, Player
      * @param type keeps track of the cell type, CellType
      */
-    public BoardCell(String name, Player owner, CellType type){
+    public BoardCell(String name, Player owner, CellType type, String imgName){
         this.name = name;
         this.owner = owner;
         this.type = type;
+        this.imgPath = imgName;
     }
 
     /**
@@ -83,5 +89,14 @@ public abstract class BoardCell {
      */
     public CellType getType(){
         return type;
+    }
+
+    /**
+     * Returns the image path of the cell.
+     * @author Bardia Parmoun 101143006
+     * @return the imgPath of the cell, String
+     */
+    public String getImgPath(){
+        return imgPath;
     }
 }
