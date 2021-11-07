@@ -84,50 +84,41 @@ public class BoardController implements ActionListener {
         boardModel.setNumPlayers(numPlayers);
     }
 
-    /**
-     * UI method to initialize players with their respective name and icon.
-     * @author Kyra Lothrop 101145872
-     * @param numPlayers number of players participating, int
-     */
-    private void initializePlayers(int numPlayers){
-        String icon;
+//    /**
+//     * UI method to initialize players with their respective name and icon.
+//     * @author Kyra Lothrop 101145872
+//     * @param numPlayers number of players participating, int
+//     */
+//    private void initializePlayers(int numPlayers){
+//        String icon;
+//
+//        for (int i = 0; i < numPlayers; i++){
+//            Scanner scan2 = new Scanner(System.in);
+//            System.out.printf("What's player %d's name? ", i + 1);
+//            String name = scan2.nextLine();
+//
+//            String remainingIcons = getListOfIconsUpper();
+//
+//            do {
+//                System.out.printf("Choose an icon <%s>: ", remainingIcons);
+//                icon = scan2.nextLine().toUpperCase();
+//            } while (!(remainingIcons.contains(icon)));
+//
+//            BoardModel.Icon playerIcon = findPlayerIcon(icon.toLowerCase());
+//            boardModel.addPlayer(new Player(name, playerIcon));
+//        }
+//        System.out.println("-------------------------------------------------------------");
+//        System.out.println("LETS BEGIN!");
+//
+//    }
 
-        for (int i = 0; i < numPlayers; i++){
-            Scanner scan2 = new Scanner(System.in);
-            System.out.printf("What's player %d's name? ", i + 1);
-            String name = scan2.nextLine();
-
-            String remainingIcons = getListOfIconsUpper();
-
-            do {
-                System.out.printf("Choose an icon <%s>: ", remainingIcons);
-                icon = scan2.nextLine().toUpperCase();
-            } while (!(remainingIcons.contains(icon)));
-
-            BoardModel.Icon playerIcon = findPlayerIcon(icon.toLowerCase());
-            boardModel.addPlayer(new Player(name, playerIcon));
-        }
-        System.out.println("-------------------------------------------------------------");
-        System.out.println("LETS BEGIN!");
-
-    }
-
-    // MADE PUBLIC CHANGE BACK++++++++++++++++++++++++++++=
-    public BoardModel.Icon findPlayerIcon(String icon) {
-        for (BoardModel.Icon ic: BoardModel.Icon.values()){
-            if (ic.getName().equals(icon)) {
-                ic.setUsed();
-                return ic;
-            }
-        }
-        return null;
-    }
 
     /**
      * Displays list of available icons in uppercase letters, looks nice on UI.
      * @author Sarah Chow 101143033
      * @return the remaining icons in uppercase form, String
      */
+    // REMOVE?
     private String getListOfIconsUpper(){
 
         String upperCaseIcon = "";

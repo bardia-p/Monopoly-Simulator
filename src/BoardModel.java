@@ -136,29 +136,30 @@ public class BoardModel {
     }
 
     public void sendCommand(String command) {
+        // change to switch statement?
         if(command.equals(BoardFrame.actionCommands.ROLL.getStringRep())){
-            roll(turn); //works!
+            roll(turn);
         }
         else if(command.equals(BoardFrame.actionCommands.PASS.getStringRep())){
-            passTurn(turn); // works!
+            passTurn(turn);
         }
         else if(command.equals((BoardFrame.actionCommands.FORFEIT.getStringRep()))){
-            forfeit(turn);  //works!
+            forfeit(turn);
         }
         else if(command.equals((BoardFrame.actionCommands.BUY.getStringRep()))){
-            buyProperty((Property) turn.getCurrentCell() , turn);   //works!
+            buyProperty((Property) turn.getCurrentCell() , turn);
         }
         else if(command.equals((BoardFrame.actionCommands.SELL.getStringRep()))){
-            //sellProperty((Property) //what to sell, turn);   //to display
+            //sellProperty((Property) //must prompt user for what to sell
         }
         else if(command.equals((BoardFrame.actionCommands.PAY_RENT.getStringRep()))){
-            payFees((Property) turn.getCurrentCell(), turn);    //kinda works
+            payFees((Property) turn.getCurrentCell(), turn);
         }
         else if(command.equals((BoardFrame.actionCommands.PAY_TAX.getStringRep()))){
-            payFees((Tax) turn.getCurrentCell(), turn); //kinda works
+            payFees((Tax) turn.getCurrentCell(), turn);
         }
         else if(command.equals(BoardFrame.actionCommands.NEW_GAME.getStringRep())){
-            play(); //does not work
+            play(); // does not work for now
         }
     }
 

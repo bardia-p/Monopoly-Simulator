@@ -118,7 +118,6 @@ public class BoardFrame extends JFrame implements BoardView  {
         newGame.addActionListener(controller);
         //newGame.setActionCommand(actionCommands.NEW_GAME.getStringRep());
 
-        //Commands
         commandButtons = new ArrayList<>();
 
         this.pack();
@@ -203,25 +202,66 @@ public class BoardFrame extends JFrame implements BoardView  {
     }
 
     private void initializePlayers(int numPlayers){
-        // TODO make icon options dropdown
-        // TODO make fields required for submit
         for (int i = 0; i < numPlayers; i++){
             JTextField playerName = new JTextField();
-            JTextField playerIcon = new JTextField();
             Object[] message = {
                     "What's player "+ (i+1) + "'s name?", playerName,
-                    "Choose an icon: ", playerIcon,
             };
             int option = JOptionPane.showConfirmDialog(null, message, "Initialize player "+ (i+1), JOptionPane.OK_CANCEL_OPTION);
-            if (option == JOptionPane.OK_OPTION)
-            {
-                model.addPlayer(new Player(playerName.getText(), controller.findPlayerIcon(playerIcon.getText().toLowerCase())));
+
+            Object[] iconOptions = getListOfIconsUpper();
+            String playerIcon = (String) JOptionPane.showInputDialog(null, "Select player " + (i+1) + " icon" , "Select Icon",
+                    JOptionPane.QUESTION_MESSAGE, null, iconOptions, iconOptions[0]);
+            model.setNumPlayers(numPlayers);
+
+            model.addPlayer(new Player(playerName.getText(), findPlayerIcon(playerIcon.toLowerCase())));
+
+        }
+
+//        for (int i = 0; i < numPlayers; i++){
+//            JTextField playerName = new JTextField();
+//            JTextField playerIcon = new JTextField();
+//            Object[] message = {
+//                    "What's player "+ (i+1) + "'s name?", playerName,
+//                    "Choose an icon: ", playerIcon,
+//            };
+//            int option = JOptionPane.showConfirmDialog(null, message, "Initialize player "+ (i+1), JOptionPane.OK_CANCEL_OPTION);
+//            if (option == JOptionPane.OK_OPTION)
+//            {
+//                model.addPlayer(new Player(playerName.getText(), controller.findPlayerIcon(playerIcon.getText().toLowerCase())));
+//            }
+//        }
+    }
+
+    /**
+     * Displays list of available icons in uppercase letters, looks nice on UI.
+     * @author Sarah Chow 101143033
+     * @return the remaining icons in uppercase form, String
+     */
+    private Object[] getListOfIconsUpper(){
+        List<String> iconOptions = new ArrayList<>();
+
+        for (BoardModel.Icon icon: BoardModel.Icon.values()){
+            if (!icon.getUsed()) {
+                iconOptions.add(icon.getName().toUpperCase());
             }
         }
+
+        return iconOptions.toArray();
+    }
+
+    // moved from BoardFrame to BoardController+++++++++++++++++
+    private BoardModel.Icon findPlayerIcon(String icon) {
+        for (BoardModel.Icon ic: BoardModel.Icon.values()){
+            if (ic.getName().equals(icon)) {
+                ic.setUsed();
+                return ic;
+            }
+        }
+        return null;
     }
 
     private void constructBoard(List<BoardCell> cells) {
-
         // Command buttons
         JPanel commandsPanel = new JPanel(new GridLayout(1,7));
         commandsPanel.setBounds(0, 30, 600, 20);
