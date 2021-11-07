@@ -1,3 +1,6 @@
+import javax.swing.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.*;
 
 /**
@@ -13,7 +16,7 @@ import java.util.*;
  * @author Owen VanDusen 101152022
  * @version 1.0
  */
-public class BoardController  {
+public class BoardController extends WindowAdapter {
     /**
      * Keeps track of the board model.
      */
@@ -234,5 +237,15 @@ public class BoardController  {
                 }
             }
         }
+    }
+
+    /**
+     * Listens for all the window event of minimizing the window.
+     * @author Bardia Parmoun 101143006
+     * @param we a window event for minimizing the window.
+     */
+    @Override
+    public void windowDeiconified(WindowEvent we) {
+        boardModel.sendCommand(BoardFrame.actionCommands.REPAINT.getStringRep());
     }
 }

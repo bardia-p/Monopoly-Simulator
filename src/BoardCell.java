@@ -24,11 +24,10 @@ public abstract class BoardCell {
      * Keeps track of the cell type.
      */
     private final CellType type;
-
-    private String imgName;
-
-    private static int indexCounter = 0;
-    private int index;
+    /**
+     * Keeps track of the image path of the cell.
+     */
+    private String imgPath;
 
     /**
      * Keeps track of all the possible cell types.
@@ -46,8 +45,7 @@ public abstract class BoardCell {
         this.name = name;
         this.owner = owner;
         this.type = type;
-        this.imgName = imgName;
-        this.index = indexCounter++;
+        this.imgPath = imgName;
     }
 
     /**
@@ -93,11 +91,12 @@ public abstract class BoardCell {
         return type;
     }
 
-    public String getImgName(){
-        return imgName;
-    }
-
-    public int getIndex(){
-        return index;
+    /**
+     * Returns the image path of the cell.
+     * @author Bardia Parmoun 101143006
+     * @return the imgPath of the cell, String
+     */
+    public String getImgPath(){
+        return imgPath;
     }
 }

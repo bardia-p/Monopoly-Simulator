@@ -153,7 +153,7 @@ public class Player {
     }
 
     /**
-     * Accessor to get the icon of the player.
+     * Accessor to get the name of the icon of the player.
      * @author Bardia Parmoun 101143006
      * @return icon of player, String
      */
@@ -161,6 +161,11 @@ public class Player {
         return icon.getName();
     }
 
+    /**
+     * Accessor to get the image path of the icon of the player.
+     * @author Bardia Parmoun 101143006
+     * @return image path of player icon, String
+     */
     public String getIconImgPath(){
         return icon.getImgPath();
     }

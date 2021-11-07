@@ -35,6 +35,11 @@ public class BoardEvent extends EventObject {
      * Keeps track of an integer value.
      */
     private int value;
+
+    /**
+     * Keeps track of an integer value.
+     */
+    private int value2;
     /**
      * Keeps track of the result of the given event.
      */
@@ -146,6 +151,14 @@ public class BoardEvent extends EventObject {
         this.player = player;
     }
 
+// JAVADOC NEEDED *******************************************************************************************
+    public BoardEvent(BoardModel model, BoardModel.Status type, Player player, int value, int value2){
+        this(model, type);
+        this.player = player;
+        this.value = value;
+        this.value2 = value2;
+    }
+
     /**
      * Constructor for the Board event, instantiates the board model, the type of event and a value. Mainly used for
      * events such as getting the number of players.
@@ -159,6 +172,14 @@ public class BoardEvent extends EventObject {
         this.value = value;
     }
 
+    /**
+     * Constructor for the Board event, instantiates the board model, the type of event and a value. Mainly used for
+     * events such as construcing the board
+     * @author Bardia Parmoun 101143006
+     * @param model
+     * @param type
+     * @param cells
+     */
     public BoardEvent(BoardModel model, BoardModel.Status type, List<BoardCell> cells){
         this(model, type);
         this.cells = cells;
@@ -221,6 +242,15 @@ public class BoardEvent extends EventObject {
     }
 
     /**
+     * Accessor to get the value associated with the event.
+     * @author Owen VanDusen 101152022
+     * @return the value, int
+     */
+    public int getValue2() {
+        return value2;
+    }
+
+    /**
      * Returns the result of the event.
      * @author Bardia Parmoun 101143006
      * @return the result, boolean
@@ -256,6 +286,10 @@ public class BoardEvent extends EventObject {
         return dice;
     }
 
+    /**
+     * Returns the list of the cells in the event.
+     * @return the list of the cells passed in the event, List<BoardCell>
+     */
     public List<BoardCell> getCells(){
         return cells;
     }
