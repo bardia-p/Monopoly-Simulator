@@ -1,3 +1,6 @@
+import javax.swing.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.*;
 
 /**
@@ -13,15 +16,13 @@ import java.util.*;
  * @author Owen VanDusen 101152022
  * @version 1.0
  */
-public class BoardController  {
+public class BoardController extends WindowAdapter {
     /**
      * Keeps track of the board model.
      */
     private BoardModel boardModel;
-    /**
-     * Keeps track of the remaining icons that the players can pick from
-     */
-    private final ArrayList<String>  remainingIcons;
+
+    public static final int NUM_ICONS = 8;
 
     /**
      * Constructor for the BoardController, populates the array list with all possible icons.
@@ -30,18 +31,9 @@ public class BoardController  {
      * @author Bardia Parmoun 101143006
      * @author Owen VanDusen 101152022
      */
-    public BoardController(){
-        remainingIcons = new ArrayList<>(Arrays.asList(
-                "boot",
-                "iron",
-                "scottie dog",
-                "battleship",
-                "racing car",
-                "top hat",
-                "wheelbarrow",
-                "thimble"
-        ));
-    }
+    public BoardController(){}
+
+
 
     /**
      * Calls a different method depending on which board event was passed to the method
@@ -74,7 +66,7 @@ public class BoardController  {
         while (flag == 1) {
             try {
                 numPlayers = Integer.parseInt(findNumPlayers);
-                if (numPlayers > 1 && numPlayers < remainingIcons.size() + 1){
+                if (numPlayers > 1 && numPlayers < NUM_ICONS + 1){
                     flag = 0;
                 }
             } catch(NumberFormatException e){
@@ -84,7 +76,7 @@ public class BoardController  {
             if (flag == 1){
                 System.out.println("Sorry try again!");
                 System.out.printf("The number of players should be an integer between 1 and less than %d\n",
-                        remainingIcons.size() + 1);
+                        NUM_ICONS + 1);
                 System.out.print("How many people will be playing? ");
                 findNumPlayers = scan.nextLine();
             }
@@ -106,17 +98,29 @@ public class BoardController  {
             System.out.printf("What's player %d's name? ", i + 1);
             String name = scan2.nextLine();
 
+            String remainingIcons = getListOfIconsUpper();
+
             do {
-                System.out.printf("Choose an icon <%s>: ", getListOfIconsUpper());
-                icon = scan2.nextLine().toLowerCase();
+                System.out.printf("Choose an icon <%s>: ", remainingIcons);
+                icon = scan2.nextLine().toUpperCase();
             } while (!(remainingIcons.contains(icon)));
 
-            boardModel.addPlayer(new Player(name, icon));
-            remainingIcons.remove(icon);
+            BoardModel.Icon playerIcon = findPlayerIcon(icon.toLowerCase());
+            boardModel.addPlayer(new Player(name, playerIcon));
         }
         System.out.println("-------------------------------------------------------------");
         System.out.println("LETS BEGIN!");
 
+    }
+
+    private BoardModel.Icon findPlayerIcon(String icon) {
+        for (BoardModel.Icon ic: BoardModel.Icon.values()){
+            if (ic.getName().equals(icon)) {
+                ic.setUsed();
+                return ic;
+            }
+        }
+        return null;
     }
 
     /**
@@ -128,8 +132,10 @@ public class BoardController  {
 
         String upperCaseIcon = "";
 
-        for (String icon : remainingIcons){
-            upperCaseIcon += icon.toUpperCase() + ", ";
+        for (BoardModel.Icon icon: BoardModel.Icon.values()){
+            if (!icon.getUsed()) {
+                upperCaseIcon += icon.getName().toUpperCase() + ", ";
+            }
         }
 
         return upperCaseIcon.substring(0, upperCaseIcon.length() - 2);
@@ -231,5 +237,15 @@ public class BoardController  {
                 }
             }
         }
+    }
+
+    /**
+     * Listens for all the window event of minimizing the window.
+     * @author Bardia Parmoun 101143006
+     * @param we a window event for minimizing the window.
+     */
+    @Override
+    public void windowDeiconified(WindowEvent we) {
+        boardModel.sendCommand(BoardFrame.actionCommands.REPAINT.getStringRep());
     }
 }
