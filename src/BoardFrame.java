@@ -45,6 +45,8 @@ public class BoardFrame extends JFrame implements BoardView  {
 
     public static final String BACKGROUND_COLOR = "#cbe4d0";
 
+    private static final int BOARD_SHIFT = 75;
+
     private JPanel mainPanel;
 
     private JLayeredPane layeredPane;
@@ -52,7 +54,12 @@ public class BoardFrame extends JFrame implements BoardView  {
     public enum actionCommands {
         ROLL("roll"),
         NEW_GAME("newgame"),
-        PASS("pass");
+        PASS("pass"),
+        FORFEIT("forfeit"),
+        BUY("buy"),
+        SELL("sell"),
+        PAY_RENT("payrent"),
+        PAY_TAX("paytax");
 
         private String stringRep;
 
@@ -65,8 +72,6 @@ public class BoardFrame extends JFrame implements BoardView  {
         }
 
     };
-
-    private static final int BOARD_SHIFT = 75;
 
     /**
      * Constructor for the Board listener, creates the board model, adds the board listener to the board model,
@@ -157,6 +162,9 @@ public class BoardFrame extends JFrame implements BoardView  {
             case GAME_OVER -> handleWinner(e.getPlayers());
             case INITIALIZE_BOARD -> constructBoard(e.getCells());
             case CREATE_PLAYER_ICONS -> createPlayerLabels((ArrayList<Player>) e.getPlayers());
+            case GET_NUM_PLAYERS -> getNumPlayers();        //new
+            case INITIALIZE_PLAYERS -> initializePlayers(e.getValue());     //new
+            case GET_COMMAND -> updateAvailableCommands(e.getPlayer(), (ArrayList<BoardModel.Command>) e.getCommands());     //new
             default -> controller.eventListener(e);
         }
     }
@@ -169,58 +177,99 @@ public class BoardFrame extends JFrame implements BoardView  {
         }
     }
 
+    private void updateAvailableCommands(Player player, ArrayList<BoardModel.Command> commands){
+        String availableCommands = "";
+
+        for (BoardModel.Command command: commands){
+            availableCommands += command.getStringCommand() + ", ";
+        }
+
+        availableCommands = availableCommands.substring(0, availableCommands.length() - 2);
+
+        for(JButton b: commandButtons){
+            if(availableCommands.contains(b.getText().toLowerCase())){
+                b.setEnabled(true);
+            }else{
+                b.setEnabled(false);
+            }
+        }
+
+//        for (BoardModel.Command command: commands){
+//            availableCommands += command.getStringCommand() + ", ";
+//        }
+
+//        availableCommands = availableCommands.substring(0, availableCommands.length() - 2);
+//
+//        for(JButton b: commandButtons){
+//            if(b)
+//        }
+//        System.out.println("commands?");
+//        for (BoardModel.Command command: commands){
+//            availableCommands += command.getStringCommand() + ", ";
+//        }
+    }
+
+    private void getNumPlayers(){
+        Integer[] numPlayerOptions = {2,3,4,5,6,7,8};
+        int numPlayers = (Integer)JOptionPane.showInputDialog(null, "How many people will be playing?", "INITIALIZE GAME DATA",
+                JOptionPane.QUESTION_MESSAGE, null, numPlayerOptions, numPlayerOptions[0]);
+        model.setNumPlayers(numPlayers);
+    }
+
+    private void initializePlayers(int numPlayers){
+        // TODO make icon options dropdown
+        // TODO make fields required for submit
+        for (int i = 0; i < numPlayers; i++){
+            JTextField playerName = new JTextField();
+            JTextField playerIcon = new JTextField();
+            Object[] message = {
+                    "What's player "+ (i+1) + "'s name?", playerName,
+                    "Choose an icon: ", playerIcon,
+            };
+            int option = JOptionPane.showConfirmDialog(null, message, "Initialize player "+ (i+1), JOptionPane.OK_CANCEL_OPTION);
+            if (option == JOptionPane.OK_OPTION)
+            {
+                model.addPlayer(new Player(playerName.getText(), controller.findPlayerIcon(playerIcon.getText().toLowerCase())));
+            }
+        }
+    }
+
     private void constructBoard(List<BoardCell> cells) {
-        // Commands
+
+        // Command buttons
         JPanel commandsPanel = new JPanel(new GridLayout(1,7));
         commandsPanel.setBounds(0, 30, 600, 20);
 
-        JButton rollButton = new JButton("Roll");
-        rollButton.setEnabled(true);
-        rollButton.setActionCommand(actionCommands.ROLL.getStringRep());
-        rollButton.addActionListener(controller);
-        commandButtons.add(rollButton);
+        String[] buttonsText = {"Roll", "Pass", "Forfeit", "Buy", "Sell", "Pay Rent", "Pay Tax"};
 
-        JButton passButton = new JButton("Pass");
-        passButton.setEnabled(true);
-        passButton.addActionListener(controller);
-        passButton.setActionCommand(actionCommands.PASS.getStringRep());
-        commandButtons.add(passButton);
+        for(int i = 0; i<buttonsText.length; i++){
+            JButton commandButton = new JButton(buttonsText[i]);
+            commandButton.addActionListener(controller);
+            commandButtons.add(commandButton);
+            commandsPanel.add(commandButton);
 
-        JButton forfeitButton = new JButton("Forfeit");
-        forfeitButton.setEnabled(false);
-        forfeitButton.addActionListener(controller);
-        commandButtons.add(forfeitButton);
-
-
-        JButton buyButton = new JButton("Buy");
-        buyButton.setEnabled(false);
-        buyButton.addActionListener(controller);
-        commandButtons.add(buyButton);
-
-        JButton sellButton = new JButton("Sell");
-        sellButton.setEnabled(false);
-        sellButton.addActionListener(controller);
-        commandButtons.add(sellButton);
-
-        JButton payRentButton = new JButton("Pay Rent");
-        payRentButton.setEnabled(false);
-        payRentButton.addActionListener(controller);
-        commandButtons.add(payRentButton);
-
-        JButton payTaxButton = new JButton("PayTax");
-        payTaxButton.setEnabled(false);
-        payTaxButton.addActionListener(controller);
-        commandButtons.add(payTaxButton);
-
-
-        commandsPanel.add(rollButton);
-        commandsPanel.add(passButton);
-        commandsPanel.add(forfeitButton);
-        commandsPanel.add(buyButton);
-        commandsPanel.add(sellButton);
-        commandsPanel.add(payRentButton);
-        commandsPanel.add(payTaxButton);
-
+            if (buttonsText[i].equals("Roll")){
+                commandButton.setActionCommand(actionCommands.ROLL.getStringRep());
+            }
+            else if(buttonsText[i].equals("Pass")){
+                commandButton.setActionCommand(actionCommands.PASS.getStringRep());
+            }
+            else if(buttonsText[i].equals("Forfeit")){
+                commandButton.setActionCommand(actionCommands.FORFEIT.getStringRep());
+            }
+            else if(buttonsText[i].equals("Buy")){
+                commandButton.setActionCommand(actionCommands.BUY.getStringRep());
+            }
+            else if(buttonsText[i].equals("Sell")){
+                commandButton.setActionCommand(actionCommands.SELL.getStringRep());
+            }
+            else if(buttonsText[i].equals("Pay Rent")){
+                commandButton.setActionCommand(actionCommands.PAY_RENT.getStringRep());
+            }
+            else if(buttonsText[i].equals("Pay Tax")){
+                commandButton.setActionCommand(actionCommands.PAY_TAX.getStringRep());
+            }
+        }
         layeredPane.add(commandsPanel);
 
         // Constructing the panels

@@ -137,13 +137,28 @@ public class BoardModel {
 
     public void sendCommand(String command) {
         if(command.equals(BoardFrame.actionCommands.ROLL.getStringRep())){
-            roll(turn);
+            roll(turn); //works!
         }
-        if(command.equals(BoardFrame.actionCommands.PASS.getStringRep())){
-            //passTurn(); //pass a player?
+        else if(command.equals(BoardFrame.actionCommands.PASS.getStringRep())){
+            passTurn(turn); // broken
+        }
+        else if(command.equals((BoardFrame.actionCommands.FORFEIT.getStringRep()))){
+            forfeit(turn);  //works!
+        }
+        else if(command.equals((BoardFrame.actionCommands.BUY.getStringRep()))){
+            buyProperty((Property) turn.getCurrentCell() , turn);   //works!
+        }
+        else if(command.equals((BoardFrame.actionCommands.SELL.getStringRep()))){
+            //sellProperty((Property) //what to sell, turn);   //to display
+        }
+        else if(command.equals((BoardFrame.actionCommands.PAY_RENT.getStringRep()))){
+            payFees((Property) turn.getCurrentCell(), turn);    //kinda works
+        }
+        else if(command.equals((BoardFrame.actionCommands.PAY_TAX.getStringRep()))){
+            payFees((Tax) turn.getCurrentCell(), turn); //kinda works
         }
         else if(command.equals(BoardFrame.actionCommands.NEW_GAME.getStringRep())){
-            play();
+            play(); //does not work
         }
     }
 

@@ -15,7 +15,7 @@ import java.util.*;
  * @author Owen VanDusen 101152022
  * @version 1.0
  */
-public class BoardController  implements ActionListener {
+public class BoardController implements ActionListener {
     /**
      * Keeps track of the board model.
      */
@@ -42,9 +42,9 @@ public class BoardController  implements ActionListener {
     public void eventListener(BoardEvent e){
         boardModel = (BoardModel) e.getSource();
         switch (e.getType()) {
-            case GET_NUM_PLAYERS -> getNumPlayers();
-            case INITIALIZE_PLAYERS -> initializePlayers(e.getValue());
-            case GET_COMMAND -> getCommand(e.getPlayer(), (ArrayList<BoardModel.Command>) e.getCommands());
+//            case GET_NUM_PLAYERS -> getNumPlayers();
+//            case INITIALIZE_PLAYERS -> initializePlayers(e.getValue());
+//            case GET_COMMAND -> getCommand(e.getPlayer(), (ArrayList<BoardModel.Command>) e.getCommands());
         }
     }
 
@@ -112,7 +112,8 @@ public class BoardController  implements ActionListener {
 
     }
 
-    private BoardModel.Icon findPlayerIcon(String icon) {
+    // MADE PUBLIC CHANGE BACK++++++++++++++++++++++++++++=
+    public BoardModel.Icon findPlayerIcon(String icon) {
         for (BoardModel.Icon ic: BoardModel.Icon.values()){
             if (ic.getName().equals(icon)) {
                 ic.setUsed();
