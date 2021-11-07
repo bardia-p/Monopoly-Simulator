@@ -1,11 +1,11 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Group 3
@@ -29,9 +29,50 @@ public class BoardFrame extends JFrame implements BoardView  {
      * Keeps track of the board controller.
      */
     BoardController controller;
-
+    /**
+     * Keeps track of all the panels for the individual board cells.
+     */
     private List<JPanel> boardCells;
+    /**
+     * Keeps track of all the player JLabels.
+     */
     private Map<Player, JLabel> playerLabels;
+    /**
+     * The main panel that keeps track of all the cells.
+     */
+    private JPanel mainPanel;
+    /**
+     * The main pane that includes the cells, the players, the status windows, etc
+     */
+    private JLayeredPane layeredPane;
+    /**
+     * Keeps track of the size of the board on each side.
+     */
+    private static final int SIZE = 11;
+    /**
+     * Keeps track of the size of the window width.
+     */
+    private static final int WINDOW_WIDTH = 1000;
+    /**
+     * Keeps track of the window height.
+     */
+    private static final int WINDOW_HEIGHT = 800;
+    /**
+     * Keeps track of the size of the board width.
+     */
+    private static final int BOARD_WIDTH = 750;
+    /**
+     * Keeps track of the board height.
+     */
+    private static final int BOARD_HEIGHT = 750;
+    /**
+     * The background color of the board.
+     */
+    private static final String BACKGROUND_COLOR = "#cbe4d0";
+    /**
+     * Keeps track of how much the board should be shifted down based on the buttons above it.
+     */
+    private static final int BOARD_SHIFT_Y = 50;
 
     // JMenu
     private JMenuBar menuBar;
@@ -41,16 +82,9 @@ public class BoardFrame extends JFrame implements BoardView  {
     // Commands
     private List<JButton> commandButtons;
 
-    public static final int SIZE = 11;
-
-    public static final String BACKGROUND_COLOR = "#cbe4d0";
-
-    private static final int BOARD_SHIFT = 75;
-
-    private JPanel mainPanel;
-
-    private JLayeredPane layeredPane;
-
+    /**
+     * The enum used to keep track of all the possible commands
+     */
     public enum actionCommands {
         ROLL("roll"),
         NEW_GAME("newgame"),
@@ -59,7 +93,8 @@ public class BoardFrame extends JFrame implements BoardView  {
         BUY("buy"),
         SELL("sell"),
         PAY_RENT("payrent"),
-        PAY_TAX("paytax");
+        PAY_TAX("paytax"),
+        REPAINT("repaint");
 
         private String stringRep;
 
@@ -84,27 +119,30 @@ public class BoardFrame extends JFrame implements BoardView  {
     public BoardFrame(){
         super("Rich Uncle Pennybags!");
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        //this.setResizable(false);
-        setState(JFrame.NORMAL);
+        this.setResizable(false);
 
+        // The layered pane that includes all the components.
         layeredPane = new JLayeredPane();
         layeredPane.setOpaque(true);
         getContentPane().add(layeredPane);
-        addWindowListener(getWindowAdapter());
-        layeredPane.setPreferredSize(new Dimension(1000,900));
+        layeredPane.setPreferredSize(new Dimension(WINDOW_WIDTH,WINDOW_HEIGHT));
+
+        // The main panel that keeps track of all the cells
         mainPanel = new JPanel();
         mainPanel.setLayout(new GridBagLayout());
         mainPanel.setBackground(Color.decode(BACKGROUND_COLOR));
-        mainPanel.setBounds(0, 75, 750, 750);
+        mainPanel.setBounds(0, BOARD_SHIFT_Y, BOARD_WIDTH, BOARD_HEIGHT);
 
         layeredPane.add(mainPanel,0);
 
+        // Keeps track of the player labels and cell panels.
         playerLabels = new HashMap<>();
-
         boardCells = new ArrayList<JPanel>();
 
+        // Adding the frame to the model.
         model = new BoardModel();
         model.addBoardView(this);
+
         controller = new BoardController(model);
 
         // JMenu
@@ -127,17 +165,6 @@ public class BoardFrame extends JFrame implements BoardView  {
 
     }
 
-    private WindowAdapter getWindowAdapter() {
-        return new WindowAdapter() {
-            @Override
-            public void windowDeiconified(WindowEvent we) {
-                layeredPane.moveToFront(mainPanel);
-                for (JLabel label: playerLabels.values())
-                layeredPane.moveToFront(label);
-            }
-        };
-    }
-
     /**
      * Passes a BoardEvent to the BoardController to be interpreted.
      * @author Bardia Parmoun 101143006
@@ -147,7 +174,6 @@ public class BoardFrame extends JFrame implements BoardView  {
     public void handleBoardUpdate(BoardEvent e) {
         switch (e.getType()) {
             case PLAYER_ROLL -> handleRoll(e.getDice(), e.getPlayer());
-            case PLAYER_MOVE -> showCurrentCell(e.getPlayer());
             case BUY -> handleBuyProperty(e.getPlayer(), (Property) e.getBoardCell(), e.getResult());
             case SELL -> handleSellProperty(e.getPlayer(), (Property) e.getBoardCell(), e.getResult());
             case PLAYER_STATUS -> handleGetPlayerStatus(e.getPlayer());
@@ -164,10 +190,48 @@ public class BoardFrame extends JFrame implements BoardView  {
             case GET_NUM_PLAYERS -> getNumPlayers();        //new
             case INITIALIZE_PLAYERS -> initializePlayers(e.getValue());     //new
             case GET_COMMAND -> updateAvailableCommands(e.getPlayer(), (ArrayList<BoardModel.Command>) e.getCommands());     //new
+            case PLAYER_MOVE -> handlePlayerGUIMove(e.getPlayer(), e.getValue(), e.getValue2());
+            case REPAINT_BOARD -> handleRepaintBoard();
             default -> controller.eventListener(e);
         }
     }
 
+    /**
+     * Repaints the board when the window has changed to make sure everything is visible.
+     * @author Bardia Parmoun 101143006
+     */
+    private void handleRepaintBoard() {
+        for (JLabel label: playerLabels.values()) {
+            layeredPane.moveToFront(label);
+        }
+    }
+
+    /**
+     * Handles moving players cell by cell.
+     * @author Sarah Chow 101143033
+     * @param player the player that is moving, Player
+     * @param amountToMove the amount that a player should move, int
+     * @param originalPos the original position of the player, int
+     */
+    private void handlePlayerGUIMove(Player player, int amountToMove, int originalPos){
+        for (int i = originalPos; i < originalPos + amountToMove + 1; i++){
+            int newPlayerPosition =  i % BoardModel.SIZE_OF_BOARD;
+            showCurrentCell(player, newPlayerPosition);
+            try{
+                TimeUnit.MILLISECONDS.sleep(200);
+            }
+            catch(Exception e){
+                System.out.println("wait failed");
+            }
+
+        }
+    }
+
+    /**
+     * Creates the player labels and icons.
+     * @author Bardia Parmoun 101143006
+     * @param players the list of the players to make icons for, List<Player>
+     */
     private void createPlayerLabels(ArrayList<Player> players) {
         for (Player p: players){
             JLabel playerLabel = new JLabel();
@@ -175,6 +239,7 @@ public class BoardFrame extends JFrame implements BoardView  {
             layeredPane.add(playerLabel);
         }
     }
+
 
     private void updateAvailableCommands(Player player, ArrayList<BoardModel.Command> commands){
         String availableCommands = "";
@@ -186,12 +251,17 @@ public class BoardFrame extends JFrame implements BoardView  {
         availableCommands = availableCommands.substring(0, availableCommands.length() - 2);
 
         for(JButton b: commandButtons){
-            if(availableCommands.contains(b.getText().toLowerCase())){
+            if(b.getText().equals("Roll")){
+                b.setEnabled(true);
+            }
+            else if(availableCommands.contains(b.getText().toLowerCase())){
                 b.setEnabled(true);
             }else{
                 b.setEnabled(false);
             }
         }
+
+
     }
 
     private void getNumPlayers(){
@@ -261,6 +331,13 @@ public class BoardFrame extends JFrame implements BoardView  {
         return null;
     }
 
+
+    /**
+     * Constructs the board from the list of the board cells.
+     * @author Bardia Parmoun 101143006
+     * @author Kyra Lothrop 101145872
+     * @param cells the list of the board cells, List<BoardCell>
+     */
     private void constructBoard(List<BoardCell> cells) {
         // Command buttons
         JPanel commandsPanel = new JPanel(new GridLayout(1,7));
@@ -307,6 +384,7 @@ public class BoardFrame extends JFrame implements BoardView  {
 
         for (BoardCell cell: cells) {
             try{
+                // Changes the row and col if it hits corners.
                 if (cell.getName().equals("JAIL")){
                     row = SIZE- 1;
                     col = 0;
@@ -326,19 +404,20 @@ public class BoardFrame extends JFrame implements BoardView  {
                     col_step = 0;
                     direction = GridBagConstraints.SOUTH;
                 }
-
-                BufferedImage image = ImageIO.read(getClass().getResource(cell.getImgName()));
+                // Loads the cell image.
+                BufferedImage image = ImageIO.read(getClass().getResource(cell.getImgPath()));
                 JLabel label = new JLabel(new ImageIcon(image));
+                // Finds the position of the cell.
                 GridBagConstraints c = new GridBagConstraints();
                 c.gridx = col;
                 c.gridy = row;
                 c.fill = GridBagConstraints.HORIZONTAL;
                 c.anchor = direction;
                 c.insets = new Insets(0,0,0,0);
-
+                // Places the cell in a panel.
                 JPanel panel = new JPanel(new BorderLayout());
                 panel.setBackground(Color.decode(BACKGROUND_COLOR));
-
+                // Adds the panel to the board and list of panels.
                 panel.add(label);
                 boardCells.add(panel);
 
@@ -352,11 +431,7 @@ public class BoardFrame extends JFrame implements BoardView  {
             }
         }
 
-        JScrollPane productPanelWithScroll = new JScrollPane(layeredPane,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-               JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-
         // adding all the components to the frame
-        this.getContentPane().add(productPanelWithScroll,BorderLayout.CENTER);
         this.pack();
     }
 
@@ -379,23 +454,21 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @author Sarah Chow 101143033
      * @param player player performing actions, Player
      */
-    private void showCurrentCell(Player player){
+    private void showCurrentCell(Player player, int cellIndex){
         if (!player.getIconImgPath().equals("")) {
             try {
                 BufferedImage image = ImageIO.read(getClass().getResource(player.getIconImgPath()));
                 Image dimg = image.getScaledInstance(40,40, Image.SCALE_SMOOTH);
                 playerLabels.get(player).setIcon(new ImageIcon(dimg));
-                //playerLabel.setOpaque(true);
-                BoardCell currCell = player.getCurrentCell();
 
-                JPanel currentCell = boardCells.get(currCell.getIndex());
+                JPanel currentCell = boardCells.get(cellIndex);
 
                 Rectangle cellPosition = currentCell.getBounds();
-                //System.out.println(cellPosition.x + " " + cellPosition.y);
 
                 int index = (int) new ArrayList(playerLabels.keySet()).indexOf(player);
-                int x = cellPosition.x + 3*cellPosition.width/4 - 30 - 5 * index;
-                int y = cellPosition.y + 1*cellPosition.height/2 - 30 - 5 * index + BOARD_SHIFT;
+                int x = cellPosition.x + 3*cellPosition.width/4 - 30 - 5*index;
+                int y = cellPosition.y + 1*cellPosition.height/2 - 30 - 5*index + BOARD_SHIFT_Y;
+
                 playerLabels.get(player).setBounds(x, y, 50, 50);
                 layeredPane.moveToFront(playerLabels.get(player));
 
@@ -404,10 +477,6 @@ public class BoardFrame extends JFrame implements BoardView  {
                 System.out.println("Could not load the player icon image");
             }
         }
-
-        System.out.printf("Player %s is currently at: %s\n",
-                player.getIconName().toUpperCase(),
-                player.getCurrentCell().getName());
     }
 
     /**

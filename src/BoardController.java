@@ -1,5 +1,8 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
 import java.util.*;
 
 /**
@@ -15,7 +18,9 @@ import java.util.*;
  * @author Owen VanDusen 101152022
  * @version 1.0
  */
-public class BoardController implements ActionListener {
+
+public class BoardController extends WindowAdapter implements ActionListener {
+
     /**
      * Keeps track of the board model.
      */
@@ -230,9 +235,20 @@ public class BoardController implements ActionListener {
         }
     }
 
+
     @Override
     public void actionPerformed(ActionEvent e) {
         String command = e.getActionCommand();
         boardModel.sendCommand(command);
+    }
+
+    /**
+     * Listens for all the window event of minimizing the window.
+     * @author Bardia Parmoun 101143006
+     * @param we a window event for minimizing the window.
+     */
+    @Override
+    public void windowDeiconified(WindowEvent we) {
+        boardModel.sendCommand(BoardFrame.actionCommands.REPAINT.getStringRep());
     }
 }

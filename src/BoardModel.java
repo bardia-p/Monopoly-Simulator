@@ -1,4 +1,5 @@
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Group 3
@@ -57,7 +58,7 @@ public class BoardModel {
      */
     public enum Status {GET_NUM_PLAYERS, CREATE_PLAYER_ICONS, INITIALIZE_BOARD, INITIALIZE_MONOPOLY, INITIALIZE_PLAYERS, GET_COMMAND, PLAYER_ROLL,
         PLAYER_DOUBLE_ROLL, PLAYER_MOVE, BUY, SELL, PAY_FEES, PLAYER_STATUS, CELL_STATUS, BOARD_STATUS, PLAYER_FORFEIT,
-        PASS_TURN, GAME_OVER}
+        PASS_TURN, REPAINT_BOARD, GAME_OVER}
     /**
      * Keeps track of the possible player commands.
      */
@@ -84,6 +85,9 @@ public class BoardModel {
         }
     }
 
+    /**
+     * Keeps track of the player icons
+     */
     public enum Icon{
         BOOT ("boot","images/icons/boot.png"),
         IRON ("iron","images/icons/iron.png"),
@@ -135,9 +139,17 @@ public class BoardModel {
         numPlayers = 0;
     }
 
+    /**
+     * Select what method to call based on the given command
+     * @author Kyra Lothrop 101145872
+     * @param command
+     */
     public void sendCommand(String command) {
         // change to switch statement?
-        if(command.equals(BoardFrame.actionCommands.ROLL.getStringRep())){
+        if(command.equals(BoardFrame.actionCommands.REPAINT.getStringRep())){
+            repaint(turn); //works!
+        }
+        else if(command.equals(BoardFrame.actionCommands.ROLL.getStringRep())){
             roll(turn);
         }
         else if(command.equals(BoardFrame.actionCommands.PASS.getStringRep())){
@@ -162,6 +174,7 @@ public class BoardModel {
             play(); // does not work for now
         }
     }
+
 
     /**
      * Constructor for BoardModel, sets all values
@@ -358,6 +371,10 @@ public class BoardModel {
         sendBoardUpdate(new BoardEvent(this, Status.INITIALIZE_MONOPOLY));
     }
 
+    private void repaint(Player turn) {
+        sendBoardUpdate(new BoardEvent(this, Status.REPAINT_BOARD));
+    }
+
     /**
      * Randomly sets the value of two integers between 1-6 to represent rolling two dice. If the player
      * rolls doubles allows them to move again. Calls the move method to move the player.
@@ -386,11 +403,12 @@ public class BoardModel {
      * @param amountToMove distance the player should move, int
      */
     public void move(Player player, int amountToMove){
+        sendBoardUpdate(new BoardEvent(this, Status.PLAYER_MOVE, player, amountToMove, player.getPosition()));
         int newPlayerPosition = (player.getPosition() + amountToMove) % SIZE_OF_BOARD;
         player.setPosition(newPlayerPosition);
         player.setCurrentCell(cells.get(newPlayerPosition));
-
-        sendBoardUpdate(new BoardEvent(this, Status.PLAYER_MOVE, player));
+//        //debug
+//        System.out.printf("Player %s is currently at: %s\n", player.getIconName(), cells.get(newPlayerPosition).getName());
     }
 
     /**
