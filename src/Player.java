@@ -346,8 +346,9 @@ public class Player {
     public Map<String, String> getAttributes() {
 
         Map<String, String> attributes = new LinkedHashMap<String, String>();
+        int count = 1;
 
-        attributes.put("Name: ", String.valueOf(name));
+        attributes.put("Player Name: ", String.valueOf(name));
         attributes.put("Icon: ", String.valueOf(icon));
         attributes.put("Cash: ", String.valueOf(cash));
         attributes.put("Position: ", String.valueOf(position));
@@ -355,7 +356,8 @@ public class Player {
 
         for (Property property: properties)
         {
-            attributes.put("Property: ", String.valueOf(property));
+            attributes.put("Property " + count + ": ", property.getName().toUpperCase());
+            count++;
         }
 
         return attributes;

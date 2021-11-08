@@ -51,7 +51,7 @@ public class Tax extends BoardCell{
 
         Map<String, String> attributes = new LinkedHashMap<String, String>();
 
-        attributes.put("Name: ", String.valueOf(super.getName()));
+        attributes.put("Cell Name: ", String.valueOf(super.getName()));
         attributes.put("Tax: ", String.valueOf(tax));
 
         return attributes;

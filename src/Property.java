@@ -98,7 +98,7 @@ public class Property extends BoardCell {
             propertyOwner = super.getOwner().getIconName();
         }
 
-        attributes.put("Name: ", String.valueOf(super.getName()));
+        attributes.put("Cell Name: ", String.valueOf(super.getName()).toUpperCase());
         attributes.put("Price: ", String.valueOf(price));
         attributes.put("Rent: ", String.valueOf(rent));
         attributes.put("Property Owner: ", propertyOwner.toUpperCase());

@@ -577,14 +577,18 @@ public class BoardFrame extends JFrame implements BoardView  {
      * Displays the attributes of the object.
      * @author Sarah Chow 101143033
      * @param title JPanel title, String
-     * @param message message to be displayed, String
      * @param attributes attributes of the object, Map
      */
-    private void displayObjectAttributes(String title, String message, Map<String, String> attributes){
-        message += "\n";
+    private void displayObjectAttributes(String title, Map<String, String> attributes, boolean player){
+        int count = 0;
+        String message = "";
 
         for (String key : attributes.keySet()){
+            if (player && count > 4){
+                message += "\t";
+            }
             message += key + attributes.get(key) + "\n";
+            count++;
         }
         JOptionPane.showMessageDialog(null, message, title, JOptionPane.PLAIN_MESSAGE);
     }
@@ -595,7 +599,7 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @param player player performing actions, Player
      */
     private void handleGetPlayerStatus(Player player) {
-        displayObjectAttributes("PLAYER STATUS", player.getIconName().toUpperCase(), player.getAttributes());
+        displayObjectAttributes("PLAYER STATUS", player.getAttributes(), true);
     }
 
     /**
@@ -604,7 +608,7 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @param currentCell property the player is on, BoardCell
      */
     private void handleGetCellStatus(BoardCell currentCell){
-        displayObjectAttributes("CELL STATUS", currentCell.getName(), currentCell.getAttributes());
+        displayObjectAttributes("CELL STATUS", currentCell.getAttributes(), false);
     }
 
 
