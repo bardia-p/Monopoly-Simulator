@@ -82,30 +82,11 @@ public class Property extends BoardCell {
         return recentlyChanged;
     }
 
-    /**
-     * Accessor method to package relevant information into a string.
-     * @author Sarah Chow 101143033
-     * @return the property's current information, String
-     */
-    @Override
-    public String toString() {
-        String propertyInfo = "\n\tname='" + super.getName() + '\'' +
-                "\n\tprice='" + price + '\'' +
-                "\n\trent='" + rent + '\'';
-
-        if (super.getOwner() != null){
-            propertyInfo += "\n\tproperty owner='" + super.getOwner().getIconName() + '\'';
-
-        } else {
-            propertyInfo += "\n\tproperty owner='no owner'";
-        }
-        return propertyInfo;
-    }
 
     /**
      * Accessor method to package relevant information into a linked hash map.
      * @author Sarah Chow 101143033
-     * @return attributes of the property, LinkedHashMap
+     * @return attributes of the property, Map
      */
     public Map<String, String> getAttributes() {
 

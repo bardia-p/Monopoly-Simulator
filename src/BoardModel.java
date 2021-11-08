@@ -58,7 +58,7 @@ public class BoardModel {
      */
     public enum Status {GET_NUM_PLAYERS, CREATE_PLAYER_ICONS, INITIALIZE_BOARD, INITIALIZE_MONOPOLY, INITIALIZE_PLAYERS, GET_COMMAND, PLAYER_ROLL,
         PLAYER_DOUBLE_ROLL, PLAYER_MOVE, BUY, SELL, PAY_FEES, PLAYER_STATUS, CELL_STATUS, BOARD_STATUS, PLAYER_FORFEIT,
-        PASS_TURN, REPAINT_BOARD, GAME_OVER}
+        PLAYER_REQUEST_FORFEIT, PASS_TURN, REPAINT_BOARD, GAME_OVER}
     /**
      * Keeps track of the possible player commands.
      */
@@ -72,6 +72,7 @@ public class BoardModel {
         ROLL_AGAIN ("roll"),
         CELL_STATUS ("cell status"),
         FORFEIT ("forfeit"),
+        CONFIRM_FORFEIT("confirm_forfeit"),
         PAY_TAX ("pay tax"),
         REPAINT("repaint");
 
@@ -148,45 +149,41 @@ public class BoardModel {
     public void sendCommand(String command) {
         if(command.equals(Command.REPAINT.getStringCommand())){
             repaint(turn);
-            getCommand(turn);
         }
         else if(command.equals(Command.ROLL_AGAIN.getStringCommand())){
             roll(turn);
-            getCommand(turn);
         }
         else if(command.equals(Command.PASS.getStringCommand())){
             passTurn(turn);
-            getCommand(turn);
-        }
-        else if(command.equals((Command.FORFEIT.getStringCommand()))){
-            forfeit(turn);
         }
         else if(command.equals((Command.BUY.getStringCommand()))){
             buyProperty((Property) turn.getCurrentCell() , turn);
-            getCommand(turn);
         }
         else if(command.equals((Command.SELL.getStringCommand()))){
             //sellProperty((Property) //must prompt user for what to sell
-            getCommand(turn);
         }
         else if(command.equals((Command.PAY_RENT.getStringCommand()))){
             payFees((Property) turn.getCurrentCell(), turn);
-            getCommand(turn);
         }
         else if(command.equals((Command.PAY_TAX.getStringCommand()))){
             payFees((Tax) turn.getCurrentCell(), turn);
-            getCommand(turn);
         }
         else if (command.equals((Command.PLAYER_STATUS.getStringCommand()))){
             getPlayerStatus(turn);
-            getCommand(turn);
         }
         else if (command.equals((Command.CELL_STATUS.getStringCommand()))){
             getCellStatus();
-            getCommand(turn);
+        }
+        else if(command.equals((Command.FORFEIT.getStringCommand()))){
+            request_forfeit(turn);
+        }
+        else if(command.equals((Command.CONFIRM_FORFEIT.getStringCommand()))){
+            forfeit(turn);
         }
 
-        //getCommand(turn);
+        if(!command.equals((Command.FORFEIT.getStringCommand()))) {
+            getCommand(turn);
+        }
     }
 
 
@@ -374,6 +371,7 @@ public class BoardModel {
         // Handling forfeiting the game and declaring bankruptcy.
         commands.add(Command.FORFEIT);
 
+
         sendBoardUpdate(new BoardEvent(this, BoardModel.Status.GET_COMMAND, player, commands));
     }
 
@@ -555,6 +553,14 @@ public class BoardModel {
         player.setRollAgain(true);
 
         sendBoardUpdate(new BoardEvent(this, Status.PLAYER_DOUBLE_ROLL, player));
+    }
+
+    public void request_forfeit(Player player){
+        sendBoardUpdate(new BoardEvent(this, Status.PLAYER_REQUEST_FORFEIT, player));
+
+        if (player.getRequest_forfeit()){
+            forfeit(player);
+        }
     }
 
     /**

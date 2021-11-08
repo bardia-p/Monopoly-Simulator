@@ -142,7 +142,6 @@ public class BoardFrame extends JFrame implements BoardView  {
             case INITIALIZE_MONOPOLY -> handleWelcomeMonopoly();
             case PAY_FEES -> handlePayFees(e.getPlayer().getCurrentCell(), e.getPlayer(), e.getValue(), e.getResult());
             case PASS_TURN -> handleCurrentPlayerChange();
-            case PLAYER_FORFEIT -> handleForfeitedPlayer(e.getPlayer());
             case GAME_OVER -> handleWinner(e.getPlayers());
             case INITIALIZE_BOARD -> constructBoard(e.getCells());
             case CREATE_PLAYER_ICONS -> createPlayerLabels((ArrayList<Player>) e.getPlayers());
@@ -151,6 +150,8 @@ public class BoardFrame extends JFrame implements BoardView  {
             case GET_COMMAND -> updateAvailableCommands(e.getPlayer(), (ArrayList<BoardModel.Command>) e.getCommands());     //new
             case PLAYER_MOVE -> handlePlayerGUIMove(e.getPlayer(), e.getValue(), e.getValue2());
             case REPAINT_BOARD -> handleRepaintBoard();
+            case PLAYER_FORFEIT -> handleForfeitedPlayer(e.getPlayer());
+            case PLAYER_REQUEST_FORFEIT -> handleRequestForfeit(e.getPlayer());
         }
     }
 
@@ -687,8 +688,19 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @author Sarah Chow 101143033
      * @param player player forfeiting, Player
      */
-    private void handleForfeitedPlayer(Player player) {
-        System.out.printf("Player %s has forfeited the game!\n", player.getIconName().toUpperCase());
+    private void handleRequestForfeit(Player player) {
+        int ans = JOptionPane.showConfirmDialog(null, "Are you sure you would like to forfeit the game?");
+        if (ans == JOptionPane.YES_OPTION){
+            player.toggleRequest_forfeit();
+        }
+        else{
+            JOptionPane.showMessageDialog(null, "Forfeit request cancelled!");
+        }
+    }
+
+    private void handleForfeitedPlayer(Player player){
+        String message = "Player: " + player.getIconName().toUpperCase() + " has forfeited the game!";
+        JOptionPane.showMessageDialog(null, message);
     }
 
     /**
@@ -704,7 +716,7 @@ public class BoardFrame extends JFrame implements BoardView  {
         for (Player player: players){
             if (player.isBankrupt()) {
                 gameOverMessage += "Player " + player.getIconName().toUpperCase() +
-                        " has the rank" + player.getRank() + "\n";
+                        " has the rank " + player.getRank() + "\n";
             }
         }
         JOptionPane.showMessageDialog(null, gameOverMessage, "GAME OVER!", JOptionPane.PLAIN_MESSAGE);

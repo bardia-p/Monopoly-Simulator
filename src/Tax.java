@@ -41,21 +41,11 @@ public class Tax extends BoardCell{
         return tax;
     }
 
-    /**
-     * Accessor method to package relevant information into a string.
-     * @author Sarah Chow 101143033
-     * @return the cell's current information, String
-     */
-    @Override
-    public String toString() {
-        return "\n\tname='" + super.getName() + '\'' +
-                "\n\ttax='" + tax + '\'';
-    }
 
     /**
      * Accessor method to package relevant information into a linked hash map.
      * @author Sarah Chow 101143033
-     * @return attributes of Tax, LinkedHashMap
+     * @return attributes of Tax, Map
      */
     public Map<String, String> getAttributes() {
 

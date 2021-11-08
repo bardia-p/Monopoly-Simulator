@@ -29,20 +29,11 @@ public class EmptyCell extends BoardCell {
         super(name, null, type, imgPath);
     }
 
-    /**
-     * Accessor method to package relevant information into a string.
-     * @author Bardia Parmoun 101143006
-     * @return the cell's current information, String
-     */
-    @Override
-    public String toString() {
-        return "\n\tname='" + super.getName() + "'";
-    }
 
     /**
      * Accessor method to package relevant information into a linked hash map.
      * @author Sarah Chow 101143033
-     * @return attributes of empty cell, LinkedHashMap
+     * @return attributes of empty cell, Map
      */
     public Map<String, String> getAttributes() {
 

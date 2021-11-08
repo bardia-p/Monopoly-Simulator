@@ -67,6 +67,8 @@ public class Player {
      */
     private int rank;
 
+    private boolean request_forfeit;
+
     /**
      * Possible values of player debt status.
      */
@@ -92,6 +94,7 @@ public class Player {
         this.rollAgain = false;
         this.feesStatus = StatusEnum.NO_FEES;
         this.rank = 0;
+        this.request_forfeit = false;
     }
 
     /**
@@ -315,10 +318,18 @@ public class Player {
         return rank;
     }
 
+    public void toggleRequest_forfeit() {
+        this.request_forfeit = !this.request_forfeit;
+    }
+
+    public boolean getRequest_forfeit(){
+        return this.request_forfeit;
+    }
+
     /**
      * Accessor method to package relevant information into a linked hash map.
      * @author Sarah Chow 101143033
-     * @return attributes of the player, LinkedHashMap
+     * @return attributes of the player, Map
      */
     public Map<String, String> getAttributes() {
 

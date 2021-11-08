@@ -38,20 +38,11 @@ public class Go extends BoardCell {
         return reward;
     }
 
-    /**
-     * Accessor method to package relevant information into a string.
-     * @author Sarah Chow 101143033
-     * @return the cell's current information, String
-     */
-    @Override
-    public String toString() {
-        return "\n\tname='" + super.getName() + '\'';
-    }
 
     /**
      * Accessor method to package relevant information into a linked hash map.
      * @author Sarah Chow 101143033
-     * @return attributes of GO, LinkedHashMap
+     * @return attributes of GO, Map
      */
     public Map<String, String> getAttributes() {
 
