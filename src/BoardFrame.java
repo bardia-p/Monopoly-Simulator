@@ -1,6 +1,8 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.*;
@@ -134,7 +136,7 @@ public class BoardFrame extends JFrame implements BoardView  {
         switch (e.getType()) {
             case PLAYER_ROLL -> handleRoll(e.getDice(), e.getPlayer());
             case BUY -> handleBuyProperty(e.getPlayer(), (Property) e.getBoardCell(), e.getResult());
-            case SELL -> handleSellProperty(e.getPlayer(), (Property) e.getBoardCell(), e.getResult());
+            case SELL -> handleSellProperty(e.getPlayer());
             case PLAYER_STATUS -> handleGetPlayerStatus(e.getPlayer());
             case BOARD_STATUS -> handleGetBoardStatus(e.getPlayers());
             case CELL_STATUS -> handleGetCellStatus(e.getPlayer().getCurrentCell());
@@ -560,16 +562,51 @@ public class BoardFrame extends JFrame implements BoardView  {
 
     /**
      * Displays whether the current player can sell the property they attempted to sell.
-     * @author Kyra Lothrop 101145872
+     * @author Sarah Chow 101143033
      * @param player player performing actions, Player
-     * @param property property that is in contention for selling, Property
-     * @param result if the player can sell the property, boolean
      */
-    private void handleSellProperty(Player player, Property property, boolean result) {
-         if (result){
-            System.out.printf("\nPlayer %s sold %s\n", player.getIconName().toUpperCase(), property.getName());
-        } else {
-            System.out.printf("\nPlayer %s cannot sell %s\n", player.getIconName().toUpperCase(), property.getName());
+    private void handleSellProperty(Player player) {
+        JPanel panel = new JPanel();
+        ButtonGroup group = new ButtonGroup();
+
+        for (Property p : player.getProperties(true)) {
+
+            JRadioButton button = new JRadioButton(p.getName().toUpperCase());
+
+            String message = "<html>";
+
+            for (String key : p.getAttributes().keySet()) {
+                message += key + p.getAttributes().get(key) + "<br/>";
+            }
+
+            message += "</html>";
+            JLabel des = new JLabel(message);
+
+            button.setActionCommand(p.getName());
+            group.add(button);
+
+            des.setVisible(true);
+            panel.add(button);
+            panel.add(des, BorderLayout.EAST);
+        }
+
+        panel.setPreferredSize(new Dimension(400, 400));
+
+
+        int ans = JOptionPane.showConfirmDialog(null, panel,
+                "SELL PROPERTY", JOptionPane.CANCEL_OPTION);
+        if (ans == JOptionPane.OK_OPTION){
+            for (Property p : player.getProperties(true)){ //************* theres definitely a way to do this without iterating over the list lol
+                if (group.getSelection().getActionCommand().equals(p.getName())){
+                    player.toggleConfirmSell();
+                    player.setPropertyToSell(p);
+                    JOptionPane.showMessageDialog(null, "Player " +
+                            player.getIconName().toUpperCase() + " sold " + p.getName().toUpperCase());
+                }
+            }
+        }
+        else{
+            JOptionPane.showMessageDialog(null, "Sell cancelled!");
         }
     }
 

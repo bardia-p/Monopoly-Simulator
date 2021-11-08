@@ -160,7 +160,7 @@ public class BoardModel {
             buyProperty((Property) turn.getCurrentCell() , turn);
         }
         else if(command.equals((Command.SELL.getStringCommand()))){
-            //sellProperty((Property) //must prompt user for what to sell
+            sellProperty(turn); //must prompt user for what to sell
         }
         else if(command.equals((Command.PAY_RENT.getStringCommand()))){
             payFees((Property) turn.getCurrentCell(), turn);
@@ -446,16 +446,18 @@ public class BoardModel {
     /**
      * Sells a property owned by the active player and removes it from their owned properties if
      * the property may be sold.
-     * @author Bardia Parmoun 101143006
-     * @param property property being sold, Property
+     * @author Sarah Chow 101143033
      * @param player player selling the property, Player
      */
-    public void sellProperty(Property property, Player player){
-        player.sellProperty(property);
-        property.toggleRecentlyChanged();
-        property.setOwner(null);
+    public void sellProperty(Player player){
+        sendBoardUpdate(new BoardEvent(this, Status.SELL, player));
 
-        sendBoardUpdate(new BoardEvent(this, Status.SELL, player, property, true));
+        if (player.getConfirmSell()){
+            player.sellProperty(player.getPropertyToSell());
+            player.getPropertyToSell().toggleRecentlyChanged();
+            player.getPropertyToSell().setOwner(null);
+        }
+
     }
 
     /**
