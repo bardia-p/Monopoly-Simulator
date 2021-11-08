@@ -278,7 +278,7 @@ public class BoardFrame extends JFrame implements BoardView  {
     private void handleRoll(int[] dice, Player player) { // Player object not used ****************************************
         int die1 = dice[0];
         int die2 = dice[1];
-        final int MAXRANDOMROLLS = 10;
+        final int MAXRANDOMROLLS = 5;
 
         for (int i = 0; i < MAXRANDOMROLLS + 1; i++) {
             Random rand = new Random();
@@ -341,14 +341,30 @@ public class BoardFrame extends JFrame implements BoardView  {
     }
 
     /**
+     * Method to cancel the player initialization process.
+     * @author Sarah Chow 101143033
+     */
+    private void initializationCancel(){
+        JOptionPane.showMessageDialog(null, "Game initialization is cancelled!");
+        System.exit(0);
+    }
+
+    /**
      * Get the number of players from the user
      * @author Kyra Lothrop 101145872
      */
     private void getNumPlayers(){
         Integer[] numPlayerOptions = {2,3,4,5,6,7,8};
-        int numPlayers = (Integer)JOptionPane.showInputDialog(null, "How many people will be playing?", "INITIALIZE GAME DATA",
-                JOptionPane.QUESTION_MESSAGE, null, numPlayerOptions, numPlayerOptions[0]);
-        model.setNumPlayers(numPlayers);
+        try{
+            int numPlayers = (Integer)JOptionPane.showInputDialog(null, "How many people will be playing?", "INITIALIZE GAME DATA",
+                    JOptionPane.QUESTION_MESSAGE, null, numPlayerOptions, numPlayerOptions[0]);
+
+            model.setNumPlayers(numPlayers);
+        }
+        catch(Exception e){
+            initializationCancel();
+        }
+
     }
 
     /**
@@ -362,15 +378,24 @@ public class BoardFrame extends JFrame implements BoardView  {
             Object[] message = {
                     "What's player "+ (i+1) + "'s name?", playerName,
             };
-            JOptionPane.showConfirmDialog(null, message, "Initialize player "+ (i+1), JOptionPane.OK_CANCEL_OPTION);
+
+            int ans = JOptionPane.showConfirmDialog(null, message, "Initialize player "+ (i+1),
+                        JOptionPane.OK_CANCEL_OPTION);
+
+            if (ans != JOptionPane.OK_OPTION){
+                initializationCancel();
+            }
 
             Object[] iconOptions = getListOfIconsUpper();
-            String playerIcon = (String) JOptionPane.showInputDialog(null, "Select player " + (i+1) + " icon" , "Select Icon",
-                    JOptionPane.QUESTION_MESSAGE, null, iconOptions, iconOptions[0]);
-            model.setNumPlayers(numPlayers);
+            String playerIcon = (String) JOptionPane.showInputDialog(null, "Select player " +
+                                (i+1) + " icon" , "Select Icon", JOptionPane.QUESTION_MESSAGE, null,
+                                iconOptions, iconOptions[0]);
+
+            if (playerIcon == null){
+                initializationCancel();
+            }
 
             model.addPlayer(new Player(playerName.getText(), findPlayerIcon(playerIcon.toLowerCase())));
-
         }
     }
 
@@ -383,7 +408,7 @@ public class BoardFrame extends JFrame implements BoardView  {
         List<String> iconOptions = new ArrayList<>();
 
         for (BoardModel.Icon icon: BoardModel.Icon.values()){
-            if (!icon.getUsed()) {
+            if (!icon.getUsed() && !icon.getName().equals("bank")) {
                 iconOptions.add(icon.getName().toUpperCase());
             }
         }
@@ -449,6 +474,8 @@ public class BoardFrame extends JFrame implements BoardView  {
             else if (buttonsText[i].equals("Cell Status")){
                 commandButton.setActionCommand(BoardModel.Command.CELL_STATUS.getStringCommand());
             }
+
+            commandButton.setEnabled(false);
         }
         layeredPane.add(commandsPanel);
 
