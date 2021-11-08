@@ -130,6 +130,7 @@ public class BoardModel {
      * @author Owen VanDusen 101152022
      */
     public BoardModel(){
+        constructBoard();
         views = new ArrayList<>();
         cells = new ArrayList<>();
         players = new ArrayList<>();
@@ -288,6 +289,15 @@ public class BoardModel {
     }
 
     /**
+     * Accessor method for the dice rolled using roll(). ONLY USED FOR TEST CASES
+     * @return Two element array representing each individual die rolled
+     * @author Owen VanDusen 101152022
+     */
+    public int[] getDice() {
+        return dice;
+    }
+
+    /**
      * Generates a board event to create players for the game based on the number of players selected.
      * @author Kyra Lothrop 101145872
      */
@@ -411,8 +421,6 @@ public class BoardModel {
         int newPlayerPosition = (player.getPosition() + amountToMove) % SIZE_OF_BOARD;
         player.setPosition(newPlayerPosition);
         player.setCurrentCell(cells.get(newPlayerPosition));
-//        //debug
-//        System.out.printf("Player %s is currently at: %s\n", player.getIconName(), cells.get(newPlayerPosition).getName());
     }
 
     /**
@@ -575,7 +583,6 @@ public class BoardModel {
      * @author Kyra Lothrop 101145872
      */
     public void play(){
-        constructBoard();
         initializeMonopoly();
         getNumPlayers();
         initiatePlayers();
