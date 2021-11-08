@@ -1,3 +1,6 @@
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * Group 3
  * SYSC 3110 - Milestone 1 Tax Class
@@ -38,14 +41,19 @@ public class Tax extends BoardCell{
         return tax;
     }
 
+
     /**
-     * Accessor method to package relevant information into a string.
+     * Accessor method to package relevant information into a linked hash map.
      * @author Sarah Chow 101143033
-     * @return the cell's current information, String
+     * @return attributes of Tax, Map
      */
-    @Override
-    public String toString() {
-        return "\n\tname='" + super.getName() + '\'' +
-                "\n\ttax='" + tax + '\'';
+    public Map<String, String> getAttributes() {
+
+        Map<String, String> attributes = new LinkedHashMap<String, String>();
+
+        attributes.put("Cell Name: ", String.valueOf(super.getName()));
+        attributes.put("Tax: ", String.valueOf(tax));
+
+        return attributes;
     }
 }

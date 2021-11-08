@@ -58,7 +58,7 @@ public class BoardModel {
      */
     public enum Status {GET_NUM_PLAYERS, CREATE_PLAYER_ICONS, INITIALIZE_BOARD, INITIALIZE_MONOPOLY, INITIALIZE_PLAYERS, GET_COMMAND, PLAYER_ROLL,
         PLAYER_DOUBLE_ROLL, PLAYER_MOVE, BUY, SELL, PAY_FEES, PLAYER_STATUS, CELL_STATUS, BOARD_STATUS, PLAYER_FORFEIT,
-        PASS_TURN, REPAINT_BOARD, GAME_OVER}
+        PLAYER_REQUEST_FORFEIT, PASS_TURN, REPAINT_BOARD, GAME_OVER}
     /**
      * Keeps track of the possible player commands.
      */
@@ -66,12 +66,13 @@ public class BoardModel {
         BUY ("buy"),
         SELL ("sell"),
         PAY_RENT ("pay rent"),
-        STATUS ("status"),
+        PLAYER_STATUS ("player status"),
         BOARD_STATUS ("board status"),
         PASS ("pass"),
         ROLL_AGAIN ("roll"),
         CELL_STATUS ("cell status"),
         FORFEIT ("forfeit"),
+        CONFIRM_FORFEIT("confirm_forfeit"),
         PAY_TAX ("pay tax"),
         REPAINT("repaint");
 
@@ -148,33 +149,39 @@ public class BoardModel {
     public void sendCommand(String command) {
         if(command.equals(Command.REPAINT.getStringCommand())){
             repaint(turn);
-            getCommand(turn);
         }
         else if(command.equals(Command.ROLL_AGAIN.getStringCommand())){
             roll(turn);
-            getCommand(turn);
         }
         else if(command.equals(Command.PASS.getStringCommand())){
             passTurn(turn);
-            getCommand(turn);
-        }
-        else if(command.equals((Command.FORFEIT.getStringCommand()))){
-            forfeit(turn);
         }
         else if(command.equals((Command.BUY.getStringCommand()))){
             buyProperty((Property) turn.getCurrentCell() , turn);
-            getCommand(turn);
         }
         else if(command.equals((Command.SELL.getStringCommand()))){
-            //sellProperty((Property) //must prompt user for what to sell
-            getCommand(turn);
+            sellProperty(turn); //must prompt user for what to sell
         }
         else if(command.equals((Command.PAY_RENT.getStringCommand()))){
             payFees((Property) turn.getCurrentCell(), turn);
-            getCommand(turn);
         }
         else if(command.equals((Command.PAY_TAX.getStringCommand()))){
             payFees((Tax) turn.getCurrentCell(), turn);
+        }
+        else if (command.equals((Command.PLAYER_STATUS.getStringCommand()))){
+            getPlayerStatus(turn);
+        }
+        else if (command.equals((Command.CELL_STATUS.getStringCommand()))){
+            getCellStatus();
+        }
+        else if(command.equals((Command.FORFEIT.getStringCommand()))){
+            request_forfeit(turn);
+        }
+        else if(command.equals((Command.CONFIRM_FORFEIT.getStringCommand()))){
+            forfeit(turn);
+        }
+
+        if(!command.equals((Command.FORFEIT.getStringCommand()))) {
             getCommand(turn);
         }
     }
@@ -357,12 +364,13 @@ public class BoardModel {
         }
 
         // Handles the status commands.
-        commands.add(BoardModel.Command.STATUS);
+        commands.add(BoardModel.Command.PLAYER_STATUS);
         commands.add(BoardModel.Command.BOARD_STATUS);
         commands.add(BoardModel.Command.CELL_STATUS);
 
         // Handling forfeiting the game and declaring bankruptcy.
         commands.add(Command.FORFEIT);
+
 
         sendBoardUpdate(new BoardEvent(this, BoardModel.Status.GET_COMMAND, player, commands));
     }
@@ -438,16 +446,18 @@ public class BoardModel {
     /**
      * Sells a property owned by the active player and removes it from their owned properties if
      * the property may be sold.
-     * @author Bardia Parmoun 101143006
-     * @param property property being sold, Property
+     * @author Sarah Chow 101143033
      * @param player player selling the property, Player
      */
-    public void sellProperty(Property property, Player player){
-        player.sellProperty(property);
-        property.toggleRecentlyChanged();
-        property.setOwner(null);
+    public void sellProperty(Player player){
+        sendBoardUpdate(new BoardEvent(this, Status.SELL, player));
 
-        sendBoardUpdate(new BoardEvent(this, Status.SELL, player, property, true));
+        if (player.getConfirmSell()){
+            player.sellProperty(player.getPropertyToSell());
+            player.getPropertyToSell().toggleRecentlyChanged();
+            player.getPropertyToSell().setOwner(null);
+        }
+
     }
 
     /**
@@ -455,9 +465,9 @@ public class BoardModel {
      * @author Sarah Chow 101143033
      * @param player active player, Player
      */
-    public void getStatus(Player player){
+    public void getPlayerStatus(Player player){
         sendBoardUpdate(new BoardEvent(this, Status.PLAYER_STATUS, player));
-    }
+    } // I RENAMED THIS FUNCTION *****************************************************************************************
 
     /**
      * Accessor to display the information of the players on each view.
@@ -545,6 +555,14 @@ public class BoardModel {
         player.setRollAgain(true);
 
         sendBoardUpdate(new BoardEvent(this, Status.PLAYER_DOUBLE_ROLL, player));
+    }
+
+    public void request_forfeit(Player player){
+        sendBoardUpdate(new BoardEvent(this, Status.PLAYER_REQUEST_FORFEIT, player));
+
+        if (player.getRequest_forfeit()){
+            forfeit(player);
+        }
     }
 
     /**

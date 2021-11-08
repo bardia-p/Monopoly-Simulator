@@ -1,6 +1,8 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.*;
@@ -134,7 +136,7 @@ public class BoardFrame extends JFrame implements BoardView  {
         switch (e.getType()) {
             case PLAYER_ROLL -> handleRoll(e.getDice(), e.getPlayer());
             case BUY -> handleBuyProperty(e.getPlayer(), (Property) e.getBoardCell(), e.getResult());
-            case SELL -> handleSellProperty(e.getPlayer(), (Property) e.getBoardCell(), e.getResult());
+            case SELL -> handleSellProperty(e.getPlayer());
             case PLAYER_STATUS -> handleGetPlayerStatus(e.getPlayer());
             case BOARD_STATUS -> handleGetBoardStatus(e.getPlayers());
             case CELL_STATUS -> handleGetCellStatus(e.getPlayer().getCurrentCell());
@@ -142,7 +144,6 @@ public class BoardFrame extends JFrame implements BoardView  {
             case INITIALIZE_MONOPOLY -> handleWelcomeMonopoly();
             case PAY_FEES -> handlePayFees(e.getPlayer().getCurrentCell(), e.getPlayer(), e.getValue(), e.getResult());
             case PASS_TURN -> handleCurrentPlayerChange();
-            case PLAYER_FORFEIT -> handleForfeitedPlayer(e.getPlayer());
             case GAME_OVER -> handleWinner(e.getPlayers());
             case INITIALIZE_BOARD -> constructBoard(e.getCells());
             case CREATE_PLAYER_ICONS -> createPlayerLabels((ArrayList<Player>) e.getPlayers());
@@ -151,6 +152,8 @@ public class BoardFrame extends JFrame implements BoardView  {
             case GET_COMMAND -> updateAvailableCommands(e.getPlayer(), (ArrayList<BoardModel.Command>) e.getCommands());     //new
             case PLAYER_MOVE -> handlePlayerGUIMove(e.getPlayer(), e.getValue(), e.getValue2());
             case REPAINT_BOARD -> handleRepaintBoard();
+            case PLAYER_FORFEIT -> handleForfeitedPlayer(e.getPlayer());
+            case PLAYER_REQUEST_FORFEIT -> handleRequestForfeit(e.getPlayer());
         }
     }
 
@@ -272,7 +275,7 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @param dice value of the dice, int[]
      * @param player player performing actions, Player
      */
-    private void handleRoll(int[] dice, Player player) {
+    private void handleRoll(int[] dice, Player player) { // Player object not used ****************************************
         int die1 = dice[0];
         int die2 = dice[1];
         final int MAXRANDOMROLLS = 10;
@@ -304,6 +307,14 @@ public class BoardFrame extends JFrame implements BoardView  {
 
     }
 
+    /**
+     * Displays a prompt whenever a player rolls the same number on both dice.
+     * @author Bardia Parmoun 101143006
+     * @param player player performing actions, Player
+     */
+    private void handleRollingDoubles(Player player){
+        System.out.printf("Player %s rolled a double\n", player.getIconName());
+    }
 
     /**
      * Enables the command buttons based on what the user is allowed to do
@@ -403,7 +414,7 @@ public class BoardFrame extends JFrame implements BoardView  {
         JPanel commandsPanel = new JPanel(new GridLayout(1,7));
         commandsPanel.setBounds(0, 30, 600, 20);
 
-        String[] buttonsText = {"Roll", "Pass", "Forfeit", "Buy", "Sell", "Pay Rent", "Pay Tax"};
+        String[] buttonsText = {"Roll", "Pass", "Forfeit", "Buy", "Sell", "Pay Rent", "Pay Tax", "Player Status", "Cell Status"};
 
         for(int i = 0; i<buttonsText.length; i++){
             JButton commandButton = new JButton(buttonsText[i]);
@@ -431,6 +442,12 @@ public class BoardFrame extends JFrame implements BoardView  {
             }
             else if(buttonsText[i].equals("Pay Tax")){
                 commandButton.setActionCommand(BoardModel.Command.PAY_TAX.getStringCommand());
+            }
+            else if (buttonsText[i].equals("Player Status")){
+                commandButton.setActionCommand(BoardModel.Command.PLAYER_STATUS.getStringCommand());
+            }
+            else if (buttonsText[i].equals("Cell Status")){
+                commandButton.setActionCommand(BoardModel.Command.CELL_STATUS.getStringCommand());
             }
         }
         layeredPane.add(commandsPanel);
@@ -545,28 +562,92 @@ public class BoardFrame extends JFrame implements BoardView  {
 
     /**
      * Displays whether the current player can sell the property they attempted to sell.
-     * @author Kyra Lothrop 101145872
+     * @author Sarah Chow 101143033
      * @param player player performing actions, Player
-     * @param property property that is in contention for selling, Property
-     * @param result if the player can sell the property, boolean
      */
-    private void handleSellProperty(Player player, Property property, boolean result) {
-         if (result){
-            System.out.printf("\nPlayer %s sold %s\n", player.getIconName().toUpperCase(), property.getName());
-        } else {
-            System.out.printf("\nPlayer %s cannot sell %s\n", player.getIconName().toUpperCase(), property.getName());
+    private void handleSellProperty(Player player) {
+        JPanel panel = new JPanel();
+        ButtonGroup group = new ButtonGroup();
+
+        for (Property p : player.getProperties(true)) {
+
+            JRadioButton button = new JRadioButton(p.getName().toUpperCase());
+
+            String message = "<html>";
+
+            for (String key : p.getAttributes().keySet()) {
+                message += key + p.getAttributes().get(key) + "<br/>";
+            }
+
+            message += "</html>";
+            JLabel des = new JLabel(message);
+
+            button.setActionCommand(p.getName());
+            group.add(button);
+
+            des.setVisible(true);
+            panel.add(button);
+            panel.add(des, BorderLayout.EAST);
+        }
+
+        panel.setPreferredSize(new Dimension(400, 400));
+
+
+        int ans = JOptionPane.showConfirmDialog(null, panel,
+                "SELL PROPERTY", JOptionPane.CANCEL_OPTION);
+        if (ans == JOptionPane.OK_OPTION){
+            for (Property p : player.getProperties(true)){ //************* theres definitely a way to do this without iterating over the list lol
+                if (group.getSelection().getActionCommand().equals(p.getName())){
+                    player.toggleConfirmSell();
+                    player.setPropertyToSell(p);
+                    JOptionPane.showMessageDialog(null, "Player " +
+                            player.getIconName().toUpperCase() + " sold " + p.getName().toUpperCase());
+                }
+            }
+        }
+        else{
+            JOptionPane.showMessageDialog(null, "Sell cancelled!");
         }
     }
 
     /**
+     * Displays the attributes of the object.
+     * @author Sarah Chow 101143033
+     * @param title JPanel title, String
+     * @param attributes attributes of the object, Map
+     */
+    private void displayObjectAttributes(String title, Map<String, String> attributes, boolean player){
+        int count = 0;
+        String message = "";
+
+        for (String key : attributes.keySet()){
+            if (player && count > 4){
+                message += "\t";
+            }
+            message += key + attributes.get(key) + "\n";
+            count++;
+        }
+        JOptionPane.showMessageDialog(null, message, title, JOptionPane.PLAIN_MESSAGE);
+    }
+
+    /**
      * Displays the status of the current player.
-     * @author Owen VanDusen 101152022
+     * @author Sarah Chow 101143033
      * @param player player performing actions, Player
      */
     private void handleGetPlayerStatus(Player player) {
-        System.out.printf("\nDisplaying the status of player: %s\n", player.getIconName().toUpperCase());
-        System.out.println(player + "\n");
+        displayObjectAttributes("PLAYER STATUS", player.getAttributes(), true);
     }
+
+    /**
+     * Displays the information of the property the player is currently on.
+     * @author Sarah Chow 101143033
+     * @param currentCell property the player is on, BoardCell
+     */
+    private void handleGetCellStatus(BoardCell currentCell){
+        displayObjectAttributes("CELL STATUS", currentCell.getAttributes(), false);
+    }
+
 
     /**
      * Displays the status of the current board.
@@ -601,24 +682,6 @@ public class BoardFrame extends JFrame implements BoardView  {
         System.out.println("\n");
     }
 
-    /**
-     * Displays the information of the property the player is currently on.
-     * @author Bardia Parmoun 101143006
-     * @param currentCell property the player is on, BoardCell
-     */
-    private void handleGetCellStatus(BoardCell currentCell){
-        System.out.printf("\nDisplaying the status of the current cell: %s\n", currentCell.getName());
-        System.out.println(currentCell + "\n");
-    }
-
-    /**
-     * Displays a prompt whenever a player rolls the same number on both dice.
-     * @author Bardia Parmoun 101143006
-     * @param player player performing actions, Player
-     */
-    private void handleRollingDoubles(Player player){
-        System.out.printf("Player %s rolled a double\n", player.getIconName());
-    }
 
     /**
      * Displays the introduction message.
@@ -661,12 +724,28 @@ public class BoardFrame extends JFrame implements BoardView  {
     }
 
     /**
+     * Confirmation message that the player would like to forfeit the game.
+     * @author Sarah Chow 101143033
+     * @param player player forfeiting, Player
+     */
+    private void handleRequestForfeit(Player player) {
+        int ans = JOptionPane.showConfirmDialog(null, "Are you sure you would like to forfeit the game?");
+        if (ans == JOptionPane.YES_OPTION){
+            player.toggleRequest_forfeit();
+        }
+        else{
+            JOptionPane.showMessageDialog(null, "Forfeit request cancelled!");
+        }
+    }
+
+    /**
      * Displays a message informing that a player chose to forfeit the game.
      * @author Sarah Chow 101143033
      * @param player player forfeiting, Player
      */
-    private void handleForfeitedPlayer(Player player) {
-        System.out.printf("Player %s has forfeited the game!\n", player.getIconName().toUpperCase());
+    private void handleForfeitedPlayer(Player player){
+        String message = "Player: " + player.getIconName().toUpperCase() + " has forfeited the game!";
+        JOptionPane.showMessageDialog(null, message);
     }
 
     /**
@@ -682,7 +761,7 @@ public class BoardFrame extends JFrame implements BoardView  {
         for (Player player: players){
             if (player.isBankrupt()) {
                 gameOverMessage += "Player " + player.getIconName().toUpperCase() +
-                        " has the rank" + player.getRank() + "\n";
+                        " has the rank " + player.getRank() + "\n";
             }
         }
         JOptionPane.showMessageDialog(null, gameOverMessage, "GAME OVER!", JOptionPane.PLAIN_MESSAGE);

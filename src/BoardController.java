@@ -38,7 +38,7 @@ public class BoardController extends WindowAdapter implements ActionListener {
     /**
      * Listens for the user command buttons in the BoardFrame
      * @author Kyra Lothrop 101145872
-     * @param e
+     * @param e action event e for using the buttons, ActionEvent
      */
     @Override
     public void actionPerformed(ActionEvent e) {

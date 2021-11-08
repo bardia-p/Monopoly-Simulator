@@ -1,3 +1,5 @@
+import java.util.Map;
+
 /**
  * Group 3
  * SYSC 3110 - Milestone 1 BoardCell Class
@@ -76,13 +78,6 @@ public abstract class BoardCell {
     }
 
     /**
-     * Accessor method to package relevant information into a string.
-     * @author Sarah Chow 101143033
-     * @return the cell's current information, String
-     */
-    public abstract String toString();
-
-    /**
      * Accessor method to get the type of the cell
      * @author Owen VanDusen 101152022
      * @return the cell type, CellType
@@ -99,4 +94,11 @@ public abstract class BoardCell {
     public String getImgPath(){
         return imgPath;
     }
+
+    /**
+     * Accessor method to package relevant information into a Map.
+     * @author Sarah Chow 101143033
+     * @return the cell's current information, Map
+     */
+    public abstract Map<String, String> getAttributes();
 }
