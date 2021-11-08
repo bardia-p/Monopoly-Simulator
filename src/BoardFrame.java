@@ -1,8 +1,6 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.*;
@@ -36,6 +34,10 @@ public class BoardFrame extends JFrame implements BoardView  {
      */
     private List<JPanel> boardCells;
     /**
+     * List of command buttons.
+     */
+    private List<JButton> commandButtons;
+    /**
      * Keeps track of all the player JLabels.
      */
     private Map<Player, JLabel> playerLabels;
@@ -54,7 +56,7 @@ public class BoardFrame extends JFrame implements BoardView  {
     /**
      * Keeps track of the size of the window width.
      */
-    private static final int WINDOW_WIDTH = 1000;
+    private static final int WINDOW_WIDTH = 750;
     /**
      * Keeps track of the window height.
      */
@@ -74,11 +76,27 @@ public class BoardFrame extends JFrame implements BoardView  {
     /**
      * Keeps track of how much the board should be shifted down based on the buttons above it.
      */
-    private static final int BOARD_SHIFT_Y = 50;
+    private static final int BOARD_SHIFT_Y = 60;
     /**
-     * List of command buttons.
+     * The size of the icon.
      */
-    private List<JButton> commandButtons;
+    private static final int ICON_SIZE = 40;
+    /**
+     * The size of the die.
+     */
+    private static final int DIE_SIZE = 50;
+    /**
+     * The height of the command panel.
+     */
+    private static final int COMMAND_HEIGHT = 50;
+    /**
+     * Shifting the command panel.
+     */
+    private static final int COMMAND_SHIFT_Y = 10;
+    /**
+     * The maximum number of rolls in the dice animation.
+     */
+    private static final int MAXRANDOMROLLS = 10;
 
     /**
      * Constructor for the Board listener, creates the board model, adds the board listener to the board model,
@@ -247,7 +265,7 @@ public class BoardFrame extends JFrame implements BoardView  {
                     break;
             }
 
-            Image newImage = currImage.getScaledInstance(50, 50, Image.SCALE_DEFAULT);
+            Image newImage = currImage.getScaledInstance(DIE_SIZE, DIE_SIZE, Image.SCALE_DEFAULT);
             JLabel label = new JLabel(new ImageIcon(newImage));
 
             GridBagConstraints c = new GridBagConstraints();
@@ -275,10 +293,9 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @param dice value of the dice, int[]
      * @param player player performing actions, Player
      */
-    private void handleRoll(int[] dice, Player player) { // Player object not used ****************************************
+    private void handleRoll(int[] dice, Player player) {
         int die1 = dice[0];
         int die2 = dice[1];
-        final int MAXRANDOMROLLS = 10;
 
         for (int i = 0; i < MAXRANDOMROLLS + 1; i++) {
             Random rand = new Random();
@@ -346,7 +363,8 @@ public class BoardFrame extends JFrame implements BoardView  {
      */
     private void getNumPlayers(){
         Integer[] numPlayerOptions = {2,3,4,5,6,7,8};
-        int numPlayers = (Integer)JOptionPane.showInputDialog(null, "How many people will be playing?", "INITIALIZE GAME DATA",
+        int numPlayers = (Integer)JOptionPane.showInputDialog(null,
+                "How many people will be playing?", "INITIALIZE GAME DATA",
                 JOptionPane.QUESTION_MESSAGE, null, numPlayerOptions, numPlayerOptions[0]);
         model.setNumPlayers(numPlayers);
     }
@@ -411,8 +429,8 @@ public class BoardFrame extends JFrame implements BoardView  {
      */
     private void constructBoard(List<BoardCell> cells) {
         // Command buttons
-        JPanel commandsPanel = new JPanel(new GridLayout(1,7));
-        commandsPanel.setBounds(0, 30, 600, 20);
+        JPanel commandsPanel = new JPanel(new GridLayout(2,4, 10, 10));
+        commandsPanel.setBounds(0, COMMAND_SHIFT_Y,BOARD_WIDTH, COMMAND_HEIGHT);
 
         String[] buttonsText = {"Roll", "Pass", "Forfeit", "Buy", "Sell", "Pay Rent", "Pay Tax", "Player Status", "Cell Status"};
 
@@ -449,6 +467,8 @@ public class BoardFrame extends JFrame implements BoardView  {
             else if (buttonsText[i].equals("Cell Status")){
                 commandButton.setActionCommand(BoardModel.Command.CELL_STATUS.getStringCommand());
             }
+
+            commandButton.setEnabled(false);
         }
         layeredPane.add(commandsPanel);
 
@@ -522,7 +542,7 @@ public class BoardFrame extends JFrame implements BoardView  {
         if (!player.getIconImgPath().equals("")) {
             try {
                 BufferedImage image = ImageIO.read(getClass().getResource(player.getIconImgPath()));
-                Image dimg = image.getScaledInstance(40,40, Image.SCALE_SMOOTH);
+                Image dimg = image.getScaledInstance(ICON_SIZE,ICON_SIZE, Image.SCALE_SMOOTH);
                 playerLabels.get(player).setIcon(new ImageIcon(dimg));
 
                 JPanel currentCell = boardCells.get(cellIndex);
@@ -720,6 +740,9 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @author Owen VanDusen 101152022
      */
     private void handleCurrentPlayerChange() {
+        for(JButton b: commandButtons){
+            b.setEnabled(false);
+        }
         System.out.println("\n+++++++++Passing Dice To Next Player+++++++++");
     }
 

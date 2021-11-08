@@ -391,6 +391,7 @@ public class Player {
         attributes.put("Cash: ", String.valueOf(cash));
         attributes.put("Position: ", String.valueOf(position));
         attributes.put("Bankrupt: ", String.valueOf(bankrupt).toUpperCase());
+        attributes.put("Fee Status: ", String.valueOf(feesStatus).toUpperCase());
 
         for (Property property: properties)
         {

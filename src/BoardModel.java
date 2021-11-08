@@ -1,5 +1,4 @@
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Group 3
@@ -53,12 +52,13 @@ public class BoardModel {
      */
     private final Player bank;
 
+    private boolean checkDoubleRoll = false;
     /**
      * Keeps track of the possible board statuses.
      */
-    public enum Status {GET_NUM_PLAYERS, CREATE_PLAYER_ICONS, INITIALIZE_BOARD, INITIALIZE_MONOPOLY, INITIALIZE_PLAYERS, GET_COMMAND, PLAYER_ROLL,
-        PLAYER_DOUBLE_ROLL, PLAYER_MOVE, BUY, SELL, PAY_FEES, PLAYER_STATUS, CELL_STATUS, BOARD_STATUS, PLAYER_FORFEIT,
-        PLAYER_REQUEST_FORFEIT, PASS_TURN, REPAINT_BOARD, GAME_OVER}
+    public enum Status {GET_NUM_PLAYERS, CREATE_PLAYER_ICONS, INITIALIZE_BOARD, INITIALIZE_MONOPOLY, INITIALIZE_PLAYERS,
+        GET_COMMAND, PLAYER_ROLL, PLAYER_DOUBLE_ROLL, PLAYER_MOVE, BUY, SELL, PAY_FEES, PLAYER_STATUS, CELL_STATUS,
+        BOARD_STATUS, PLAYER_FORFEIT, PLAYER_REQUEST_FORFEIT, PASS_TURN, REPAINT_BOARD, GAME_OVER}
     /**
      * Keeps track of the possible player commands.
      */
@@ -139,6 +139,7 @@ public class BoardModel {
         gameFinish = false;
         turn = null;
         numPlayers = 0;
+        checkDoubleRoll = false;
     }
 
     /**
@@ -151,7 +152,7 @@ public class BoardModel {
             repaint(turn);
         }
         else if(command.equals(Command.ROLL_AGAIN.getStringCommand())){
-            roll(turn);
+            checkDoubleRoll = true;
         }
         else if(command.equals(Command.PASS.getStringCommand())){
             passTurn(turn);
@@ -181,7 +182,8 @@ public class BoardModel {
             forfeit(turn);
         }
 
-        if(!command.equals((Command.FORFEIT.getStringCommand()))) {
+        if(turn!= null && !command.equals((Command.PASS.getStringCommand())) &&
+                !command.equals((Command.FORFEIT.getStringCommand()))) {
             getCommand(turn);
         }
     }
@@ -419,6 +421,7 @@ public class BoardModel {
         int newPlayerPosition = (player.getPosition() + amountToMove) % SIZE_OF_BOARD;
         player.setPosition(newPlayerPosition);
         player.setCurrentCell(cells.get(newPlayerPosition));
+        getCommand(player);
 //        //debug
 //        System.out.printf("Player %s is currently at: %s\n", player.getIconName(), cells.get(newPlayerPosition).getName());
     }
@@ -539,7 +542,7 @@ public class BoardModel {
         // Reset the turn.
         turn = null;
 
-        if (numPlayers >1) {
+        if (numPlayers > 1) {
             sendBoardUpdate(new BoardEvent(this, Status.PASS_TURN, player));
         }
     }
@@ -608,8 +611,13 @@ public class BoardModel {
 
                     // Keeps prompting the player for commands until their turn is over.
                     while (turn != null){
-
+                        if (checkDoubleRoll){
+                            roll(player);
+                            checkDoubleRoll = false;
+                        }
                     }
+
+
                 }
 
                 // Checks to see if the game is over
