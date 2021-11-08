@@ -63,11 +63,14 @@ public class Player {
      */
     private boolean bankrupt;
     /**
-     * keeps track of player rank after going bankrupt.
+     * Keeps track of player rank after going bankrupt.
      */
     private int rank;
 
-    private boolean request_forfeit;
+    /**
+     * Keeps track of whether the player would like to forfeit.
+     */
+    private static boolean request_forfeit;
 
     /**
      * Possible values of player debt status.
@@ -318,10 +321,19 @@ public class Player {
         return rank;
     }
 
+    /**
+     * Accessor to toggle the request forfeit boolean variable.
+     * @author Sarah Chow 101143033
+     */
     public void toggleRequest_forfeit() {
         this.request_forfeit = !this.request_forfeit;
     }
 
+    /**
+     * Accessor to get whether the player has requested to forfeit.
+     * @author Sarah Chow 101143033
+     * @return whether the player would like to forfeit, boolean
+     */
     public boolean getRequest_forfeit(){
         return this.request_forfeit;
     }

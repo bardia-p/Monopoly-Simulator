@@ -305,6 +305,14 @@ public class BoardFrame extends JFrame implements BoardView  {
 
     }
 
+    /**
+     * Displays a prompt whenever a player rolls the same number on both dice.
+     * @author Bardia Parmoun 101143006
+     * @param player player performing actions, Player
+     */
+    private void handleRollingDoubles(Player player){
+        System.out.printf("Player %s rolled a double\n", player.getIconName());
+    }
 
     /**
      * Enables the command buttons based on what the user is allowed to do
@@ -573,6 +581,7 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @param attributes attributes of the object, Map
      */
     private void displayObjectAttributes(String title, String message, Map<String, String> attributes){
+        message += "\n";
 
         for (String key : attributes.keySet()){
             message += key + attributes.get(key) + "\n";
@@ -633,16 +642,6 @@ public class BoardFrame extends JFrame implements BoardView  {
     }
 
 
-
-    /**
-     * Displays a prompt whenever a player rolls the same number on both dice.
-     * @author Bardia Parmoun 101143006
-     * @param player player performing actions, Player
-     */
-    private void handleRollingDoubles(Player player){
-        System.out.printf("Player %s rolled a double\n", player.getIconName());
-    }
-
     /**
      * Displays the introduction message.
      * @author Sarah Chow 101143033
@@ -684,7 +683,7 @@ public class BoardFrame extends JFrame implements BoardView  {
     }
 
     /**
-     * Displays a message informing that a player chose to forfeit the game.
+     * Confirmation message that the player would like to forfeit the game.
      * @author Sarah Chow 101143033
      * @param player player forfeiting, Player
      */
@@ -698,6 +697,11 @@ public class BoardFrame extends JFrame implements BoardView  {
         }
     }
 
+    /**
+     * Displays a message informing that a player chose to forfeit the game.
+     * @author Sarah Chow 101143033
+     * @param player player forfeiting, Player
+     */
     private void handleForfeitedPlayer(Player player){
         String message = "Player: " + player.getIconName().toUpperCase() + " has forfeited the game!";
         JOptionPane.showMessageDialog(null, message);

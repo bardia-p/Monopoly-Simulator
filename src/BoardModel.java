@@ -321,6 +321,7 @@ public class BoardModel {
      * @param player the active player, Player
      */
     public void getCommand(Player player){
+        System.out.println(player.getIconName());
         BoardCell currentCell = player.getCurrentCell();
         ArrayList<BoardModel.Command> commands = new ArrayList<>();
 
