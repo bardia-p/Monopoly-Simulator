@@ -197,6 +197,113 @@ public class BoardFrame extends JFrame implements BoardView  {
         }
     }
 
+    /**
+     * Method to animate the rolling of random dice numbers and to visually land on a value.
+     * @author Sarah Chow 101143033
+     * @param randomRoll value to land on, int
+     * @param dice1 whether the die should be offset, boolean
+     */
+    private void buildDiceDisplay(int randomRoll, boolean dice1){
+        int setLocationX = 8;
+        int setLocationY = 8;
+
+        if (dice1){
+            setLocationX -= 1; // Make second dice off center
+        }
+
+        try {
+            BufferedImage dieImage1 = ImageIO.read(getClass().getResource("images/dice/dice1.png"));
+            BufferedImage dieImage2 = ImageIO.read(getClass().getResource("images/dice/dice2.png"));
+            BufferedImage dieImage3 = ImageIO.read(getClass().getResource("images/dice/dice3.png"));
+            BufferedImage dieImage4 = ImageIO.read(getClass().getResource("images/dice/dice4.png"));
+            BufferedImage dieImage5 = ImageIO.read(getClass().getResource("images/dice/dice5.png"));
+            BufferedImage dieImage6 = ImageIO.read(getClass().getResource("images/dice/dice6.png"));
+
+            BufferedImage currImage = dieImage1;
+
+            switch (randomRoll) {
+                case (1):
+                    currImage = dieImage1;
+                    break;
+                case (2):
+                    currImage = dieImage2;
+                    break;
+                case (3):
+                    currImage = dieImage3;
+                    break;
+                case (4):
+                    currImage = dieImage4;
+                    break;
+                case (5):
+                    currImage = dieImage5;
+                    break;
+                case (6):
+                    currImage = dieImage6;
+                    break;
+                default:
+                    break;
+            }
+
+            Image newImage = currImage.getScaledInstance(50, 50, Image.SCALE_DEFAULT);
+            JLabel label = new JLabel(new ImageIcon(newImage));
+
+            GridBagConstraints c = new GridBagConstraints();
+            c.gridx = setLocationX;
+            c.gridy = setLocationY;
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.anchor = GridBagConstraints.NORTH;
+
+            JPanel panel = new JPanel(new BorderLayout());
+            panel.setBackground(Color.decode(BACKGROUND_COLOR));
+
+            panel.add(label);
+            boardCells.add(panel);
+
+            mainPanel.add(panel, c);
+        }
+        catch(Exception e){
+            System.out.println("build dice display failed");
+        }
+    }
+
+    /**
+     * Passes the values of both dice and the player to the BoardController to be interpreted.
+     * @author Sarah Chow 101143033
+     * @param dice value of the dice, int[]
+     * @param player player performing actions, Player
+     */
+    private void handleRoll(int[] dice, Player player) {
+        int die1 = dice[0];
+        int die2 = dice[1];
+        final int MAXRANDOMROLLS = 10;
+
+        for (int i = 0; i < MAXRANDOMROLLS + 1; i++) {
+            Random rand = new Random();
+            int randomRoll1;
+            int randomRoll2;
+            randomRoll1 = rand.nextInt((6 - 1) + 1) + 1;
+            randomRoll2 = rand.nextInt((6 - 1) + 1) + 1;
+
+            if (i == MAXRANDOMROLLS) {
+                randomRoll1 = die1;
+                randomRoll2 = die2;
+            }
+
+            buildDiceDisplay(randomRoll1, true);
+            buildDiceDisplay(randomRoll2, false);
+
+            this.pack();
+
+            try {
+                TimeUnit.MILLISECONDS.sleep(100);
+            } catch (Exception e) {
+                System.out.println("wait failed");
+            }
+
+        }
+
+    }
+
 
     /**
      * Enables the command buttons based on what the user is allowed to do
@@ -388,19 +495,6 @@ public class BoardFrame extends JFrame implements BoardView  {
         this.pack();
     }
 
-    /**
-     * Passes the values of both dice and the player to the BoardController to be interpreted.
-     * @author Sarah Chow 101143033
-     * @param dice value of the dice, int[]
-     * @param player player performing actions, Player
-     */
-    private void handleRoll(int[] dice, Player player) {
-        int die1 = dice[0];
-        int die2 = dice[1];
-        System.out.println("\nRolling dice for: " + player.getIconName().toUpperCase());
-        System.out.printf("---> You rolled a %d and a %d\n", die1, die2);
-        System.out.printf("---> Total: %d\n\n", die1 + die2);
-    }
 
     /**
      * Displays the name of the property the current player is standing on in the terminal.
