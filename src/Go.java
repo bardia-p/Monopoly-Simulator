@@ -1,3 +1,6 @@
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * Group 3
  * SYSC 3110 - Milestone 1 Go Class
@@ -43,5 +46,19 @@ public class Go extends BoardCell {
     @Override
     public String toString() {
         return "\n\tname='" + super.getName() + '\'';
+    }
+
+    /**
+     * Accessor method to package relevant information into a linked hash map.
+     * @author Sarah Chow 101143033
+     * @return attributes of GO, LinkedHashMap
+     */
+    public Map<String, String> getAttributes() {
+
+        Map<String, String> attributes = new LinkedHashMap<String, String>();
+
+        attributes.put("Name: ", String.valueOf(super.getName()));
+
+        return attributes;
     }
 }

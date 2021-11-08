@@ -1,3 +1,7 @@
+import java.util.LinkedHashMap;
+import java.util.Locale;
+import java.util.Map;
+
 /**
  * Group 3
  * SYSC 3110 - Milestone 1 Property Class
@@ -96,5 +100,28 @@ public class Property extends BoardCell {
             propertyInfo += "\n\tproperty owner='no owner'";
         }
         return propertyInfo;
+    }
+
+    /**
+     * Accessor method to package relevant information into a linked hash map.
+     * @author Sarah Chow 101143033
+     * @return attributes of the property, LinkedHashMap
+     */
+    public Map<String, String> getAttributes() {
+
+        Map<String, String> attributes = new LinkedHashMap<String, String>();
+
+        String propertyOwner = "Not Owned";
+
+        if (super.getOwner() != null){
+            propertyOwner = super.getOwner().getIconName();
+        }
+
+        attributes.put("Name: ", String.valueOf(super.getName()));
+        attributes.put("Price: ", String.valueOf(price));
+        attributes.put("Rent: ", String.valueOf(rent));
+        attributes.put("Property Owner: ", propertyOwner.toUpperCase());
+
+        return attributes;
     }
 }

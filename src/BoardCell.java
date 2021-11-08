@@ -1,3 +1,5 @@
+import java.util.Map;
+
 /**
  * Group 3
  * SYSC 3110 - Milestone 1 BoardCell Class
@@ -99,4 +101,6 @@ public abstract class BoardCell {
     public String getImgPath(){
         return imgPath;
     }
+
+    public abstract Map<String, String> getAttributes();
 }

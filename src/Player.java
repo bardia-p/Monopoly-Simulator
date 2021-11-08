@@ -3,7 +3,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.*;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -315,28 +316,25 @@ public class Player {
     }
 
     /**
-     * Accessor method to package relevant information into a string.
-     * @author Bardia Parmoun 101143006
-     * @return the player's current information, String
+     * Accessor method to package relevant information into a linked hash map.
+     * @author Sarah Chow 101143033
+     * @return attributes of the player, LinkedHashMap
      */
-    @Override
-    public String toString() {
-        String playerInfo;
+    public Map<String, String> getAttributes() {
 
-        playerInfo = "\tbankrupt=" + bankrupt +
-                "\n\tname='" + name + '\'' +
-                "\n\ticon='" + icon + '\'' +
-                "\n\tcash='" + cash + '\'' +
-                "\n\tposition='" + position + '\'' +
-                "\n\tproperties= { \n\t\t";
+        Map<String, String> attributes = new LinkedHashMap<String, String>();
+
+        attributes.put("Name: ", String.valueOf(name));
+        attributes.put("Icon: ", String.valueOf(icon));
+        attributes.put("Cash: ", String.valueOf(cash));
+        attributes.put("Position: ", String.valueOf(position));
+        attributes.put("Bankrupt: ", String.valueOf(bankrupt).toUpperCase());
 
         for (Property property: properties)
         {
-            playerInfo += property.getName() + "\n\t\t";
+            attributes.put("Property: ", String.valueOf(property));
         }
 
-        playerInfo += " \b\b}";
-
-        return playerInfo;
+        return attributes;
     }
 }

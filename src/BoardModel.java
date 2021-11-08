@@ -66,7 +66,7 @@ public class BoardModel {
         BUY ("buy"),
         SELL ("sell"),
         PAY_RENT ("pay rent"),
-        STATUS ("status"),
+        PLAYER_STATUS ("player status"),
         BOARD_STATUS ("board status"),
         PASS ("pass"),
         ROLL_AGAIN ("roll"),
@@ -177,6 +177,16 @@ public class BoardModel {
             payFees((Tax) turn.getCurrentCell(), turn);
             getCommand(turn);
         }
+        else if (command.equals((Command.PLAYER_STATUS.getStringCommand()))){
+            getPlayerStatus(turn);
+            getCommand(turn);
+        }
+        else if (command.equals((Command.CELL_STATUS.getStringCommand()))){
+            getCellStatus();
+            getCommand(turn);
+        }
+
+        //getCommand(turn);
     }
 
 
@@ -357,7 +367,7 @@ public class BoardModel {
         }
 
         // Handles the status commands.
-        commands.add(BoardModel.Command.STATUS);
+        commands.add(BoardModel.Command.PLAYER_STATUS);
         commands.add(BoardModel.Command.BOARD_STATUS);
         commands.add(BoardModel.Command.CELL_STATUS);
 
@@ -455,9 +465,9 @@ public class BoardModel {
      * @author Sarah Chow 101143033
      * @param player active player, Player
      */
-    public void getStatus(Player player){
+    public void getPlayerStatus(Player player){
         sendBoardUpdate(new BoardEvent(this, Status.PLAYER_STATUS, player));
-    }
+    } // I RENAMED THIS FUNCTION *****************************************************************************************
 
     /**
      * Accessor to display the information of the players on each view.

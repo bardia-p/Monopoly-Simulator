@@ -272,7 +272,7 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @param dice value of the dice, int[]
      * @param player player performing actions, Player
      */
-    private void handleRoll(int[] dice, Player player) {
+    private void handleRoll(int[] dice, Player player) { // Player object not used ****************************************
         int die1 = dice[0];
         int die2 = dice[1];
         final int MAXRANDOMROLLS = 10;
@@ -403,7 +403,7 @@ public class BoardFrame extends JFrame implements BoardView  {
         JPanel commandsPanel = new JPanel(new GridLayout(1,7));
         commandsPanel.setBounds(0, 30, 600, 20);
 
-        String[] buttonsText = {"Roll", "Pass", "Forfeit", "Buy", "Sell", "Pay Rent", "Pay Tax"};
+        String[] buttonsText = {"Roll", "Pass", "Forfeit", "Buy", "Sell", "Pay Rent", "Pay Tax", "Player Status", "Cell Status"};
 
         for(int i = 0; i<buttonsText.length; i++){
             JButton commandButton = new JButton(buttonsText[i]);
@@ -431,6 +431,12 @@ public class BoardFrame extends JFrame implements BoardView  {
             }
             else if(buttonsText[i].equals("Pay Tax")){
                 commandButton.setActionCommand(BoardModel.Command.PAY_TAX.getStringCommand());
+            }
+            else if (buttonsText[i].equals("Player Status")){
+                commandButton.setActionCommand(BoardModel.Command.PLAYER_STATUS.getStringCommand());
+            }
+            else if (buttonsText[i].equals("Cell Status")){
+                commandButton.setActionCommand(BoardModel.Command.CELL_STATUS.getStringCommand());
             }
         }
         layeredPane.add(commandsPanel);
@@ -559,14 +565,38 @@ public class BoardFrame extends JFrame implements BoardView  {
     }
 
     /**
+     * Displays the attributes of the object.
+     * @author Sarah Chow 101143033
+     * @param title JPanel title, String
+     * @param message message to be displayed, String
+     * @param attributes attributes of the object, Map
+     */
+    private void displayObjectAttributes(String title, String message, Map<String, String> attributes){
+
+        for (String key : attributes.keySet()){
+            message += key + attributes.get(key) + "\n";
+        }
+        JOptionPane.showMessageDialog(null, message, title, JOptionPane.PLAIN_MESSAGE);
+    }
+
+    /**
      * Displays the status of the current player.
-     * @author Owen VanDusen 101152022
+     * @author Sarah Chow 101143033
      * @param player player performing actions, Player
      */
     private void handleGetPlayerStatus(Player player) {
-        System.out.printf("\nDisplaying the status of player: %s\n", player.getIconName().toUpperCase());
-        System.out.println(player + "\n");
+        displayObjectAttributes("PLAYER STATUS", player.getIconName().toUpperCase(), player.getAttributes());
     }
+
+    /**
+     * Displays the information of the property the player is currently on.
+     * @author Sarah Chow 101143033
+     * @param currentCell property the player is on, BoardCell
+     */
+    private void handleGetCellStatus(BoardCell currentCell){
+        displayObjectAttributes("CELL STATUS", currentCell.getName(), currentCell.getAttributes());
+    }
+
 
     /**
      * Displays the status of the current board.
@@ -601,15 +631,7 @@ public class BoardFrame extends JFrame implements BoardView  {
         System.out.println("\n");
     }
 
-    /**
-     * Displays the information of the property the player is currently on.
-     * @author Bardia Parmoun 101143006
-     * @param currentCell property the player is on, BoardCell
-     */
-    private void handleGetCellStatus(BoardCell currentCell){
-        System.out.printf("\nDisplaying the status of the current cell: %s\n", currentCell.getName());
-        System.out.println(currentCell + "\n");
-    }
+
 
     /**
      * Displays a prompt whenever a player rolls the same number on both dice.
