@@ -164,7 +164,7 @@ public class BoardModel {
             buyProperty((Property) turn.getCurrentCell() , turn);
         }
         else if(command.equals((Command.SELL.getStringCommand()))){
-            sellProperty(turn); //must prompt user for what to sell
+            sellPropertyPrompt(turn); //must prompt user for what to sell
         }
         else if(command.equals((Command.PAY_RENT.getStringCommand()))){
             payFees(turn.getCurrentCell(), turn);
@@ -200,7 +200,7 @@ public class BoardModel {
      * @author Bardia Parmoun 101143006
      * @author Owen VanDusen 101152022
      */
-    private void constructBoard(){
+    public void constructBoard(){
         cells.addAll(Arrays.asList(
                 new Go(200, "images/board/go.jpg"),
                 new Property("Mediterranean Avenue",60,2, "images/board/mediterranean.jpg"),
@@ -298,6 +298,15 @@ public class BoardModel {
         for (BoardView view : views) {
             view.handleBoardUpdate(boardEvent);
         }
+    }
+
+    /**
+     * Accessor method for the dice rolled using roll(). ONLY USED FOR TEST CASES
+     * @return Two element array representing each individual die rolled
+     * @author Owen VanDusen 101152022
+     */
+    public int[] getDice() {
+        return dice;
     }
 
     /**
@@ -452,20 +461,29 @@ public class BoardModel {
     }
 
     /**
+     * Handles propmprting the view for which property to sell.
+     * @author Sarah Chow 101143033
+     * @param player player selling the property, Player
+     */
+    public void sellPropertyPrompt(Player player){
+        sendBoardUpdate(new BoardEvent(this, Status.SELL, player));
+
+        if (player.getConfirmSell()){
+            sellProperty(player, player.getPropertyToSell());
+        }
+    }
+
+    /**
      * Sells a property owned by the active player and removes it from their owned properties if
      * the property may be sold.
      * @author Sarah Chow 101143033
      * @param player player selling the property, Player
+     * @param propertyToSell the property to sell, Property
      */
-    public void sellProperty(Player player){
-        sendBoardUpdate(new BoardEvent(this, Status.SELL, player));
-
-        if (player.getConfirmSell()){
-            player.sellProperty(player.getPropertyToSell());
-            player.getPropertyToSell().toggleRecentlyChanged();
-            player.getPropertyToSell().setOwner(null);
-        }
-
+    public void sellProperty(Player player, Property propertyToSell){
+        player.sellProperty(propertyToSell);
+        propertyToSell.toggleRecentlyChanged();
+        propertyToSell.setOwner(null);
     }
 
     /**

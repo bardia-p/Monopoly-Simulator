@@ -238,6 +238,15 @@ public class Player {
     }
 
     /**
+     * Accessor to set the current amount of cash a player has. Used exclusively for test cases.
+     * @param cash the amount of cash you want the player to have
+     * @author Owen VanDusen 101155022
+     */
+    public void setCash(int cash){
+        this.cash = cash;
+    }
+
+    /**
      * Accessor for cash attribute.
      * @author Bardia Parmoun 101143006
      * @return cash value, int
