@@ -24,8 +24,8 @@ public class Go extends BoardCell {
      * @author Owen VanDusen 101152022
      * @param reward keeps track of the Go reward, int
      */
-    public Go(int reward){
-        super("GO", null, CellType.GO);
+    public Go(int reward, String imgName){
+        super("GO", null, CellType.GO, imgName);
         this.reward = reward;
     }
 

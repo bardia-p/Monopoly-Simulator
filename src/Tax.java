@@ -27,8 +27,8 @@ public class Tax extends BoardCell{
      * @param tax amount of tax for the cell, int
      * @param owner, the owner of the cell Player
      */
-    Tax(String name, int tax, Player owner){
-        super(name, owner, CellType.TAX);
+    Tax(String name, int tax, Player owner, String imgName){
+        super(name, owner, CellType.TAX, imgName);
         this.tax = tax;
     }
 
