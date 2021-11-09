@@ -38,18 +38,13 @@ public class Go extends BoardCell {
         return reward;
     }
 
-
     /**
-     * Accessor method to package relevant information into a linked hash map.
+     * Accessor method to package relevant information into a string.
      * @author Sarah Chow 101143033
-     * @return attributes of GO, Map
+     * @return the cell's current information, String
      */
-    public Map<String, String> getAttributes() {
-
-        Map<String, String> attributes = new LinkedHashMap<>();
-
-        attributes.put("Cell Name: ", String.valueOf(super.getName()));
-
-        return attributes;
+    @Override
+    public String toString() {
+        return "\n\tname='" + super.getName() + '\'';
     }
 }

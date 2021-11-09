@@ -81,27 +81,23 @@ public class Property extends BoardCell {
         return recentlyChanged;
     }
 
-
     /**
-     * Accessor method to package relevant information into a linked hash map.
+     * Accessor method to package relevant information into a string.
      * @author Sarah Chow 101143033
-     * @return attributes of the property, Map
+     * @return the property's current information, String
      */
-    public Map<String, String> getAttributes() {
-
-        Map<String, String> attributes = new LinkedHashMap<>();
-
-        String propertyOwner = "Not Owned";
+    @Override
+    public String toString() {
+        String propertyInfo = "\n\tname='" + super.getName() + '\'' +
+                "\n\tprice='" + price + '\'' +
+                "\n\trent='" + rent + '\'';
 
         if (super.getOwner() != null){
-            propertyOwner = super.getOwner().getIconName();
+            propertyInfo += "\n\tproperty owner='" + super.getOwner().getIconName() + '\'';
+
+        } else {
+            propertyInfo += "\n\tproperty owner='no owner'";
         }
-
-        attributes.put("Cell Name: ", String.valueOf(super.getName()).toUpperCase());
-        attributes.put("Price: ", String.valueOf(price));
-        attributes.put("Rent: ", String.valueOf(rent));
-        attributes.put("Property Owner: ", propertyOwner.toUpperCase());
-
-        return attributes;
+        return propertyInfo;
     }
 }

@@ -101,6 +101,7 @@ public class BoardModel {
         TOP_HAT ("top hat", "images/icons/top_hat.png"),
         WHEELBARROW ("wheelbarrow", "images/icons/wheelbarrow.png"),
         THIMBLE ("thimble","images/icons/thimble.png"),
+        RACING_CAR ("racing car","images/icons/racing_car.png"),
         BANK("bank", "");
 
         private final String name;
@@ -386,7 +387,7 @@ public class BoardModel {
         commands.add(Command.FORFEIT);
 
 
-        sendBoardUpdate(new BoardEvent(this, BoardModel.Status.GET_COMMAND, commands));
+        sendBoardUpdate(new BoardEvent(this, BoardModel.Status.GET_COMMAND, commands, player));
     }
 
     /**
@@ -545,9 +546,12 @@ public class BoardModel {
      */
     public void passTurn(Player player){
         // Remove the recently changed from the player's cells.
-        for (Property property : player.getProperties(false)){
-            if (property.getRecentlyChanged()){
-                property.toggleRecentlyChanged(); // Set all to false
+        for (BoardCell cell: cells){
+            if (cell.getType() == BoardCell.CellType.PROPERTY){
+                Property p = (Property) cell;
+                if (p.getRecentlyChanged()){
+                    p.toggleRecentlyChanged(); // Set all to false
+                }
             }
         }
 

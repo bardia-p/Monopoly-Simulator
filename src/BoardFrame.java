@@ -1,5 +1,6 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -42,6 +43,10 @@ public class BoardFrame extends JFrame implements BoardView  {
      */
     private final Map<Player, JLabel> playerLabels;
     /**
+     * Keeps track of all the player status panels.
+     */
+    private final Map<Player, JPanel> playerStatusPanels;
+    /**
      * The main panel that keeps track of all the cells.
      */
     private final JPanel mainPanel;
@@ -50,13 +55,17 @@ public class BoardFrame extends JFrame implements BoardView  {
      */
     private final JLayeredPane layeredPane;
     /**
+     * Keeps track of the dice panels.
+     */
+    private final JPanel[] dicePanels;
+    /**
      * Keeps track of the size of the board on each side.
      */
     private static final int SIZE = 11;
     /**
      * Keeps track of the size of the window width.
      */
-    private static final int WINDOW_WIDTH = 750;
+    private static final int WINDOW_WIDTH = 1000;
     /**
      * Keeps track of the window height.
      */
@@ -109,6 +118,14 @@ public class BoardFrame extends JFrame implements BoardView  {
      * Figures out how much to offset the players on the cell based on each player.
      */
     private static final int ICON_SHIFT_ON_CELL_PER_PLAYER = 5;
+    /**
+     * Keeps track of the location of the die row.
+     */
+    private static final int DICE_LOCATION_ROW = 8;
+    /**
+     * Keeps track of the location of the die column.
+     */
+    private static final int DICE_LOCATION_COLUMN = 8;
 
     /**
      * Constructor for the Board listener, creates the board model, adds the board listener to the board model,
@@ -140,6 +157,7 @@ public class BoardFrame extends JFrame implements BoardView  {
 
         // Keeps track of the player labels and cell panels.
         playerLabels = new HashMap<>();
+        playerStatusPanels = new HashMap<>();
         boardCells = new ArrayList<>();
 
         // Adding the frame to the model.
@@ -149,6 +167,29 @@ public class BoardFrame extends JFrame implements BoardView  {
         controller = new BoardController(model);
 
         commandButtons = new ArrayList<>();
+
+        dicePanels = new JPanel[2];
+
+        GridBagConstraints c1 = new GridBagConstraints();
+        c1.gridx = DICE_LOCATION_ROW;
+        c1.gridy = DICE_LOCATION_COLUMN;
+        c1.fill = GridBagConstraints.HORIZONTAL;
+        c1.anchor = GridBagConstraints.NORTH;
+
+        GridBagConstraints c2 = new GridBagConstraints();
+        c2.gridx = DICE_LOCATION_ROW - 1;
+        c2.gridy = DICE_LOCATION_COLUMN;
+        c2.fill = GridBagConstraints.HORIZONTAL;
+        c2.anchor = GridBagConstraints.NORTH;
+
+        dicePanels[0] = new JPanel(new BorderLayout());
+        dicePanels[0].setBackground(Color.decode(BACKGROUND_COLOR));
+
+        dicePanels[1] = new JPanel(new BorderLayout());
+        dicePanels[1].setBackground(Color.decode(BACKGROUND_COLOR));
+
+        mainPanel.add(dicePanels[0], c1);
+        mainPanel.add(dicePanels[1], c2);
 
         this.pack();
         this.setVisible(true);
@@ -174,10 +215,10 @@ public class BoardFrame extends JFrame implements BoardView  {
             case PASS_TURN -> handleCurrentPlayerChange();
             case GAME_OVER -> handleWinner(e.getPlayers());
             case INITIALIZE_BOARD -> constructBoard(e.getCells());
-            case CREATE_PLAYER_ICONS -> createPlayerLabels((ArrayList<Player>) e.getPlayers());
+            case CREATE_PLAYER_ICONS -> createPlayers((ArrayList<Player>) e.getPlayers());
             case GET_NUM_PLAYERS -> getNumPlayers();
             case INITIALIZE_PLAYERS -> initializePlayers(e.getValue());
-            case GET_COMMAND -> updateAvailableCommands((ArrayList<BoardModel.Command>) e.getCommands());
+            case GET_COMMAND -> updateAvailableCommands(e.getPlayer(), (ArrayList<BoardModel.Command>) e.getCommands());
             case PLAYER_MOVE -> handlePlayerGUIMove(e.getPlayer(), e.getValue(), e.getValue2());
             case REPAINT_BOARD -> handleRepaintBoard();
             case PLAYER_FORFEIT -> handleForfeitedPlayer(e.getPlayer());
@@ -218,31 +259,73 @@ public class BoardFrame extends JFrame implements BoardView  {
     }
 
     /**
-     * Creates the player labels and icons.
+     * Creates the player labels, icons, and panels.
      * @author Bardia Parmoun 101143006
      * @param players the list of the players to make icons for, List<Player>
      */
-    private void createPlayerLabels(ArrayList<Player> players) {
+    private void createPlayers(ArrayList<Player> players) {
+        JPanel statusPanel = new JPanel();
+        statusPanel.setLayout(new GridLayout(players.size(), 1));
+        statusPanel.setBackground(Color.decode(BACKGROUND_COLOR));
+
         for (Player p: players){
             JLabel playerLabel = new JLabel();
+            JPanel playerPanel = new JPanel();
+            TitledBorder title = BorderFactory.createTitledBorder(p.getIconName().toUpperCase());
+            playerPanel.setBorder(title);
             playerLabels.put(p, playerLabel);
+            playerStatusPanels.put(p, playerPanel);
+
+            updatePlayerStatusPanel(p);
+
+            statusPanel.add(playerPanel);
+
             layeredPane.add(playerLabel);
         }
+
+        // adding scroll bars to the status panel
+        JScrollPane statusPanelWithScroll = new JScrollPane(statusPanel,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+
+        statusPanelWithScroll.setBounds(BOARD_WIDTH, BOARD_SHIFT_Y + COMMAND_PANEL_GAP,
+                WINDOW_WIDTH - BOARD_WIDTH, BOARD_HEIGHT);
+        layeredPane.add(statusPanelWithScroll, 0);
+    }
+
+    /**
+     * Updates the player panel.
+     * @author Bardia Parmoun 101143006
+     * @param p the player panel to update, Player
+     */
+    private void updatePlayerStatusPanel(Player p){
+        JPanel panel = playerStatusPanels.get(p);
+
+        panel.removeAll();
+        panel.revalidate();
+        panel.repaint();
+        String playerStatus = p.toString();
+        String newStatus = "<html>";
+        for (int i=0; i < playerStatus.length(); i++){
+            if (playerStatus.charAt(i)!='\n'){
+                newStatus += playerStatus.charAt(i);
+            } else {
+                newStatus += "<br/>";
+            }
+        }
+        newStatus += "</html>";
+
+        JLabel statusLabel = new JLabel(newStatus);
+        panel.setBackground(Color.decode(BACKGROUND_COLOR));
+        panel.add(statusLabel);
     }
 
     /**
      * Method to animate the rolling of random dice numbers and to visually land on a value.
      * @author Sarah Chow 101143033
      * @param randomRoll value to land on, int
-     * @param dice1 whether the die should be offset, boolean
+     * @param dieIndex keeps track of the die index, int
      */
-    private void buildDiceDisplay(int randomRoll, boolean dice1){
-        int setLocationX = 8;
-        int setLocationY = 8;
-
-        if (dice1){
-            setLocationX -= 1; // Make second dice off center
-        }
+    private void buildDiceDisplay(int randomRoll, int dieIndex){
 
         try {
             BufferedImage dieImage1 = ImageIO.read(Objects.requireNonNull(getClass().getResource
@@ -269,22 +352,11 @@ public class BoardFrame extends JFrame implements BoardView  {
                 default -> currImage = dieImage1;
             }
 
+            dicePanels[dieIndex].removeAll();
+
             Image newImage = currImage.getScaledInstance(DIE_SIZE, DIE_SIZE, Image.SCALE_DEFAULT);
             JLabel label = new JLabel(new ImageIcon(newImage));
-
-            GridBagConstraints c = new GridBagConstraints();
-            c.gridx = setLocationX;
-            c.gridy = setLocationY;
-            c.fill = GridBagConstraints.HORIZONTAL;
-            c.anchor = GridBagConstraints.NORTH;
-
-            JPanel panel = new JPanel(new BorderLayout());
-            panel.setBackground(Color.decode(BACKGROUND_COLOR));
-
-            panel.add(label);
-            boardCells.add(panel);
-
-            mainPanel.add(panel, c);
+            dicePanels[dieIndex].add(label);
         }
         catch(Exception e){
             System.out.println("build dice display failed");
@@ -313,8 +385,8 @@ public class BoardFrame extends JFrame implements BoardView  {
                 randomRoll2 = die2;
             }
 
-            buildDiceDisplay(randomRoll1, true);
-            buildDiceDisplay(randomRoll2, false);
+            buildDiceDisplay(randomRoll1, 0);
+            buildDiceDisplay(randomRoll2, 1);
 
             this.pack();
 
@@ -325,8 +397,8 @@ public class BoardFrame extends JFrame implements BoardView  {
             }
         }
 
-        buildDiceDisplay(die1, true);
-        buildDiceDisplay(die2, false);
+        buildDiceDisplay(die1, 0);
+        buildDiceDisplay(die2, 1);
 
         this.pack();
     }
@@ -336,7 +408,7 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @author Kyra Lothrop 101145872
      * @param commands keeps track of the list of the commands, List<BoardModel.Command>
      */
-    private void updateAvailableCommands(ArrayList<BoardModel.Command> commands){
+    private void updateAvailableCommands(Player player, ArrayList<BoardModel.Command> commands){
         String availableCommands = "";
 
         for (BoardModel.Command command: commands){
@@ -348,6 +420,9 @@ public class BoardFrame extends JFrame implements BoardView  {
         for(JButton b: commandButtons){
             b.setEnabled(availableCommands.contains(b.getText().toLowerCase()));
         }
+
+        updatePlayerStatusPanel(player);
+        pack();
     }
 
     /**
@@ -602,20 +677,15 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @param player player performing actions, Player
      */
     private void handleSellProperty(Player player) {
-        JPanel panel = new JPanel();
+        JPanel panel = new JPanel(new GridLayout(player.getProperties(true).size(), 2));
         ButtonGroup group = new ButtonGroup();
 
         for (Property p : player.getProperties(true)) {
 
             JRadioButton button = new JRadioButton(p.getName().toUpperCase());
 
-            String message = "<html>";
+            String message = "<html>" + p + "</html>";
 
-            for (String key : p.getAttributes().keySet()) {
-                message += key + p.getAttributes().get(key) + "<br/>";
-            }
-
-            message += "</html>";
             JLabel des = new JLabel(message);
 
             button.setActionCommand(p.getName());
@@ -623,7 +693,7 @@ public class BoardFrame extends JFrame implements BoardView  {
 
             des.setVisible(true);
             panel.add(button);
-            panel.add(des, BorderLayout.EAST);
+            panel.add(des);
         }
 
         panel.setPreferredSize(new Dimension(400, 400));
@@ -647,32 +717,12 @@ public class BoardFrame extends JFrame implements BoardView  {
     }
 
     /**
-     * Displays the attributes of the object.
-     * @author Sarah Chow 101143033
-     * @param title JPanel title, String
-     * @param attributes attributes of the object, Map
-     */
-    private void displayObjectAttributes(String title, Map<String, String> attributes, boolean player){
-        int count = 0;
-        String message = "";
-
-        for (String key : attributes.keySet()){
-            if (player && count > 4){
-                message += "\t";
-            }
-            message += key + attributes.get(key) + "\n";
-            count++;
-        }
-        JOptionPane.showMessageDialog(null, message, title, JOptionPane.PLAIN_MESSAGE);
-    }
-
-    /**
      * Displays the status of the current player.
      * @author Sarah Chow 101143033
      * @param player player performing actions, Player
      */
     private void handleGetPlayerStatus(Player player) {
-        displayObjectAttributes("PLAYER STATUS", player.getAttributes(), true);
+        JOptionPane.showMessageDialog(null, player, "PLAYER STATUS", JOptionPane.PLAIN_MESSAGE);
     }
 
     /**
@@ -681,7 +731,7 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @param currentCell property the player is on, BoardCell
      */
     private void handleGetCellStatus(BoardCell currentCell){
-        displayObjectAttributes("CELL STATUS", currentCell.getAttributes(), false);
+        JOptionPane.showMessageDialog(null, currentCell, "CELL STATUS", JOptionPane.PLAIN_MESSAGE);
     }
 
     /**
