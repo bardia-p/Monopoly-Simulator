@@ -1,15 +1,9 @@
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.*;
-import java.util.HashMap;
 import java.util.List;
 
 /**
  * Group 3
- * SYSC 3110 - Milestone 1 Player Class
+ * SYSC 3110 - Milestone 2 Player Class
  *
  * This document is the Player. This class has the name, icon, cash value,
  * position on board, list of properties, the current property they are on, their rent status (paid rent, unpaid rent,
@@ -107,7 +101,7 @@ public class Player {
         this.rollAgain = false;
         this.feesStatus = StatusEnum.NO_FEES;
         this.rank = 0;
-        this.request_forfeit = false;
+        request_forfeit = false;
         this.propertyToSell = null;
         this.confirmSell = false;
     }
@@ -364,7 +358,7 @@ public class Player {
      * @author Sarah Chow 101143033
      */
     public void toggleRequest_forfeit() {
-        this.request_forfeit = !this.request_forfeit;
+        request_forfeit = !request_forfeit;
     }
 
     /**
@@ -373,7 +367,7 @@ public class Player {
      * @return whether the player would like to forfeit, boolean
      */
     public boolean getRequest_forfeit(){
-        return this.request_forfeit;
+        return request_forfeit;
     }
 
     /**
@@ -383,7 +377,7 @@ public class Player {
      */
     public Map<String, String> getAttributes() {
 
-        Map<String, String> attributes = new LinkedHashMap<String, String>();
+        Map<String, String> attributes = new LinkedHashMap<>();
         int count = 1;
 
         attributes.put("Player Name: ", String.valueOf(name));

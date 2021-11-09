@@ -51,8 +51,10 @@ public class BoardModel {
      * Keeps track of the bank player.
      */
     private final Player bank;
-
-    private boolean checkDoubleRoll = false;
+    /**
+     * Checks to see if the roll button was pressed.
+     */
+    private boolean checkDoubleRoll;
     /**
      * Keeps track of the possible board statuses.
      */
@@ -143,13 +145,13 @@ public class BoardModel {
     }
 
     /**
-     * Select what method to call based on the given command
+     * Select what method to call based on the given command.
      * @author Kyra Lothrop 101145872
-     * @param command
+     * @param command the type of command to run, Strng
      */
     public void sendCommand(String command) {
         if(command.equals(Command.REPAINT.getStringCommand())){
-            repaint(turn);
+            repaint();
         }
         else if(command.equals(Command.ROLL_AGAIN.getStringCommand())){
             checkDoubleRoll = true;
@@ -164,10 +166,10 @@ public class BoardModel {
             sellProperty(turn); //must prompt user for what to sell
         }
         else if(command.equals((Command.PAY_RENT.getStringCommand()))){
-            payFees((Property) turn.getCurrentCell(), turn);
+            payFees(turn.getCurrentCell(), turn);
         }
         else if(command.equals((Command.PAY_TAX.getStringCommand()))){
-            payFees((Tax) turn.getCurrentCell(), turn);
+            payFees(turn.getCurrentCell(), turn);
         }
         else if (command.equals((Command.PLAYER_STATUS.getStringCommand()))){
             getPlayerStatus(turn);
@@ -182,6 +184,7 @@ public class BoardModel {
             forfeit(turn);
         }
 
+        // Avoids race conditions.
         if(turn!= null && !command.equals((Command.PASS.getStringCommand())) &&
                 !command.equals((Command.FORFEIT.getStringCommand()))) {
             getCommand(turn);
@@ -374,7 +377,7 @@ public class BoardModel {
         commands.add(Command.FORFEIT);
 
 
-        sendBoardUpdate(new BoardEvent(this, BoardModel.Status.GET_COMMAND, player, commands));
+        sendBoardUpdate(new BoardEvent(this, BoardModel.Status.GET_COMMAND, commands));
     }
 
     /**
@@ -385,7 +388,11 @@ public class BoardModel {
         sendBoardUpdate(new BoardEvent(this, Status.INITIALIZE_MONOPOLY));
     }
 
-    private void repaint(Player turn) {
+    /**
+     * Repaints the entire board to make sure the players are updated.
+     * @author Bardia Parmoun 101143006
+     */
+    private void repaint() {
         sendBoardUpdate(new BoardEvent(this, Status.REPAINT_BOARD));
     }
 
@@ -422,8 +429,6 @@ public class BoardModel {
         player.setPosition(newPlayerPosition);
         player.setCurrentCell(cells.get(newPlayerPosition));
         getCommand(player);
-//        //debug
-//        System.out.printf("Player %s is currently at: %s\n", player.getIconName(), cells.get(newPlayerPosition).getName());
     }
 
     /**

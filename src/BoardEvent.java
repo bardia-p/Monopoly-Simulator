@@ -4,7 +4,7 @@ import java.util.List;
 
 /**
  * Group 3
- * SYSC 3110 - Milestone 1 BoardEvent Class
+ * SYSC 3110 - Milestone 2 BoardEvent Class
  *
  * This document is the BoardEvent. This class has a BoardModel.Status type, a player, a value, a list of commands, a
  * result, a board cell, the recent roll, and a list of players.
@@ -60,7 +60,9 @@ public class BoardEvent extends EventObject {
      * Keeps track of the relevant players to the event.
      */
     private List<Player> players;
-
+    /**
+     * Keeps track of the relevant cells to the event.
+     */
     private List<BoardCell> cells;
 
     /**
@@ -69,12 +71,10 @@ public class BoardEvent extends EventObject {
      * @author Kyra Lothrop 101145872
      * @param model the board model, BoardModel
      * @param type the status enum, BoardModel.Status
-     * @param player the relevant player, Player
      * @param commands the possible commands, ArrayList<BoardModel.Command>
      */
-    public BoardEvent(BoardModel model, BoardModel.Status type, Player player, ArrayList<BoardModel.Command> commands){
+    public BoardEvent(BoardModel model, BoardModel.Status type, ArrayList<BoardModel.Command> commands){
         this(model, type);
-        this.player = player;
         this.commands = commands;
     }
 
@@ -151,7 +151,15 @@ public class BoardEvent extends EventObject {
         this.player = player;
     }
 
-// JAVADOC NEEDED *******************************************************************************************
+    /**
+     * Constructor for the BoardEvent,
+     * @author Kyra Lothrop 101145872
+     * @param model the board model, BoardModel
+     * @param type the status enum, BoardModel.Status
+     * @param player the relevant player, Player
+     * @param value the value1 to be used, int
+     * @param value2 the value2 to be used, int
+     */
     public BoardEvent(BoardModel model, BoardModel.Status type, Player player, int value, int value2){
         this(model, type);
         this.player = player;
@@ -176,9 +184,9 @@ public class BoardEvent extends EventObject {
      * Constructor for the Board event, instantiates the board model, the type of event and a value. Mainly used for
      * events such as construcing the board
      * @author Bardia Parmoun 101143006
-     * @param model
-     * @param type
-     * @param cells
+     * @param model the board model, BoardModel
+     * @param type the status enum, BoardModel.Status
+     * @param cells keep track of the cells, List<BoardCell>
      */
     public BoardEvent(BoardModel model, BoardModel.Status type, List<BoardCell> cells){
         this(model, type);

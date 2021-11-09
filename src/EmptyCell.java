@@ -37,7 +37,7 @@ public class EmptyCell extends BoardCell {
      */
     public Map<String, String> getAttributes() {
 
-        Map<String, String> attributes = new LinkedHashMap<String, String>();
+        Map<String, String> attributes = new LinkedHashMap<>();
 
         attributes.put("Cell Name: ", String.valueOf(super.getName()));
 

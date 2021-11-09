@@ -24,31 +24,31 @@ public class BoardFrame extends JFrame implements BoardView  {
     /**
      * Keeps track of the board model.
      */
-    BoardModel model;
+    private final BoardModel model;
     /**
      * Keeps track of the board controller.
      */
-    BoardController controller;
+    private final BoardController controller;
     /**
      * Keeps track of all the panels for the individual board cells.
      */
-    private List<JPanel> boardCells;
+    private final List<JPanel> boardCells;
     /**
      * List of command buttons.
      */
-    private List<JButton> commandButtons;
+    private final List<JButton> commandButtons;
     /**
      * Keeps track of all the player JLabels.
      */
-    private Map<Player, JLabel> playerLabels;
+    private final Map<Player, JLabel> playerLabels;
     /**
      * The main panel that keeps track of all the cells.
      */
-    private JPanel mainPanel;
+    private final JPanel mainPanel;
     /**
      * The main pane that includes the cells, the players, the status windows, etc
      */
-    private JLayeredPane layeredPane;
+    private final JLayeredPane layeredPane;
     /**
      * Keeps track of the size of the board on each side.
      */
@@ -97,6 +97,14 @@ public class BoardFrame extends JFrame implements BoardView  {
      * The maximum number of rolls in the dice animation.
      */
     private static final int MAXRANDOMROLLS = 10;
+    /**
+     * Figures out how much to offset the players on the cell.
+     */
+    private static final int ICON_SHIFT_ON_CELL = 30;
+    /**
+     * Figures out how much to offset the players on the cell based on each player.
+     */
+    private static final int ICON_SHIFT_ON_CELL_PER_PLAYER = 5;
 
     /**
      * Constructor for the Board listener, creates the board model, adds the board listener to the board model,
@@ -127,7 +135,7 @@ public class BoardFrame extends JFrame implements BoardView  {
 
         // Keeps track of the player labels and cell panels.
         playerLabels = new HashMap<>();
-        boardCells = new ArrayList<JPanel>();
+        boardCells = new ArrayList<>();
 
         // Adding the frame to the model.
         model = new BoardModel();
@@ -152,7 +160,7 @@ public class BoardFrame extends JFrame implements BoardView  {
     @Override
     public void handleBoardUpdate(BoardEvent e) {
         switch (e.getType()) {
-            case PLAYER_ROLL -> handleRoll(e.getDice(), e.getPlayer());
+            case PLAYER_ROLL -> handleRoll(e.getDice());
             case BUY -> handleBuyProperty(e.getPlayer(), (Property) e.getBoardCell(), e.getResult());
             case SELL -> handleSellProperty(e.getPlayer());
             case PLAYER_STATUS -> handleGetPlayerStatus(e.getPlayer());
@@ -165,9 +173,9 @@ public class BoardFrame extends JFrame implements BoardView  {
             case GAME_OVER -> handleWinner(e.getPlayers());
             case INITIALIZE_BOARD -> constructBoard(e.getCells());
             case CREATE_PLAYER_ICONS -> createPlayerLabels((ArrayList<Player>) e.getPlayers());
-            case GET_NUM_PLAYERS -> getNumPlayers();        //new
-            case INITIALIZE_PLAYERS -> initializePlayers(e.getValue());     //new
-            case GET_COMMAND -> updateAvailableCommands(e.getPlayer(), (ArrayList<BoardModel.Command>) e.getCommands());     //new
+            case GET_NUM_PLAYERS -> getNumPlayers();
+            case INITIALIZE_PLAYERS -> initializePlayers(e.getValue());
+            case GET_COMMAND -> updateAvailableCommands((ArrayList<BoardModel.Command>) e.getCommands());
             case PLAYER_MOVE -> handlePlayerGUIMove(e.getPlayer(), e.getValue(), e.getValue2());
             case REPAINT_BOARD -> handleRepaintBoard();
             case PLAYER_FORFEIT -> handleForfeitedPlayer(e.getPlayer());
@@ -233,36 +241,28 @@ public class BoardFrame extends JFrame implements BoardView  {
         }
 
         try {
-            BufferedImage dieImage1 = ImageIO.read(getClass().getResource("images/dice/dice1.png"));
-            BufferedImage dieImage2 = ImageIO.read(getClass().getResource("images/dice/dice2.png"));
-            BufferedImage dieImage3 = ImageIO.read(getClass().getResource("images/dice/dice3.png"));
-            BufferedImage dieImage4 = ImageIO.read(getClass().getResource("images/dice/dice4.png"));
-            BufferedImage dieImage5 = ImageIO.read(getClass().getResource("images/dice/dice5.png"));
-            BufferedImage dieImage6 = ImageIO.read(getClass().getResource("images/dice/dice6.png"));
+            BufferedImage dieImage1 = ImageIO.read(Objects.requireNonNull(getClass().getResource
+                    ("images/dice/dice1.png")));
+            BufferedImage dieImage2 = ImageIO.read(Objects.requireNonNull(getClass().getResource
+                    ("images/dice/dice2.png")));
+            BufferedImage dieImage3 = ImageIO.read(Objects.requireNonNull(getClass().getResource
+                    ("images/dice/dice3.png")));
+            BufferedImage dieImage4 = ImageIO.read(Objects.requireNonNull(getClass().getResource
+                    ("images/dice/dice4.png")));
+            BufferedImage dieImage5 = ImageIO.read(Objects.requireNonNull(getClass().getResource
+                    ("images/dice/dice5.png")));
+            BufferedImage dieImage6 = ImageIO.read(Objects.requireNonNull(getClass().getResource
+                    ("images/dice/dice6.png")));
 
-            BufferedImage currImage = dieImage1;
+            BufferedImage currImage;
 
             switch (randomRoll) {
-                case (1):
-                    currImage = dieImage1;
-                    break;
-                case (2):
-                    currImage = dieImage2;
-                    break;
-                case (3):
-                    currImage = dieImage3;
-                    break;
-                case (4):
-                    currImage = dieImage4;
-                    break;
-                case (5):
-                    currImage = dieImage5;
-                    break;
-                case (6):
-                    currImage = dieImage6;
-                    break;
-                default:
-                    break;
+                case (2) -> currImage = dieImage2;
+                case (3) -> currImage = dieImage3;
+                case (4) -> currImage = dieImage4;
+                case (5) -> currImage = dieImage5;
+                case (6) -> currImage = dieImage6;
+                default -> currImage = dieImage1;
             }
 
             Image newImage = currImage.getScaledInstance(DIE_SIZE, DIE_SIZE, Image.SCALE_DEFAULT);
@@ -291,9 +291,8 @@ public class BoardFrame extends JFrame implements BoardView  {
      * Passes the values of both dice and the player to the BoardController to be interpreted.
      * @author Sarah Chow 101143033
      * @param dice value of the dice, int[]
-     * @param player player performing actions, Player
      */
-    private void handleRoll(int[] dice, Player player) {
+    private void handleRoll(int[] dice) {
         int die1 = dice[0];
         int die2 = dice[1];
 
@@ -320,9 +319,7 @@ public class BoardFrame extends JFrame implements BoardView  {
             } catch (Exception e) {
                 System.out.println("wait failed");
             }
-
         }
-
     }
 
     /**
@@ -337,10 +334,9 @@ public class BoardFrame extends JFrame implements BoardView  {
     /**
      * Enables the command buttons based on what the user is allowed to do
      * @author Kyra Lothrop 101145872
-     * @param player
-     * @param commands
+     * @param commands keeps track of the list of the commands, List<BoardModel.Command>
      */
-    private void updateAvailableCommands(Player player, ArrayList<BoardModel.Command> commands){
+    private void updateAvailableCommands(ArrayList<BoardModel.Command> commands){
         String availableCommands = "";
 
         for (BoardModel.Command command: commands){
@@ -350,11 +346,7 @@ public class BoardFrame extends JFrame implements BoardView  {
         availableCommands = availableCommands.substring(0, availableCommands.length() - 2);
 
         for(JButton b: commandButtons){
-            if(availableCommands.contains(b.getText().toLowerCase())){
-                b.setEnabled(true);
-            }else{
-                b.setEnabled(false);
-            }
+            b.setEnabled(availableCommands.contains(b.getText().toLowerCase()));
         }
     }
 
@@ -388,7 +380,7 @@ public class BoardFrame extends JFrame implements BoardView  {
     /**
      * Initialize the player names and icons based on user input
      * @author Kyra Lothrop 101145872
-     * @param numPlayers
+     * @param numPlayers keeps track of the number of player, int
      */
     private void initializePlayers(int numPlayers){
         for (int i = 0; i < numPlayers; i++){
@@ -411,9 +403,9 @@ public class BoardFrame extends JFrame implements BoardView  {
 
             if (playerIcon == null){
                 initializationCancel();
+            } else {
+                model.addPlayer(new Player(playerName.getText(), findPlayerIcon(playerIcon.toLowerCase())));
             }
-
-            model.addPlayer(new Player(playerName.getText(), findPlayerIcon(playerIcon.toLowerCase())));
         }
     }
 
@@ -459,38 +451,22 @@ public class BoardFrame extends JFrame implements BoardView  {
 
         String[] buttonsText = {"Roll", "Pass", "Forfeit", "Buy", "Sell", "Pay Rent", "Pay Tax", "Player Status", "Cell Status"};
 
-        for(int i = 0; i<buttonsText.length; i++){
-            JButton commandButton = new JButton(buttonsText[i]);
+        for (String s : buttonsText) {
+            JButton commandButton = new JButton(s);
             commandButton.addActionListener(controller);
             commandButtons.add(commandButton);
             commandsPanel.add(commandButton);
 
-            if (buttonsText[i].equals("Roll")){
-                commandButton.setActionCommand(BoardModel.Command.ROLL_AGAIN.getStringCommand());
-            }
-            else if(buttonsText[i].equals("Pass")){
-                commandButton.setActionCommand(BoardModel.Command.PASS.getStringCommand());
-            }
-            else if(buttonsText[i].equals("Forfeit")){
-                commandButton.setActionCommand(BoardModel.Command.FORFEIT.getStringCommand());
-            }
-            else if(buttonsText[i].equals("Buy")){
-                commandButton.setActionCommand(BoardModel.Command.BUY.getStringCommand());
-            }
-            else if(buttonsText[i].equals("Sell")){
-                commandButton.setActionCommand(BoardModel.Command.SELL.getStringCommand());
-            }
-            else if(buttonsText[i].equals("Pay Rent")){
-                commandButton.setActionCommand(BoardModel.Command.PAY_RENT.getStringCommand());
-            }
-            else if(buttonsText[i].equals("Pay Tax")){
-                commandButton.setActionCommand(BoardModel.Command.PAY_TAX.getStringCommand());
-            }
-            else if (buttonsText[i].equals("Player Status")){
-                commandButton.setActionCommand(BoardModel.Command.PLAYER_STATUS.getStringCommand());
-            }
-            else if (buttonsText[i].equals("Cell Status")){
-                commandButton.setActionCommand(BoardModel.Command.CELL_STATUS.getStringCommand());
+            switch (s) {
+                case "Roll" -> commandButton.setActionCommand(BoardModel.Command.ROLL_AGAIN.getStringCommand());
+                case "Pass" -> commandButton.setActionCommand(BoardModel.Command.PASS.getStringCommand());
+                case "Forfeit" -> commandButton.setActionCommand(BoardModel.Command.FORFEIT.getStringCommand());
+                case "Buy" -> commandButton.setActionCommand(BoardModel.Command.BUY.getStringCommand());
+                case "Sell" -> commandButton.setActionCommand(BoardModel.Command.SELL.getStringCommand());
+                case "Pay Rent" -> commandButton.setActionCommand(BoardModel.Command.PAY_RENT.getStringCommand());
+                case "Pay Tax" -> commandButton.setActionCommand(BoardModel.Command.PAY_TAX.getStringCommand());
+                case "Player Status" -> commandButton.setActionCommand(BoardModel.Command.PLAYER_STATUS.getStringCommand());
+                case "Cell Status" -> commandButton.setActionCommand(BoardModel.Command.CELL_STATUS.getStringCommand());
             }
 
             commandButton.setEnabled(false);
@@ -507,27 +483,31 @@ public class BoardFrame extends JFrame implements BoardView  {
         for (BoardCell cell: cells) {
             try{
                 // Changes the row and col if it hits corners.
-                if (cell.getName().equals("JAIL")){
-                    row = SIZE- 1;
-                    col = 0;
-                    row_step = -1;
-                    col_step = 0;
-                    direction = GridBagConstraints.NORTH;
-                } else if (cell.getName().equals("FREE PARKING")) {
-                    row = 0;
-                    col = 0;
-                    row_step = 0;
-                    col_step = 1;
-                    direction = GridBagConstraints.EAST;
-                } else if (cell.getName().equals("GO TO JAIL")) {
-                    row = 0;
-                    col = SIZE - 1;
-                    row_step = 1;
-                    col_step = 0;
-                    direction = GridBagConstraints.SOUTH;
+                switch (cell.getName()) {
+                    case "JAIL" -> {
+                        row = SIZE - 1;
+                        col = 0;
+                        row_step = -1;
+                        col_step = 0;
+                        direction = GridBagConstraints.NORTH;
+                    }
+                    case "FREE PARKING" -> {
+                        row = 0;
+                        col = 0;
+                        row_step = 0;
+                        col_step = 1;
+                        direction = GridBagConstraints.EAST;
+                    }
+                    case "GO TO JAIL" -> {
+                        row = 0;
+                        col = SIZE - 1;
+                        row_step = 1;
+                        col_step = 0;
+                        direction = GridBagConstraints.SOUTH;
+                    }
                 }
                 // Loads the cell image.
-                BufferedImage image = ImageIO.read(getClass().getResource(cell.getImgPath()));
+                BufferedImage image = ImageIO.read(Objects.requireNonNull(getClass().getResource(cell.getImgPath())));
                 JLabel label = new JLabel(new ImageIcon(image));
                 // Finds the position of the cell.
                 GridBagConstraints c = new GridBagConstraints();
@@ -548,8 +528,7 @@ public class BoardFrame extends JFrame implements BoardView  {
                 row += row_step;
                 col += col_step;
             } catch (IOException e) {
-                System.out.println(e);
-                System.out.println("Could not find the image!");;
+                System.out.println("Could not find the image!");
             }
         }
 
@@ -566,7 +545,8 @@ public class BoardFrame extends JFrame implements BoardView  {
     private void showCurrentCell(Player player, int cellIndex){
         if (!player.getIconImgPath().equals("")) {
             try {
-                BufferedImage image = ImageIO.read(getClass().getResource(player.getIconImgPath()));
+                BufferedImage image = ImageIO.read(Objects.requireNonNull(getClass().getResource
+                        (player.getIconImgPath())));
                 Image dimg = image.getScaledInstance(ICON_SIZE,ICON_SIZE, Image.SCALE_SMOOTH);
                 playerLabels.get(player).setIcon(new ImageIcon(dimg));
 
@@ -574,9 +554,11 @@ public class BoardFrame extends JFrame implements BoardView  {
 
                 Rectangle cellPosition = currentCell.getBounds();
 
-                int index = (int) new ArrayList(playerLabels.keySet()).indexOf(player);
-                int x = cellPosition.x + 3*cellPosition.width/4 - 30 - 5*index;
-                int y = cellPosition.y + 1*cellPosition.height/2 - 30 - 5*index + BOARD_SHIFT_Y;
+                int index =  new ArrayList(playerLabels.keySet()).indexOf(player);
+                int x = cellPosition.x + 3*cellPosition.width/4 - ICON_SHIFT_ON_CELL -
+                        ICON_SHIFT_ON_CELL_PER_PLAYER*index;
+                int y = cellPosition.y + cellPosition.height/2 - ICON_SHIFT_ON_CELL -
+                        ICON_SHIFT_ON_CELL_PER_PLAYER*index + BOARD_SHIFT_Y;
 
                 playerLabels.get(player).setBounds(x, y, 50, 50);
                 layeredPane.moveToFront(playerLabels.get(player));
@@ -596,7 +578,7 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @param result if the player can afford the property, boolean
      */
     private void handleBuyProperty(Player player, Property property, boolean result) {
-        String buyMessage = "";
+        String buyMessage;
         if (result){
             buyMessage = "Player " + player.getIconName().toUpperCase() + " bought " + property.getName();
         } else {
@@ -639,9 +621,9 @@ public class BoardFrame extends JFrame implements BoardView  {
 
 
         int ans = JOptionPane.showConfirmDialog(null, panel,
-                "SELL PROPERTY", JOptionPane.CANCEL_OPTION);
+                "SELL PROPERTY", JOptionPane.OK_CANCEL_OPTION);
         if (ans == JOptionPane.OK_OPTION){
-            for (Property p : player.getProperties(true)){ //************* theres definitely a way to do this without iterating over the list lol
+            for (Property p : player.getProperties(true)){
                 if (group.getSelection().getActionCommand().equals(p.getName())){
                     player.toggleConfirmSell();
                     player.setPropertyToSell(p);
@@ -748,7 +730,7 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @param result if the player can afford rent, boolean
      */
     private void handlePayFees(BoardCell boardCell, Player player, int fees,  boolean result) {
-        String feesMessage = "";
+        String feesMessage;
         if (result){
             feesMessage = "You have successfully paid $" + fees + " to " +
                     boardCell.getOwner().getIconName().toUpperCase();

@@ -1,10 +1,9 @@
 import java.util.LinkedHashMap;
-import java.util.Locale;
 import java.util.Map;
 
 /**
  * Group 3
- * SYSC 3110 - Milestone 1 Property Class
+ * SYSC 3110 - Milestone 2 Property Class
  *
  * This document is the Property. This class extends BoardCell and has a price, rent, and if the property was
  * recently bought/changed.
@@ -90,7 +89,7 @@ public class Property extends BoardCell {
      */
     public Map<String, String> getAttributes() {
 
-        Map<String, String> attributes = new LinkedHashMap<String, String>();
+        Map<String, String> attributes = new LinkedHashMap<>();
 
         String propertyOwner = "Not Owned";
 

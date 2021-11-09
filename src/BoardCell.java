@@ -2,7 +2,7 @@ import java.util.Map;
 
 /**
  * Group 3
- * SYSC 3110 - Milestone 1 BoardCell Class
+ * SYSC 3110 - Milestone 2 BoardCell Class
  *
  * This document is the BoardCell. This class extends BoardCell and has a name, owner, and CellType.
  *
@@ -29,7 +29,7 @@ public abstract class BoardCell {
     /**
      * Keeps track of the image path of the cell.
      */
-    private String imgPath;
+    private final String imgPath;
 
     /**
      * Keeps track of all the possible cell types.
