@@ -3,7 +3,7 @@ import java.util.Map;
 
 /**
  * Group 3
- * SYSC 3110 - Milestone 1 Go Class
+ * SYSC 3110 - Milestone 2 Go Class
  *
  * This document is the EmptyCell. This class extends BoardCell and it is used for the cells that have not been
  * implemented yet.

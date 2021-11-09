@@ -2,7 +2,7 @@ import java.util.*;
 
 /**
  * Group 3
- * SYSC 3110 - Milestone 1 BoardModel Class
+ * SYSC 3110 - Milestone 2 BoardModel Class
  *
  * This document is the BoardModel. This class has a list of properties, a list of players, an array of dice,
  * the number of players, the size of the board, the board views, if the game has finished, the current turn,
@@ -59,8 +59,9 @@ public class BoardModel {
      * Keeps track of the possible board statuses.
      */
     public enum Status {GET_NUM_PLAYERS, CREATE_PLAYER_ICONS, INITIALIZE_BOARD, INITIALIZE_MONOPOLY, INITIALIZE_PLAYERS,
-        GET_COMMAND, PLAYER_ROLL, PLAYER_DOUBLE_ROLL, PLAYER_MOVE, BUY, SELL, PAY_FEES, PLAYER_STATUS, CELL_STATUS,
-        BOARD_STATUS, PLAYER_FORFEIT, PLAYER_REQUEST_FORFEIT, PASS_TURN, REPAINT_BOARD, GAME_OVER}
+        GET_COMMAND, PLAYER_ROLL, PLAYER_MOVE, BUY, SELL, PAY_FEES, PLAYER_STATUS, CELL_STATUS, PLAYER_FORFEIT,
+        PLAYER_REQUEST_FORFEIT, PASS_TURN, REPAINT_BOARD, GAME_OVER}
+
     /**
      * Keeps track of the possible player commands.
      */
@@ -370,7 +371,6 @@ public class BoardModel {
 
         // Handles the status commands.
         commands.add(BoardModel.Command.PLAYER_STATUS);
-        commands.add(BoardModel.Command.BOARD_STATUS);
         commands.add(BoardModel.Command.CELL_STATUS);
 
         // Handling forfeiting the game and declaring bankruptcy.
@@ -475,15 +475,8 @@ public class BoardModel {
      */
     public void getPlayerStatus(Player player){
         sendBoardUpdate(new BoardEvent(this, Status.PLAYER_STATUS, player));
-    } // I RENAMED THIS FUNCTION *****************************************************************************************
-
-    /**
-     * Accessor to display the information of the players on each view.
-     * @author Owen VanDusen 101152022
-     */
-    public void getBoardStatus(){
-        sendBoardUpdate(new BoardEvent(this, players, Status.BOARD_STATUS));
     }
+
 
     /**
      * Accessor to display the information of a specific cell on the board.
@@ -561,13 +554,10 @@ public class BoardModel {
         player.setFeesStatus(Player.StatusEnum.NO_FEES);
         player.addNumDoubles();
         player.setRollAgain(true);
-
-        sendBoardUpdate(new BoardEvent(this, Status.PLAYER_DOUBLE_ROLL, player));
     }
 
     public void request_forfeit(Player player){
         sendBoardUpdate(new BoardEvent(this, Status.PLAYER_REQUEST_FORFEIT, player));
-
         if (player.getRequest_forfeit()){
             forfeit(player);
         }

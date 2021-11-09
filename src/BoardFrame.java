@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Group 3
- * SYSC 3110 - Milestone 1 BoardFrame Class
+ * SYSC 3110 - Milestone 2 BoardFrame Class
  *
  * This document is the BoardFrame. This class has the BoardModel and BoardController. BoardFrame
  * handles outputting information for the user to see and formatting that output.
@@ -60,7 +60,7 @@ public class BoardFrame extends JFrame implements BoardView  {
     /**
      * Keeps track of the window height.
      */
-    private static final int WINDOW_HEIGHT = 800;
+    private static final int WINDOW_HEIGHT = 810;
     /**
      * Keeps track of the size of the board width.
      */
@@ -90,13 +90,17 @@ public class BoardFrame extends JFrame implements BoardView  {
      */
     private static final int COMMAND_HEIGHT = 50;
     /**
-     * Shifting the command panel.
+     * The gap between the buttons in the command panel.
+     */
+    private static final int COMMAND_PANEL_GAP = 10;
+    /**
+     * Shifting the command panel in Y.
      */
     private static final int COMMAND_SHIFT_Y = 10;
     /**
      * The maximum number of rolls in the dice animation.
      */
-    private static final int MAXRANDOMROLLS = 10;
+    private static final int MAX_RANDOM_ROLLS = 10;
     /**
      * Figures out how much to offset the players on the cell.
      */
@@ -124,12 +128,13 @@ public class BoardFrame extends JFrame implements BoardView  {
         layeredPane.setOpaque(true);
         getContentPane().add(layeredPane);
         layeredPane.setPreferredSize(new Dimension(WINDOW_WIDTH,WINDOW_HEIGHT));
+        layeredPane.setBackground(Color.decode(BACKGROUND_COLOR));
 
         // The main panel that keeps track of all the cells
         mainPanel = new JPanel();
         mainPanel.setLayout(new GridBagLayout());
         mainPanel.setBackground(Color.decode(BACKGROUND_COLOR));
-        mainPanel.setBounds(0, BOARD_SHIFT_Y, BOARD_WIDTH, BOARD_HEIGHT);
+        mainPanel.setBounds(0, BOARD_SHIFT_Y + COMMAND_PANEL_GAP, BOARD_WIDTH, BOARD_HEIGHT);
 
         layeredPane.add(mainPanel,0);
 
@@ -149,7 +154,6 @@ public class BoardFrame extends JFrame implements BoardView  {
         this.setVisible(true);
 
         model.play();
-
     }
 
     /**
@@ -164,9 +168,7 @@ public class BoardFrame extends JFrame implements BoardView  {
             case BUY -> handleBuyProperty(e.getPlayer(), (Property) e.getBoardCell(), e.getResult());
             case SELL -> handleSellProperty(e.getPlayer());
             case PLAYER_STATUS -> handleGetPlayerStatus(e.getPlayer());
-            case BOARD_STATUS -> handleGetBoardStatus(e.getPlayers());
             case CELL_STATUS -> handleGetCellStatus(e.getPlayer().getCurrentCell());
-            case PLAYER_DOUBLE_ROLL -> handleRollingDoubles(e.getPlayer());
             case INITIALIZE_MONOPOLY -> handleWelcomeMonopoly();
             case PAY_FEES -> handlePayFees(e.getPlayer().getCurrentCell(), e.getPlayer(), e.getValue(), e.getResult());
             case PASS_TURN -> handleCurrentPlayerChange();
@@ -188,8 +190,10 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @author Bardia Parmoun 101143006
      */
     private void handleRepaintBoard() {
-        for (JLabel label: playerLabels.values()) {
-            layeredPane.moveToFront(label);
+        for (Player player: playerLabels.keySet()) {
+            if (!player.isBankrupt()){
+                layeredPane.moveToFront(playerLabels.get(player));
+            }
         }
     }
 
@@ -297,14 +301,14 @@ public class BoardFrame extends JFrame implements BoardView  {
         int die2 = dice[1];
 
 
-        for (int i = 0; i < MAXRANDOMROLLS + 1; i++) {
+        for (int i = 0; i < MAX_RANDOM_ROLLS + 1; i++) {
             Random rand = new Random();
             int randomRoll1;
             int randomRoll2;
             randomRoll1 = rand.nextInt((6 - 1) + 1) + 1;
             randomRoll2 = rand.nextInt((6 - 1) + 1) + 1;
 
-            if (i == MAXRANDOMROLLS) {
+            if (i == MAX_RANDOM_ROLLS) {
                 randomRoll1 = die1;
                 randomRoll2 = die2;
             }
@@ -320,15 +324,11 @@ public class BoardFrame extends JFrame implements BoardView  {
                 System.out.println("wait failed");
             }
         }
-    }
 
-    /**
-     * Displays a prompt whenever a player rolls the same number on both dice.
-     * @author Bardia Parmoun 101143006
-     * @param player player performing actions, Player
-     */
-    private void handleRollingDoubles(Player player){
-        System.out.printf("Player %s rolled a double\n", player.getIconName());
+        buildDiceDisplay(die1, true);
+        buildDiceDisplay(die2, false);
+
+        this.pack();
     }
 
     /**
@@ -367,7 +367,8 @@ public class BoardFrame extends JFrame implements BoardView  {
         Integer[] numPlayerOptions = {2,3,4,5,6,7,8};
 
         try{
-            int numPlayers = (Integer)JOptionPane.showInputDialog(null, "How many people will be playing?", "INITIALIZE GAME DATA",
+            int numPlayers = (Integer)JOptionPane.showInputDialog(null,
+                    "How many people will be playing?", "INITIALIZE GAME DATA",
                     JOptionPane.QUESTION_MESSAGE, null, numPlayerOptions, numPlayerOptions[0]);
 
             model.setNumPlayers(numPlayers);
@@ -426,7 +427,11 @@ public class BoardFrame extends JFrame implements BoardView  {
         return iconOptions.toArray();
     }
 
-    // moved from BoardFrame to BoardController+++++++++++++++++
+    /**
+     * Finds the player icons used for the drop down menu.
+     * @param icon the string of icon to find.
+     * @return the Icon object of the player.
+     */
     private BoardModel.Icon findPlayerIcon(String icon) {
         for (BoardModel.Icon ic: BoardModel.Icon.values()){
             if (ic.getName().equals(icon)) {
@@ -446,10 +451,14 @@ public class BoardFrame extends JFrame implements BoardView  {
      */
     private void constructBoard(List<BoardCell> cells) {
         // Command buttons
-        JPanel commandsPanel = new JPanel(new GridLayout(2,4, 10, 10));
-        commandsPanel.setBounds(0, COMMAND_SHIFT_Y,BOARD_WIDTH, COMMAND_HEIGHT);
+        JPanel commandsPanel = new JPanel(new GridLayout(2,4, COMMAND_PANEL_GAP, COMMAND_PANEL_GAP));
+        commandsPanel.setBounds(COMMAND_PANEL_GAP, COMMAND_SHIFT_Y,BOARD_WIDTH - 2 * COMMAND_PANEL_GAP,
+                COMMAND_HEIGHT + COMMAND_PANEL_GAP);
 
-        String[] buttonsText = {"Roll", "Pass", "Forfeit", "Buy", "Sell", "Pay Rent", "Pay Tax", "Player Status", "Cell Status"};
+        String[] buttonsText = {"Roll", "Pass", "Forfeit", "Buy", "Sell", "Pay Rent", "Pay Tax", "Player Status",
+                "Cell Status"};
+
+        commandsPanel.setBackground(Color.decode(BACKGROUND_COLOR));
 
         for (String s : buttonsText) {
             JButton commandButton = new JButton(s);
@@ -556,9 +565,9 @@ public class BoardFrame extends JFrame implements BoardView  {
 
                 int index =  new ArrayList(playerLabels.keySet()).indexOf(player);
                 int x = cellPosition.x + 3*cellPosition.width/4 - ICON_SHIFT_ON_CELL -
-                        ICON_SHIFT_ON_CELL_PER_PLAYER*index;
+                        ICON_SHIFT_ON_CELL_PER_PLAYER * index;
                 int y = cellPosition.y + cellPosition.height/2 - ICON_SHIFT_ON_CELL -
-                        ICON_SHIFT_ON_CELL_PER_PLAYER*index + BOARD_SHIFT_Y;
+                        ICON_SHIFT_ON_CELL_PER_PLAYER * index + BOARD_SHIFT_Y;
 
                 playerLabels.get(player).setBounds(x, y, 50, 50);
                 layeredPane.moveToFront(playerLabels.get(player));
@@ -675,41 +684,6 @@ public class BoardFrame extends JFrame implements BoardView  {
         displayObjectAttributes("CELL STATUS", currentCell.getAttributes(), false);
     }
 
-
-    /**
-     * Displays the status of the current board.
-     * @author Kyra Lothrop 101145872
-     * @param players player performing actions, Player
-     */
-    private void handleGetBoardStatus(List<Player> players) {
-        System.out.println("\nDisplaying the status of the board:");
-
-        List<Player> bankruptPlayers = new ArrayList<>();
-        List<Player> nonBankruptPlayers = new ArrayList<>();
-
-        for (Player player: players){
-            if(player.isBankrupt()){
-                bankruptPlayers.add(player);
-            }
-            else if (!player.isBankrupt()){
-                nonBankruptPlayers.add(player);
-            }
-        }
-
-        System.out.println("\nBankrupt Players:");
-        for (Player bankruptPlayer: bankruptPlayers){
-            System.out.printf("\tPlayer %s, $%d\n", bankruptPlayer.getIconName().toUpperCase(), bankruptPlayer.getCash());
-        }
-
-        System.out.println("\nNon Bankrupt Players:");
-        for (Player nonBankruptPlayer: nonBankruptPlayers){
-            System.out.printf("\tPlayer %s, $%d\n", nonBankruptPlayer.getIconName().toUpperCase(),
-                    nonBankruptPlayer.getCash());
-        }
-        System.out.println("\n");
-    }
-
-
     /**
      * Displays the introduction message.
      * @author Sarah Chow 101143033
@@ -758,7 +732,8 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @param player player forfeiting, Player
      */
     private void handleRequestForfeit(Player player) {
-        int ans = JOptionPane.showConfirmDialog(null, "Are you sure you would like to forfeit the game?");
+        int ans = JOptionPane.showConfirmDialog(null,
+                "Are you sure you would like to forfeit the game?");
         if (ans == JOptionPane.YES_OPTION){
             player.toggleRequest_forfeit();
         }
@@ -775,6 +750,7 @@ public class BoardFrame extends JFrame implements BoardView  {
     private void handleForfeitedPlayer(Player player){
         String message = "Player: " + player.getIconName().toUpperCase() + " has forfeited the game!";
         JOptionPane.showMessageDialog(null, message);
+        layeredPane.setLayer(playerLabels.get(player), -1);
     }
 
     /**
@@ -783,6 +759,10 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @param players list of players in the order they forfeit the game, List<Player>
      */
     private void handleWinner(List<Player> players) {
+        for(JButton b: commandButtons){
+            b.setEnabled(false);
+        }
+
         String gameOverMessage = "";
         players.sort(Comparator.comparingInt(Player::getRank));
 

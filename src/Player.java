@@ -64,7 +64,7 @@ public class Player {
     /**
      * Keeps track of whether the player would like to forfeit.
      */
-    private static boolean request_forfeit;
+    private boolean request_forfeit;
 
     /**
      * Property the player would like to sell
@@ -101,7 +101,7 @@ public class Player {
         this.rollAgain = false;
         this.feesStatus = StatusEnum.NO_FEES;
         this.rank = 0;
-        request_forfeit = false;
+        this.request_forfeit = false;
         this.propertyToSell = null;
         this.confirmSell = false;
     }
@@ -358,7 +358,7 @@ public class Player {
      * @author Sarah Chow 101143033
      */
     public void toggleRequest_forfeit() {
-        request_forfeit = !request_forfeit;
+        this.request_forfeit = !this.request_forfeit;
     }
 
     /**

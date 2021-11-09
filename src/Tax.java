@@ -3,7 +3,7 @@ import java.util.Map;
 
 /**
  * Group 3
- * SYSC 3110 - Milestone 1 Tax Class
+ * SYSC 3110 - Milestone 2 Tax Class
  *
  * This document is the Tax. This class extends BoardCell and has a tax property.
  *
