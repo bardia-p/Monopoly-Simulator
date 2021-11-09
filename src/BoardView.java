@@ -1,6 +1,6 @@
 /**
  * Group 3
- * SYSC 3110 - Milestone 1 BoardView Interface
+ * SYSC 3110 - Milestone 2 BoardView Interface
  *
  * This document is the BoardView interface. It holds method signatures that are implemented
  * by the BoardListener.

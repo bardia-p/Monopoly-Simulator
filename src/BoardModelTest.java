@@ -31,7 +31,7 @@ public class BoardModelTest {
     @Before
     public void initialize(){
         boardModel = new BoardModel();
-
+        boardModel.constructBoard();
         p1 = new Player("Owen", BoardModel.Icon.BATTLESHIP);
         p2 = new Player("Also Owen", BoardModel.Icon.THIMBLE);
 
@@ -146,8 +146,8 @@ public class BoardModelTest {
         boardModel.buyProperty((Property)p1.getCurrentCell(), p1);
         assertEquals(3,p1.getProperties(false).size());
 
-        boardModel.sellProperty(p1.getProperties(false).get(0), p1);
-        boardModel.sellProperty(p1.getProperties(false).get(0), p1);
+        boardModel.sellProperty(p1, p1.getProperties(false).get(0));
+        boardModel.sellProperty(p1, p1.getProperties(false).get(0));
         assertEquals(1,p1.getProperties(false).size());
     }
 
@@ -192,12 +192,12 @@ public class BoardModelTest {
     public void testPropertiesBecomeSellableAfterTurnPass(){
         boardModel.move(p1,3);
         boardModel.buyProperty((Property) p1.getCurrentCell(), p1);
-        assertEquals(true, ((Property) p1.getCurrentCell()).getRecentlyChanged());
+        assertTrue(((Property) p1.getCurrentCell()).getRecentlyChanged());
         assertEquals(0, p1.getProperties(true).size());
         assertEquals(1, p1.getProperties(false).size());
 
         boardModel.passTurn(p1);
-        assertEquals(false,((Property) p1.getCurrentCell()).getRecentlyChanged());
+        assertFalse(((Property) p1.getCurrentCell()).getRecentlyChanged());
         assertEquals(1, p1.getProperties(true).size());
         assertEquals(1, p1.getProperties(false).size());
     }

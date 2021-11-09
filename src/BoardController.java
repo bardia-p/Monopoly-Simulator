@@ -5,7 +5,7 @@ import java.awt.event.WindowEvent;
 
 /**
  * Group 3
- * SYSC 3110 - Milestone 1 BoardController Class
+ * SYSC 3110 - Milestone 2 BoardController Class
  *
  * This document is the BoardController, as per the MVC model, the BoardController handles user input and passes off
  * the information to the BoardModel class. This class has a boardModel and an array list of remaining icons.
@@ -18,11 +18,10 @@ import java.awt.event.WindowEvent;
  */
 
 public class BoardController extends WindowAdapter implements ActionListener {
-
     /**
      * Keeps track of the board model.
      */
-    private BoardModel boardModel;
+    private final BoardModel boardModel;
 
     /**
      * Constructor for the BoardController, populates the array list with all possible icons.
@@ -38,7 +37,7 @@ public class BoardController extends WindowAdapter implements ActionListener {
     /**
      * Listens for the user command buttons in the BoardFrame
      * @author Kyra Lothrop 101145872
-     * @param e
+     * @param e action event e for using the buttons, ActionEvent
      */
     @Override
     public void actionPerformed(ActionEvent e) {

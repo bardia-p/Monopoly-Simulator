@@ -1,6 +1,9 @@
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * Group 3
- * SYSC 3110 - Milestone 1 Property Class
+ * SYSC 3110 - Milestone 2 Property Class
  *
  * This document is the Property. This class extends BoardCell and has a price, rent, and if the property was
  * recently bought/changed.
@@ -78,23 +81,27 @@ public class Property extends BoardCell {
         return recentlyChanged;
     }
 
+
     /**
-     * Accessor method to package relevant information into a string.
+     * Accessor method to package relevant information into a linked hash map.
      * @author Sarah Chow 101143033
-     * @return the property's current information, String
+     * @return attributes of the property, Map
      */
-    @Override
-    public String toString() {
-        String propertyInfo = "\n\tname='" + super.getName() + '\'' +
-                "\n\tprice='" + price + '\'' +
-                "\n\trent='" + rent + '\'';
+    public Map<String, String> getAttributes() {
+
+        Map<String, String> attributes = new LinkedHashMap<>();
+
+        String propertyOwner = "Not Owned";
 
         if (super.getOwner() != null){
-            propertyInfo += "\n\tproperty owner='" + super.getOwner().getIconName() + '\'';
-
-        } else {
-            propertyInfo += "\n\tproperty owner='no owner'";
+            propertyOwner = super.getOwner().getIconName();
         }
-        return propertyInfo;
+
+        attributes.put("Cell Name: ", String.valueOf(super.getName()).toUpperCase());
+        attributes.put("Price: ", String.valueOf(price));
+        attributes.put("Rent: ", String.valueOf(rent));
+        attributes.put("Property Owner: ", propertyOwner.toUpperCase());
+
+        return attributes;
     }
 }

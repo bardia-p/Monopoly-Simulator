@@ -1,9 +1,8 @@
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Group 3
- * SYSC 3110 - Milestone 1 BoardModel Class
+ * SYSC 3110 - Milestone 2 BoardModel Class
  *
  * This document is the BoardModel. This class has a list of properties, a list of players, an array of dice,
  * the number of players, the size of the board, the board views, if the game has finished, the current turn,
@@ -52,13 +51,17 @@ public class BoardModel {
      * Keeps track of the bank player.
      */
     private final Player bank;
-
+    /**
+     * Checks to see if the roll button was pressed.
+     */
+    private boolean checkDoubleRoll;
     /**
      * Keeps track of the possible board statuses.
      */
-    public enum Status {GET_NUM_PLAYERS, CREATE_PLAYER_ICONS, INITIALIZE_BOARD, INITIALIZE_MONOPOLY, INITIALIZE_PLAYERS, GET_COMMAND, PLAYER_ROLL,
-        PLAYER_DOUBLE_ROLL, PLAYER_MOVE, BUY, SELL, PAY_FEES, PLAYER_STATUS, CELL_STATUS, BOARD_STATUS, PLAYER_FORFEIT,
-        PASS_TURN, REPAINT_BOARD, GAME_OVER}
+    public enum Status {GET_NUM_PLAYERS, CREATE_PLAYER_ICONS, INITIALIZE_BOARD, INITIALIZE_MONOPOLY, INITIALIZE_PLAYERS,
+        GET_COMMAND, PLAYER_ROLL, PLAYER_MOVE, BUY, SELL, PAY_FEES, PLAYER_STATUS, CELL_STATUS, PLAYER_FORFEIT,
+        PLAYER_REQUEST_FORFEIT, PASS_TURN, REPAINT_BOARD, GAME_OVER}
+
     /**
      * Keeps track of the possible player commands.
      */
@@ -66,12 +69,13 @@ public class BoardModel {
         BUY ("buy"),
         SELL ("sell"),
         PAY_RENT ("pay rent"),
-        STATUS ("status"),
+        PLAYER_STATUS ("player status"),
         BOARD_STATUS ("board status"),
         PASS ("pass"),
         ROLL_AGAIN ("roll"),
         CELL_STATUS ("cell status"),
         FORFEIT ("forfeit"),
+        CONFIRM_FORFEIT("confirm_forfeit"),
         PAY_TAX ("pay tax"),
         REPAINT("repaint");
 
@@ -130,7 +134,6 @@ public class BoardModel {
      * @author Owen VanDusen 101152022
      */
     public BoardModel(){
-        constructBoard();
         views = new ArrayList<>();
         cells = new ArrayList<>();
         players = new ArrayList<>();
@@ -139,43 +142,52 @@ public class BoardModel {
         gameFinish = false;
         turn = null;
         numPlayers = 0;
+        checkDoubleRoll = false;
     }
 
     /**
-     * Select what method to call based on the given command
+     * Select what method to call based on the given command.
      * @author Kyra Lothrop 101145872
-     * @param command
+     * @param command the type of command to run, Strng
      */
     public void sendCommand(String command) {
         if(command.equals(Command.REPAINT.getStringCommand())){
-            repaint(turn);
-            getCommand(turn);
+            repaint();
         }
         else if(command.equals(Command.ROLL_AGAIN.getStringCommand())){
-            roll(turn);
-            getCommand(turn);
+            checkDoubleRoll = true;
         }
         else if(command.equals(Command.PASS.getStringCommand())){
             passTurn(turn);
-            getCommand(turn);
-        }
-        else if(command.equals((Command.FORFEIT.getStringCommand()))){
-            forfeit(turn);
         }
         else if(command.equals((Command.BUY.getStringCommand()))){
             buyProperty((Property) turn.getCurrentCell() , turn);
-            getCommand(turn);
         }
         else if(command.equals((Command.SELL.getStringCommand()))){
-            //sellProperty((Property) //must prompt user for what to sell
-            getCommand(turn);
+            sellPropertyPrompt(turn); //must prompt user for what to sell
         }
         else if(command.equals((Command.PAY_RENT.getStringCommand()))){
-            payFees((Property) turn.getCurrentCell(), turn);
-            getCommand(turn);
+            payFees(turn.getCurrentCell(), turn);
         }
         else if(command.equals((Command.PAY_TAX.getStringCommand()))){
-            payFees((Tax) turn.getCurrentCell(), turn);
+            payFees(turn.getCurrentCell(), turn);
+        }
+        else if (command.equals((Command.PLAYER_STATUS.getStringCommand()))){
+            getPlayerStatus(turn);
+        }
+        else if (command.equals((Command.CELL_STATUS.getStringCommand()))){
+            getCellStatus();
+        }
+        else if(command.equals((Command.FORFEIT.getStringCommand()))){
+            request_forfeit(turn);
+        }
+        else if(command.equals((Command.CONFIRM_FORFEIT.getStringCommand()))){
+            forfeit(turn);
+        }
+
+        // Avoids race conditions.
+        if(turn!= null && !command.equals((Command.PASS.getStringCommand())) &&
+                !command.equals((Command.FORFEIT.getStringCommand()))) {
             getCommand(turn);
         }
     }
@@ -188,7 +200,7 @@ public class BoardModel {
      * @author Bardia Parmoun 101143006
      * @author Owen VanDusen 101152022
      */
-    private void constructBoard(){
+    public void constructBoard(){
         cells.addAll(Arrays.asList(
                 new Go(200, "images/board/go.jpg"),
                 new Property("Mediterranean Avenue",60,2, "images/board/mediterranean.jpg"),
@@ -367,14 +379,14 @@ public class BoardModel {
         }
 
         // Handles the status commands.
-        commands.add(BoardModel.Command.STATUS);
-        commands.add(BoardModel.Command.BOARD_STATUS);
+        commands.add(BoardModel.Command.PLAYER_STATUS);
         commands.add(BoardModel.Command.CELL_STATUS);
 
         // Handling forfeiting the game and declaring bankruptcy.
         commands.add(Command.FORFEIT);
 
-        sendBoardUpdate(new BoardEvent(this, BoardModel.Status.GET_COMMAND, player, commands));
+
+        sendBoardUpdate(new BoardEvent(this, BoardModel.Status.GET_COMMAND, commands));
     }
 
     /**
@@ -385,7 +397,11 @@ public class BoardModel {
         sendBoardUpdate(new BoardEvent(this, Status.INITIALIZE_MONOPOLY));
     }
 
-    private void repaint(Player turn) {
+    /**
+     * Repaints the entire board to make sure the players are updated.
+     * @author Bardia Parmoun 101143006
+     */
+    private void repaint() {
         sendBoardUpdate(new BoardEvent(this, Status.REPAINT_BOARD));
     }
 
@@ -421,6 +437,7 @@ public class BoardModel {
         int newPlayerPosition = (player.getPosition() + amountToMove) % SIZE_OF_BOARD;
         player.setPosition(newPlayerPosition);
         player.setCurrentCell(cells.get(newPlayerPosition));
+        getCommand(player);
     }
 
     /**
@@ -444,18 +461,29 @@ public class BoardModel {
     }
 
     /**
-     * Sells a property owned by the active player and removes it from their owned properties if
-     * the property may be sold.
-     * @author Bardia Parmoun 101143006
-     * @param property property being sold, Property
+     * Handles propmprting the view for which property to sell.
+     * @author Sarah Chow 101143033
      * @param player player selling the property, Player
      */
-    public void sellProperty(Property property, Player player){
-        player.sellProperty(property);
-        property.toggleRecentlyChanged();
-        property.setOwner(null);
+    public void sellPropertyPrompt(Player player){
+        sendBoardUpdate(new BoardEvent(this, Status.SELL, player));
 
-        sendBoardUpdate(new BoardEvent(this, Status.SELL, player, property, true));
+        if (player.getConfirmSell()){
+            sellProperty(player, player.getPropertyToSell());
+        }
+    }
+
+    /**
+     * Sells a property owned by the active player and removes it from their owned properties if
+     * the property may be sold.
+     * @author Sarah Chow 101143033
+     * @param player player selling the property, Player
+     * @param propertyToSell the property to sell, Property
+     */
+    public void sellProperty(Player player, Property propertyToSell){
+        player.sellProperty(propertyToSell);
+        propertyToSell.toggleRecentlyChanged();
+        propertyToSell.setOwner(null);
     }
 
     /**
@@ -463,17 +491,10 @@ public class BoardModel {
      * @author Sarah Chow 101143033
      * @param player active player, Player
      */
-    public void getStatus(Player player){
+    public void getPlayerStatus(Player player){
         sendBoardUpdate(new BoardEvent(this, Status.PLAYER_STATUS, player));
     }
 
-    /**
-     * Accessor to display the information of the players on each view.
-     * @author Owen VanDusen 101152022
-     */
-    public void getBoardStatus(){
-        sendBoardUpdate(new BoardEvent(this, players, Status.BOARD_STATUS));
-    }
 
     /**
      * Accessor to display the information of a specific cell on the board.
@@ -537,7 +558,7 @@ public class BoardModel {
         // Reset the turn.
         turn = null;
 
-        if (numPlayers >1) {
+        if (numPlayers > 1) {
             sendBoardUpdate(new BoardEvent(this, Status.PASS_TURN, player));
         }
     }
@@ -551,8 +572,13 @@ public class BoardModel {
         player.setFeesStatus(Player.StatusEnum.NO_FEES);
         player.addNumDoubles();
         player.setRollAgain(true);
+    }
 
-        sendBoardUpdate(new BoardEvent(this, Status.PLAYER_DOUBLE_ROLL, player));
+    public void request_forfeit(Player player){
+        sendBoardUpdate(new BoardEvent(this, Status.PLAYER_REQUEST_FORFEIT, player));
+        if (player.getRequest_forfeit()){
+            forfeit(player);
+        }
     }
 
     /**
@@ -583,6 +609,7 @@ public class BoardModel {
      * @author Kyra Lothrop 101145872
      */
     public void play(){
+        constructBoard();
         initializeMonopoly();
         getNumPlayers();
         initiatePlayers();
@@ -597,8 +624,13 @@ public class BoardModel {
 
                     // Keeps prompting the player for commands until their turn is over.
                     while (turn != null){
-
+                        if (checkDoubleRoll){
+                            roll(player);
+                            checkDoubleRoll = false;
+                        }
                     }
+
+
                 }
 
                 // Checks to see if the game is over

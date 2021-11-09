@@ -1,6 +1,8 @@
+import java.util.Map;
+
 /**
  * Group 3
- * SYSC 3110 - Milestone 1 BoardCell Class
+ * SYSC 3110 - Milestone 2 BoardCell Class
  *
  * This document is the BoardCell. This class extends BoardCell and has a name, owner, and CellType.
  *
@@ -27,7 +29,7 @@ public abstract class BoardCell {
     /**
      * Keeps track of the image path of the cell.
      */
-    private String imgPath;
+    private final String imgPath;
 
     /**
      * Keeps track of all the possible cell types.
@@ -76,13 +78,6 @@ public abstract class BoardCell {
     }
 
     /**
-     * Accessor method to package relevant information into a string.
-     * @author Sarah Chow 101143033
-     * @return the cell's current information, String
-     */
-    public abstract String toString();
-
-    /**
      * Accessor method to get the type of the cell
      * @author Owen VanDusen 101152022
      * @return the cell type, CellType
@@ -99,4 +94,11 @@ public abstract class BoardCell {
     public String getImgPath(){
         return imgPath;
     }
+
+    /**
+     * Accessor method to package relevant information into a Map.
+     * @author Sarah Chow 101143033
+     * @return the cell's current information, Map
+     */
+    public abstract Map<String, String> getAttributes();
 }
