@@ -1,9 +1,9 @@
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 
 /**
  * Group 3
- * SYSC 3110 - Milestone 1 Player Class
+ * SYSC 3110 - Milestone 2 Player Class
  *
  * This document is the Player. This class has the name, icon, cash value,
  * position on board, list of properties, the current property they are on, their rent status (paid rent, unpaid rent,
@@ -23,7 +23,7 @@ public class Player {
     /**
      * Keeps track of player icon.
      */
-    private final String icon;
+    private final BoardModel.Icon icon;
     /**
      * Keeps track of player available money.
      */
@@ -57,9 +57,24 @@ public class Player {
      */
     private boolean bankrupt;
     /**
-     * keeps track of player rank after going bankrupt.
+     * Keeps track of player rank after going bankrupt.
      */
     private int rank;
+
+    /**
+     * Keeps track of whether the player would like to forfeit.
+     */
+    private boolean request_forfeit;
+
+    /**
+     * Property the player would like to sell
+     */
+    private Property propertyToSell;
+
+    /**
+     * Keeps track of whether the player would like to sell a property.
+     */
+    private boolean confirmSell;
 
     /**
      * Possible values of player debt status.
@@ -75,7 +90,7 @@ public class Player {
      * @param name Player name, String
      * @param icon Player icon, String
      */
-    Player(String name, String icon) {
+    Player(String name, BoardModel.Icon icon) {
         this.bankrupt = false;
         this.name = name;
         this.icon = icon;
@@ -86,6 +101,9 @@ public class Player {
         this.rollAgain = false;
         this.feesStatus = StatusEnum.NO_FEES;
         this.rank = 0;
+        this.request_forfeit = false;
+        this.propertyToSell = null;
+        this.confirmSell = false;
     }
 
     /**
@@ -115,6 +133,24 @@ public class Player {
     public void sellProperty(Property property){
         this.properties.remove(property);
         this.cash += property.getPrice();
+        this.toggleConfirmSell();
+    }
+
+    /**
+     * Accessor to toggle the confirm sell boolean value.
+     * @author Sarah Chow 101143033
+     */
+    public void toggleConfirmSell(){
+        this.confirmSell = !this.confirmSell;
+    }
+
+    /**
+     * Accessor to get the confirm sell boolean value.
+     * @author Sarah Chow 101143033
+     * @return the confirm sell value, boolean
+     */
+    public boolean getConfirmSell(){
+        return this.confirmSell;
     }
 
     /**
@@ -148,12 +184,21 @@ public class Player {
     }
 
     /**
-     * Accessor to get the icon of the player.
+     * Accessor to get the name of the icon of the player.
      * @author Bardia Parmoun 101143006
      * @return icon of player, String
      */
-    public String getIcon(){
-        return icon;
+    public String getIconName(){
+        return icon.getName();
+    }
+
+    /**
+     * Accessor to get the image path of the icon of the player.
+     * @author Bardia Parmoun 101143006
+     * @return image path of player icon, String
+     */
+    public String getIconImgPath(){
+        return icon.getImgPath();
     }
 
     /**
@@ -190,6 +235,15 @@ public class Player {
      */
     public BoardCell getCurrentCell(){
         return currentCell;
+    }
+
+    /**
+     * Accessor to set the current amount of cash a player has. Used exclusively for test cases.
+     * @param cash the amount of cash you want the player to have
+     * @author Owen VanDusen 101155022
+     */
+    public void setCash(int cash){
+        this.cash = cash;
     }
 
     /**
@@ -282,6 +336,14 @@ public class Player {
         return properties;
     }
 
+    public void setPropertyToSell(Property propertyToSell) {
+        this.propertyToSell = propertyToSell;
+    }
+
+    public Property getPropertyToSell() {
+        return propertyToSell;
+    }
+
     /**
      * Accessor to set the rank of the player when they go bankrupt.
      * @author Kyra Lothrop 101145872
@@ -301,28 +363,45 @@ public class Player {
     }
 
     /**
-     * Accessor method to package relevant information into a string.
-     * @author Bardia Parmoun 101143006
-     * @return the player's current information, String
+     * Accessor to toggle the request forfeit boolean variable.
+     * @author Sarah Chow 101143033
      */
-    @Override
-    public String toString() {
-        String playerInfo;
+    public void toggleRequest_forfeit() {
+        this.request_forfeit = !this.request_forfeit;
+    }
 
-        playerInfo = "\tbankrupt=" + bankrupt +
-                "\n\tname='" + name + '\'' +
-                "\n\ticon='" + icon + '\'' +
-                "\n\tcash='" + cash + '\'' +
-                "\n\tposition='" + position + '\'' +
-                "\n\tproperties= { \n\t\t";
+    /**
+     * Accessor to get whether the player has requested to forfeit.
+     * @author Sarah Chow 101143033
+     * @return whether the player would like to forfeit, boolean
+     */
+    public boolean getRequest_forfeit(){
+        return request_forfeit;
+    }
+
+    /**
+     * Accessor method to package relevant information into a linked hash map.
+     * @author Sarah Chow 101143033
+     * @return attributes of the player, Map
+     */
+    public Map<String, String> getAttributes() {
+
+        Map<String, String> attributes = new LinkedHashMap<>();
+        int count = 1;
+
+        attributes.put("Player Name: ", String.valueOf(name));
+        attributes.put("Icon: ", String.valueOf(icon));
+        attributes.put("Cash: ", String.valueOf(cash));
+        attributes.put("Position: ", String.valueOf(position));
+        attributes.put("Bankrupt: ", String.valueOf(bankrupt).toUpperCase());
+        attributes.put("Fee Status: ", String.valueOf(feesStatus).toUpperCase());
 
         for (Property property: properties)
         {
-            playerInfo += property.getName() + "\n\t\t";
+            attributes.put("Property " + count + ": ", property.getName().toUpperCase());
+            count++;
         }
 
-        playerInfo += " \b\b}";
-
-        return playerInfo;
+        return attributes;
     }
 }

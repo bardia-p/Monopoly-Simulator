@@ -4,7 +4,7 @@ import java.util.List;
 
 /**
  * Group 3
- * SYSC 3110 - Milestone 1 BoardEvent Class
+ * SYSC 3110 - Milestone 2 BoardEvent Class
  *
  * This document is the BoardEvent. This class has a BoardModel.Status type, a player, a value, a list of commands, a
  * result, a board cell, the recent roll, and a list of players.
@@ -35,6 +35,11 @@ public class BoardEvent extends EventObject {
      * Keeps track of an integer value.
      */
     private int value;
+
+    /**
+     * Keeps track of an integer value.
+     */
+    private int value2;
     /**
      * Keeps track of the result of the given event.
      */
@@ -55,6 +60,10 @@ public class BoardEvent extends EventObject {
      * Keeps track of the relevant players to the event.
      */
     private List<Player> players;
+    /**
+     * Keeps track of the relevant cells to the event.
+     */
+    private List<BoardCell> cells;
 
     /**
      * Constructor for the Board event, instantiates the board model, the type of event, the relevant player, and the
@@ -62,12 +71,10 @@ public class BoardEvent extends EventObject {
      * @author Kyra Lothrop 101145872
      * @param model the board model, BoardModel
      * @param type the status enum, BoardModel.Status
-     * @param player the relevant player, Player
      * @param commands the possible commands, ArrayList<BoardModel.Command>
      */
-    public BoardEvent(BoardModel model, BoardModel.Status type, Player player, ArrayList<BoardModel.Command> commands){
+    public BoardEvent(BoardModel model, BoardModel.Status type, ArrayList<BoardModel.Command> commands){
         this(model, type);
-        this.player = player;
         this.commands = commands;
     }
 
@@ -126,7 +133,7 @@ public class BoardEvent extends EventObject {
      * @param type the status enum, BoardModel.Status
      * @param players the list of the players, List<Player>
      */
-    public BoardEvent(BoardModel model, BoardModel.Status type, List<Player> players){
+    public BoardEvent(BoardModel model, List<Player> players, BoardModel.Status type){
         this(model, type);
         this.players = players;
     }
@@ -145,6 +152,22 @@ public class BoardEvent extends EventObject {
     }
 
     /**
+     * Constructor for the BoardEvent,
+     * @author Kyra Lothrop 101145872
+     * @param model the board model, BoardModel
+     * @param type the status enum, BoardModel.Status
+     * @param player the relevant player, Player
+     * @param value the value1 to be used, int
+     * @param value2 the value2 to be used, int
+     */
+    public BoardEvent(BoardModel model, BoardModel.Status type, Player player, int value, int value2){
+        this(model, type);
+        this.player = player;
+        this.value = value;
+        this.value2 = value2;
+    }
+
+    /**
      * Constructor for the Board event, instantiates the board model, the type of event and a value. Mainly used for
      * events such as getting the number of players.
      * @author Kyra Lothrop 101145872
@@ -155,6 +178,19 @@ public class BoardEvent extends EventObject {
     public BoardEvent(BoardModel model, BoardModel.Status type, int value){
         this(model, type);
         this.value = value;
+    }
+
+    /**
+     * Constructor for the Board event, instantiates the board model, the type of event and a value. Mainly used for
+     * events such as construcing the board
+     * @author Bardia Parmoun 101143006
+     * @param model the board model, BoardModel
+     * @param type the status enum, BoardModel.Status
+     * @param cells keep track of the cells, List<BoardCell>
+     */
+    public BoardEvent(BoardModel model, BoardModel.Status type, List<BoardCell> cells){
+        this(model, type);
+        this.cells = cells;
     }
 
     /**
@@ -174,6 +210,7 @@ public class BoardEvent extends EventObject {
         this.commands = new ArrayList<>();
         this.players = new ArrayList<>();
         this.dice = new int[2];
+        this.cells = new ArrayList<>();
     }
 
     /**
@@ -213,6 +250,15 @@ public class BoardEvent extends EventObject {
     }
 
     /**
+     * Accessor to get the value associated with the event.
+     * @author Owen VanDusen 101152022
+     * @return the value, int
+     */
+    public int getValue2() {
+        return value2;
+    }
+
+    /**
      * Returns the result of the event.
      * @author Bardia Parmoun 101143006
      * @return the result, boolean
@@ -246,5 +292,13 @@ public class BoardEvent extends EventObject {
      */
     public int[] getDice(){
         return dice;
+    }
+
+    /**
+     * Returns the list of the cells in the event.
+     * @return the list of the cells passed in the event, List<BoardCell>
+     */
+    public List<BoardCell> getCells(){
+        return cells;
     }
 }
