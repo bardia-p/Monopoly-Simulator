@@ -73,8 +73,8 @@ public class BoardEvent extends EventObject {
      * @param type the status enum, BoardModel.Status
      * @param commands the possible commands, ArrayList<BoardModel.Command>
      */
-    public BoardEvent(BoardModel model, BoardModel.Status type, ArrayList<BoardModel.Command> commands){
-        this(model, type);
+    public BoardEvent(BoardModel model, BoardModel.Status type, ArrayList<BoardModel.Command> commands, Player player){
+        this(model, type, player);
         this.commands = commands;
     }
 

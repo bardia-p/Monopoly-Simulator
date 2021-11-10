@@ -379,29 +379,30 @@ public class Player {
         return request_forfeit;
     }
 
+
     /**
-     * Accessor method to package relevant information into a linked hash map.
-     * @author Sarah Chow 101143033
-     * @return attributes of the player, Map
+     * Accessor method to package relevant information into a string.
+     * @author Bardia Parmoun 101143006
+     * @return the player's current information, String
      */
-    public Map<String, String> getAttributes() {
+    @Override
+    public String toString() {
+        String playerInfo;
 
-        Map<String, String> attributes = new LinkedHashMap<>();
-        int count = 1;
-
-        attributes.put("Player Name: ", String.valueOf(name));
-        attributes.put("Icon: ", String.valueOf(icon));
-        attributes.put("Cash: ", String.valueOf(cash));
-        attributes.put("Position: ", String.valueOf(position));
-        attributes.put("Bankrupt: ", String.valueOf(bankrupt).toUpperCase());
-        attributes.put("Fee Status: ", String.valueOf(feesStatus).toUpperCase());
+        playerInfo = "\tname='" + name + '\'' +
+                "\n\ticon='" + icon + '\'' +
+                "\n\tcash='" + cash + '\'' +
+                "\n\tposition='" + position + '\'' +
+                "\n\tbankrupt=" + bankrupt +
+                "\n\tproperties= { \n\t\t";
 
         for (Property property: properties)
         {
-            attributes.put("Property " + count + ": ", property.getName().toUpperCase());
-            count++;
+            playerInfo += property.getName() + "\n\t\t";
         }
 
-        return attributes;
+        playerInfo += "}";
+
+        return playerInfo;
     }
 }

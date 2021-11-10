@@ -96,9 +96,9 @@ public abstract class BoardCell {
     }
 
     /**
-     * Accessor method to package relevant information into a Map.
+     * Accessor method to package relevant information into a string.
      * @author Sarah Chow 101143033
-     * @return the cell's current information, Map
+     * @return the cell's current information, String
      */
-    public abstract Map<String, String> getAttributes();
+    public abstract String toString();
 }
