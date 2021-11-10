@@ -801,6 +801,9 @@ public class BoardFrame extends JFrame implements BoardView  {
         String message = "Player: " + player.getIconName().toUpperCase() + " has forfeited the game!";
         JOptionPane.showMessageDialog(null, message);
         layeredPane.setLayer(playerLabels.get(player), -1);
+
+        updatePlayerStatusPanel(player);
+        pack();
     }
 
     /**
