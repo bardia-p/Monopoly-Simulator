@@ -55,6 +55,9 @@ public class BoardModel {
      * Checks to see if the roll button was pressed.
      */
     private boolean checkDoubleRoll;
+
+    private List<Property.NeighborhoodEnum> buildableProperties;
+
     /**
      * Keeps track of the possible board statuses.
      */
@@ -140,6 +143,7 @@ public class BoardModel {
         cells = new ArrayList<>();
         players = new ArrayList<>();
         dice =  new int[2];
+        buildableProperties = new ArrayList<Property.NeighborhoodEnum>();
         bank = new Player("Bank", Icon.BANK);
         gameFinish = false;
         turn = null;
@@ -367,8 +371,6 @@ public class BoardModel {
             player.setFeesStatus(Player.StatusEnum.UNPAID_FEES);
         }
 
-
-
         // Handles selling the property
         if (player.getProperties(true).size() > 0){
             commands.add(Command.SELL);
@@ -384,47 +386,9 @@ public class BoardModel {
         }
 
         //If the player has a complete neighborhood they can buy houses on those properties
-        int brown = 0, sky = 0, magenta = 0, orange = 0, red = 0, yellow = 0, green = 0, indigo = 0;
-        boolean buildable = false;
-        for(Property p: player.getProperties(false)){
-            switch(p.getNeighborhood()){
-                case BROWN -> {
-                    brown += 1;
-                    if(p.getNeighborhood().getNumProperties() == brown){buildable = true;}
-                }
-                case SKY -> {
-                    sky += 1;
-                    if(p.getNeighborhood().getNumProperties() == sky){buildable = true;}
-                }
-                case MAGENTA -> {
-                    magenta += 1;
-                    if(p.getNeighborhood().getNumProperties() == magenta){buildable = true;}
-                }
-                case ORANGE -> {
-                    orange += 1;
-                    if(p.getNeighborhood().getNumProperties() == orange){buildable = true;}
-                }
-                case RED -> {
-                    red += 1;
-                    if(p.getNeighborhood().getNumProperties() == red){buildable = true;}
-                }
-                case YELLOW -> {
-                    yellow += 1;
-                    if(p.getNeighborhood().getNumProperties() == yellow){buildable = true;}
-                }
-                case GREEN -> {
-                    green += 1;
-                    if(p.getNeighborhood().getNumProperties() == green){buildable = true;}
-                }
-                case INDIGO -> {
-                    indigo += 1;
-                    if(p.getNeighborhood().getNumProperties() == indigo){buildable = true;}
-                }
-            }
-        }
-        if(buildable){
+        if(setBuildableProperties()){
             commands.add(Command.BUILD);
-        }
+        };
 
         // Handles the status commands.
         commands.add(Command.PLAYER_STATUS);
@@ -451,6 +415,75 @@ public class BoardModel {
      */
     private void repaint() {
         sendBoardUpdate(new BoardEvent(this, Status.REPAINT_BOARD));
+    }
+
+
+    private boolean setBuildableProperties(){
+        boolean buildable = false;
+        if(turn != null) {
+            int brown = 0, sky = 0, magenta = 0, orange = 0, red = 0, yellow = 0, green = 0, indigo = 0;
+            for (Property p : turn.getProperties(false)) {
+                switch (p.getNeighborhood()) {
+                    case BROWN -> {
+                        brown += 1;
+                        if (p.getNeighborhood().getNumProperties() == brown) {
+                            buildableProperties.add(0,Property.NeighborhoodEnum.BROWN);
+                            buildable = true;
+                        }
+                    }
+                    case SKY -> {
+                        sky += 1;
+                        if (p.getNeighborhood().getNumProperties() == sky) {
+                            buildableProperties.add(1,Property.NeighborhoodEnum.SKY);
+                            buildable = true;
+                        }
+                    }
+                    case MAGENTA -> {
+                        magenta += 1;
+                        if (p.getNeighborhood().getNumProperties() == magenta) {
+                            buildableProperties.add(2, Property.NeighborhoodEnum.MAGENTA);
+                            buildable = true;
+                        }
+                    }
+                    case ORANGE -> {
+                        orange += 1;
+                        if (p.getNeighborhood().getNumProperties() == orange) {
+                            buildableProperties.add(3,Property.NeighborhoodEnum.ORANGE);
+                            buildable = true;
+                        }
+                    }
+                    case RED -> {
+                        red += 1;
+                        if (p.getNeighborhood().getNumProperties() == red) {
+                            buildableProperties.add(4,Property.NeighborhoodEnum.RED);
+                            buildable = true;
+                        }
+                    }
+                    case YELLOW -> {
+                        yellow += 1;
+                        if (p.getNeighborhood().getNumProperties() == yellow) {
+                            buildableProperties.add(5,Property.NeighborhoodEnum.YELLOW);
+                            buildable = true;
+                        }
+                    }
+                    case GREEN -> {
+                        green += 1;
+                        if (p.getNeighborhood().getNumProperties() == green) {
+                            buildableProperties.add(6,Property.NeighborhoodEnum.GREEN);
+                            buildable = true;
+                        }
+                    }
+                    case INDIGO -> {
+                        indigo += 1;
+                        if (p.getNeighborhood().getNumProperties() == indigo) {
+                            buildableProperties.add(7,Property.NeighborhoodEnum.INDIGO);
+                            buildable = true;
+                        }
+                    }
+                }
+            }
+        }
+        return buildable;
     }
 
     /**
@@ -507,7 +540,7 @@ public class BoardModel {
         sendBoardUpdate(new BoardEvent(this, Status.BUY, player, property, result));
 
     }
-
+    //TODO
     public void buyHouse(Property property, Player player){
 
         for(Property p: player.getProperties(true)){
@@ -559,7 +592,7 @@ public class BoardModel {
         sendBoardUpdate(new BoardEvent(this, Status.CELL_STATUS, turn));
     }
 
-    public void getBuildStatus(){ sendBoardUpdate(new BoardEvent(this, Status.BUILD, turn));}
+    public void getBuildStatus(){ sendBoardUpdate(new BoardEvent(this, Status.BUILD, turn, buildableProperties));}
 
     /**
      * Action the player must take when landing on property owned by another player. Pays the

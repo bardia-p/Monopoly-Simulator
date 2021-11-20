@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
 
 /**
  * Group 3
@@ -223,7 +224,7 @@ public class BoardFrame extends JFrame implements BoardView  {
             case REPAINT_BOARD -> handleRepaintBoard();
             case PLAYER_FORFEIT -> handleForfeitedPlayer(e.getPlayer());
             case PLAYER_REQUEST_FORFEIT -> handleRequestForfeit(e.getPlayer());
-            case BUILD -> handleBuildHouses(e.getPlayer());
+            case BUILD -> handleBuildHouses(e.getPlayer(), e.getNeighborhoods());
         }
     }
 
@@ -794,7 +795,45 @@ public class BoardFrame extends JFrame implements BoardView  {
         }
     }
 
-    private void handleBuildHouses(Player player){
+    private void handleBuildHouses(Player player, List<Property.NeighborhoodEnum> buildable){
+        int groups = buildable.size();
+        JPanel panel = new JPanel(new GridLayout(2,groups));
+        ButtonGroup group = new ButtonGroup();
+
+        for(int i = 0; i < buildable.size(); i++){
+            JRadioButton button = new JRadioButton(buildable.get(i).name());
+
+            String message = switch(buildable.indexOf(i)){
+                case 0 -> "<html> BROWN Neighborhood</html>";
+                case 1 -> "<html> SKY Neighborhood</html>";
+                case 2 -> "<html> MAGENTA Neighborhood </html>";
+                case 3 -> "<html> ORANGE Neighborhood</html>";
+                case 4 -> "<html> RED Neighborhood</html>";
+                case 5 -> "<html> YELLOW Neighborhood</html>";
+                case 6 -> "<html> GREEN Neighborhood</html>";
+                case 7 -> "<html> INDIGO Neighborhood</html>";
+                default -> "";
+            };
+
+            JLabel desc = new JLabel(message);
+
+            button.setActionCommand(buildable.get(i).name());
+            group.add(button);
+
+            desc.setVisible(true);
+            panel.add(button);
+            panel.add(desc);
+        }
+
+        panel.setPreferredSize(new Dimension(400,200));
+
+        int ans = JOptionPane.showConfirmDialog(null,panel,"BUILD ON PROPERTY",JOptionPane.OK_CANCEL_OPTION);
+        if(ans == JOptionPane.OK_OPTION) {
+            //call another function to where the player will build houses on their properties
+        } else {
+            JOptionPane.showMessageDialog(null,"Building Cancelled");
+        }
+
 
     }
 

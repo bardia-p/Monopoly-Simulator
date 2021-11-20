@@ -56,6 +56,9 @@ public class BoardEvent extends EventObject {
      * Keeps track of the recent dice roll in the event.
      */
     private int[] dice;
+
+    private List<Property.NeighborhoodEnum> neighborhoods;
+
     /**
      * Keeps track of the relevant players to the event.
      */
@@ -122,6 +125,11 @@ public class BoardEvent extends EventObject {
     public BoardEvent(BoardModel model, BoardModel.Status type, Player player, int[] dice){
         this(model, type, player);
         this.dice = dice;
+    }
+
+    public BoardEvent(BoardModel model, BoardModel.Status type, Player player, List<Property.NeighborhoodEnum> neighborhoods){
+        this(model,type, player);
+        this.neighborhoods = neighborhoods;
     }
 
     /**
@@ -211,6 +219,7 @@ public class BoardEvent extends EventObject {
         this.players = new ArrayList<>();
         this.dice = new int[2];
         this.cells = new ArrayList<>();
+        this.neighborhoods = new ArrayList<>();
     }
 
     /**
@@ -300,5 +309,9 @@ public class BoardEvent extends EventObject {
      */
     public List<BoardCell> getCells(){
         return cells;
+    }
+
+    public List<Property.NeighborhoodEnum> getNeighborhoods(){
+        return neighborhoods;
     }
 }
