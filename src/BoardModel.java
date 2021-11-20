@@ -435,14 +435,19 @@ public class BoardModel {
     public void move(Player player, int amountToMove){
         sendBoardUpdate(new BoardEvent(this, Status.PLAYER_MOVE, player, amountToMove, player.getPosition()));
 
-        System.out.println(player.getPosition());
-        if(player.getPosition() == 0) {
-            sendBoardUpdate(new BoardEvent(this, Status.PASS_GO));  //here
-        }
+        int originalPosition = player.getPosition();
 
         int newPlayerPosition = (player.getPosition() + amountToMove) % SIZE_OF_BOARD;
         player.setPosition(newPlayerPosition);
         player.setCurrentCell(cells.get(newPlayerPosition));
+
+        for(int i = 1; i<=amountToMove; i++){
+            if(cells.get((originalPosition + i)% SIZE_OF_BOARD).getType() == BoardCell.CellType.GO) {
+                sendBoardUpdate(new BoardEvent(this, Status.PASS_GO, player));  //here
+                player.setCash(player.getCash() + ((Go) cells.get(0)).getReward());
+            }
+        }
+
         getCommand(player);
     }
 

@@ -228,7 +228,7 @@ public class BoardFrame extends JFrame implements BoardView  {
     }
 
     private void handlePassGo(Player player) {
-        String message = "Player passed go...";
+        String message = "Player " + player.getIconName().toUpperCase() +  " passed go!";
         JOptionPane.showMessageDialog(null, message, "PASSED GO", JOptionPane.PLAIN_MESSAGE);
     }
 
