@@ -740,6 +740,11 @@ public class BoardFrame extends JFrame implements BoardView  {
         handlePlayerGUIMove(player, GOTOJAIL_LOCATION - JAIL_LOCATION, GOTOJAIL_LOCATION);
     }
 
+    /**
+     * Displays prompts if player would like to pay their way out of jail.
+     * @author Sarah Chow 101143033
+     * @param player the player in jail, Player
+     */
     public void handleExitJail(Player player){
 
         int ans = 0;
@@ -756,6 +761,11 @@ public class BoardFrame extends JFrame implements BoardView  {
         }
     }
 
+    /**
+     * Displays prompts if the player has been in jail for 3 rounds, they must pay or forfeit the game.
+     * @author Sarah Chow 101143033
+     * @param player the player in jail, Player
+     */
     public void handleForceExitJail(Player player){
         JOptionPane.showMessageDialog(null,
                 "You've exceeded three turns in JAIL. Please pay $50 to the bank!");

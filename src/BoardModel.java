@@ -471,7 +471,7 @@ public class BoardModel {
         player.setPosition(newPlayerPosition);
         player.setCurrentCell(cells.get(newPlayerPosition));
 
-        // Player lands on go to Jail
+        // Player lands on go to Jail, do not have other options.
         if (newPlayerPosition == BoardFrame.GOTOJAIL_LOCATION) {
             inJail(player);
         } else {
@@ -480,6 +480,11 @@ public class BoardModel {
 
     }
 
+    /**
+     * Method for players in jail. Different functionalities depending on how many rounds they have spent in jail.
+     * @author Sarah Chow 101143033
+     * @param player player in jail, Player
+     */
     public void inJail(Player player){
 
         if (player.getResortInJail()){ // Player in jail
@@ -582,7 +587,7 @@ public class BoardModel {
 
     /**
      * Action the player must take when landing on property owned by another player. Pays the
-     * rent of the property from the current player to the owner.
+     * rent of the property from the current player to the owner. Pays jail fee if that is the case.
      * @author Owen VanDusen 101152022
      * @param boardCell board cell with the fees, BoardCell
      * @param player player paying rent, Player
