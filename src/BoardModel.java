@@ -2,7 +2,7 @@ import java.util.*;
 
 /**
  * Group 3
- * SYSC 3110 - Milestone 2 BoardModel Class
+ * SYSC 3110 - Milestone 3 BoardModel Class
  *
  * This document is the BoardModel. This class has a list of properties, a list of players, an array of dice,
  * the number of players, the size of the board, the board views, if the game has finished, the current turn,
@@ -12,7 +12,7 @@ import java.util.*;
  * @author Kyra Lothrop 101145872
  * @author Bardia Parmoun 101143006
  * @author Owen VanDusen 101152022
- * @version 1.0
+ * @version 3.0
  */
 public class BoardModel {
     /**
@@ -250,7 +250,7 @@ public class BoardModel {
                 new Property("Boardwalk",500,50, "images/board/boardwalk.jpg")
         ));
 
-        sendBoardUpdate(new BoardEvent(this,Status.INITIALIZE_BOARD, cells));
+        sendBoardUpdate(new BoardEvent(this,Status.INITIALIZE_BOARD));
     }
 
     /**
@@ -293,21 +293,12 @@ public class BoardModel {
     /**
      * Updates the views with a generated board event.
      * @author Sarah Chow 101143033
-     * @param boardEvent the event occurring on the board, BoardEvent
+     * @param monopolyEvent the event occurring on the board, MonopolyEvent
      */
-    private void sendBoardUpdate(BoardEvent boardEvent){
+    private void sendBoardUpdate(MonopolyEvent monopolyEvent){
         for (BoardView view : views) {
-            view.handleBoardUpdate(boardEvent);
+            view.handleMonopolyUpdate(monopolyEvent);
         }
-    }
-
-    /**
-     * Accessor method for the dice rolled using roll(). ONLY USED FOR TEST CASES
-     * @return Two element array representing each individual die rolled
-     * @author Owen VanDusen 101152022
-     */
-    public int[] getDice() {
-        return dice;
     }
 
     /**
@@ -315,8 +306,8 @@ public class BoardModel {
      * @author Kyra Lothrop 101145872
      */
     private void initiatePlayers(){
-        sendBoardUpdate(new BoardEvent(this, Status.INITIALIZE_PLAYERS, numPlayers));
-        sendBoardUpdate(new BoardEvent(this, players, Status.CREATE_PLAYER_ICONS));
+        sendBoardUpdate(new BoardEvent(this, Status.INITIALIZE_PLAYERS));
+        sendBoardUpdate(new BoardEvent(this, Status.CREATE_PLAYER_ICONS));
 
         for (Player p : players){
             move(p, 0);
@@ -387,7 +378,7 @@ public class BoardModel {
         commands.add(Command.FORFEIT);
 
 
-        sendBoardUpdate(new BoardEvent(this, BoardModel.Status.GET_COMMAND, commands, player));
+        sendBoardUpdate(new BoardEvent(this, BoardModel.Status.GET_COMMAND, player, commands));
     }
 
     /**
@@ -422,7 +413,7 @@ public class BoardModel {
             setDoubleRoll(player);
         }
 
-        sendBoardUpdate(new BoardEvent(this, Status.PLAYER_ROLL, player, dice));
+        sendBoardUpdate(new BoardEvent(this, Status.PLAYER_ROLL));
 
         move(player, dice[0] + dice[1]);
     }
@@ -434,7 +425,7 @@ public class BoardModel {
      * @param amountToMove distance the player should move, int
      */
     public void move(Player player, int amountToMove){
-        sendBoardUpdate(new BoardEvent(this, Status.PLAYER_MOVE, player, amountToMove, player.getPosition()));
+        sendBoardUpdate(new PlayerEvent(this, Status.PLAYER_MOVE, player, amountToMove, true));
         int newPlayerPosition = (player.getPosition() + amountToMove) % SIZE_OF_BOARD;
         player.setPosition(newPlayerPosition);
         player.setCurrentCell(cells.get(newPlayerPosition));
@@ -457,7 +448,7 @@ public class BoardModel {
             result = true;
         }
 
-        sendBoardUpdate(new BoardEvent(this, Status.BUY, player, property, result));
+        sendBoardUpdate(new PlayerEvent(this, Status.BUY, player, result));
 
     }
 
@@ -467,7 +458,7 @@ public class BoardModel {
      * @param player player selling the property, Player
      */
     public void sellPropertyPrompt(Player player){
-        sendBoardUpdate(new BoardEvent(this, Status.SELL, player));
+        sendBoardUpdate(new PlayerEvent(this, Status.SELL, player));
 
         if (player.getConfirmSell()){
             sellProperty(player, player.getPropertyToSell());
@@ -493,7 +484,7 @@ public class BoardModel {
      * @param player active player, Player
      */
     public void getPlayerStatus(Player player){
-        sendBoardUpdate(new BoardEvent(this, Status.PLAYER_STATUS, player));
+        sendBoardUpdate(new PlayerEvent(this, Status.PLAYER_STATUS, player));
     }
 
 
@@ -502,7 +493,7 @@ public class BoardModel {
      * @author Kyra Lothrop 101145872
      */
     public void getCellStatus(){
-        sendBoardUpdate(new BoardEvent(this, Status.CELL_STATUS, turn));
+        sendBoardUpdate(new PlayerEvent(this, Status.CELL_STATUS, turn));
     }
 
     /**
@@ -535,7 +526,7 @@ public class BoardModel {
         }
 
         //Inform player they have paid rent
-        sendBoardUpdate(new BoardEvent(this, Status.PAY_FEES, player, fees, result));
+        sendBoardUpdate(new PlayerEvent(this, Status.PAY_FEES, player, fees, result));
     }
 
     /**
@@ -563,7 +554,7 @@ public class BoardModel {
         turn = null;
 
         if (numPlayers > 1) {
-            sendBoardUpdate(new BoardEvent(this, Status.PASS_TURN, player));
+            sendBoardUpdate(new PlayerEvent(this, Status.PASS_TURN, player));
         }
     }
 
@@ -579,7 +570,7 @@ public class BoardModel {
     }
 
     public void request_forfeit(Player player){
-        sendBoardUpdate(new BoardEvent(this, Status.PLAYER_REQUEST_FORFEIT, player));
+        sendBoardUpdate(new PlayerEvent(this, Status.PLAYER_REQUEST_FORFEIT, player));
         if (player.getRequest_forfeit()){
             forfeit(player);
         }
@@ -594,7 +585,7 @@ public class BoardModel {
     public void forfeit(Player player) {
         player.setBankrupt();
         player.setRank(numPlayers--);
-        sendBoardUpdate(new BoardEvent(this, Status.PLAYER_FORFEIT, player));
+        sendBoardUpdate(new PlayerEvent(this, Status.PLAYER_FORFEIT, player));
         passTurn(player);
     }
 
@@ -603,7 +594,7 @@ public class BoardModel {
      * @author Owen VanDusen 101152022
      */
     public void gameOver(){
-        sendBoardUpdate(new BoardEvent(this, players, Status.GAME_OVER));
+        sendBoardUpdate(new BoardEvent(this, Status.GAME_OVER));
     }
 
     /**
@@ -646,5 +637,50 @@ public class BoardModel {
         }
 
         gameOver();
+    }
+
+    /**
+     * Returns the list of the cells on the board.
+     * @return the list of all the cells on the board.
+     * @author Bardia Parmoun, 101143006
+     */
+    public List<BoardCell> getCells (){
+        return cells;
+    }
+
+    /**
+     * Returns the list of the players for the board.
+     * @return the list of all the players on the board.
+     * @author Bardia Parmoun, 101143006
+     */
+    public List<Player> getPlayers (){
+        return players;
+    }
+
+    /**
+     * Returns the number of players for the board.
+     * @return the number of players.
+     * @author Bardia Parmoun, 101143006
+     */
+    public int getPlayerCount(){
+        return numPlayers;
+    }
+
+    /**
+     * Accessor method for the dice rolled using roll().
+     * @return Two element array representing each individual die rolled
+     * @author Owen VanDusen 101152022
+     */
+    public int[] getDice() {
+        return dice;
+    }
+
+    /**
+     * Accessor method to get the current turn.
+     * @return the current turn, Player
+     * @author Owen VanDusen 101152022
+     */
+    public Player getCurrentTurn() {
+        return turn;
     }
 }

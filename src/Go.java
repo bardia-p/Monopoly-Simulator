@@ -3,7 +3,7 @@ import java.util.Map;
 
 /**
  * Group 3
- * SYSC 3110 - Milestone 2 Go Class
+ * SYSC 3110 - Milestone 3 Go Class
  *
  * This document is the Go. This class extends BoardCell and it as a reward attribute
  *
@@ -11,7 +11,7 @@ import java.util.Map;
  * @author Kyra Lothrop 101145872
  * @author Bardia Parmoun 101143006
  * @author Owen VanDusen 101152022
- * @version 1.0
+ * @version 2.0
  */
 public class Go extends BoardCell {
     /**

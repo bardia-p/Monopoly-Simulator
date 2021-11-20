@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Group 3
- * SYSC 3110 - Milestone 2 BoardFrame Class
+ * SYSC 3110 - Milestone 3 BoardFrame Class
  *
  * This document is the BoardFrame. This class has the BoardModel and BoardController. BoardFrame
  * handles outputting information for the user to see and formatting that output.
@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
  * @author Kyra Lothrop 101145872
  * @author Bardia Parmoun 101143006
  * @author Owen VanDusen 101152022
- * @version 1.0
+ * @version 3.0
  */
 public class BoardFrame extends JFrame implements BoardView  {
     /**
@@ -203,26 +203,36 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @param e the board event, BoardEvent
      */
     @Override
-    public void handleBoardUpdate(BoardEvent e) {
-        switch (e.getType()) {
-            case PLAYER_ROLL -> handleRoll(e.getDice());
-            case BUY -> handleBuyProperty(e.getPlayer(), (Property) e.getBoardCell(), e.getResult());
-            case SELL -> handleSellProperty(e.getPlayer());
-            case PLAYER_STATUS -> handleGetPlayerStatus(e.getPlayer());
-            case CELL_STATUS -> handleGetCellStatus(e.getPlayer().getCurrentCell());
-            case INITIALIZE_MONOPOLY -> handleWelcomeMonopoly();
-            case PAY_FEES -> handlePayFees(e.getPlayer().getCurrentCell(), e.getPlayer(), e.getValue(), e.getResult());
-            case PASS_TURN -> handleCurrentPlayerChange();
-            case GAME_OVER -> handleWinner(e.getPlayers());
-            case INITIALIZE_BOARD -> constructBoard(e.getCells());
-            case CREATE_PLAYER_ICONS -> createPlayers((ArrayList<Player>) e.getPlayers());
-            case GET_NUM_PLAYERS -> getNumPlayers();
-            case INITIALIZE_PLAYERS -> initializePlayers(e.getValue());
-            case GET_COMMAND -> updateAvailableCommands(e.getPlayer(), (ArrayList<BoardModel.Command>) e.getCommands());
-            case PLAYER_MOVE -> handlePlayerGUIMove(e.getPlayer(), e.getValue(), e.getValue2());
-            case REPAINT_BOARD -> handleRepaintBoard();
-            case PLAYER_FORFEIT -> handleForfeitedPlayer(e.getPlayer());
-            case PLAYER_REQUEST_FORFEIT -> handleRequestForfeit(e.getPlayer());
+    public void handleMonopolyUpdate(MonopolyEvent e) {
+        BoardModel source = (BoardModel) e.getSource();
+
+        if (e.getEventType() == MonopolyEvent.EventType.BOARD_EVENT){
+            BoardEvent be = (BoardEvent) e;
+            switch (e.getStatus()) {
+                case PLAYER_ROLL -> handleRoll(source.getDice());
+                case INITIALIZE_MONOPOLY -> handleWelcomeMonopoly();
+                case GAME_OVER -> handleWinner(source.getPlayers());
+                case INITIALIZE_BOARD -> constructBoard(source.getCells());
+                case CREATE_PLAYER_ICONS -> createPlayers(source.getPlayers());
+                case GET_NUM_PLAYERS -> getNumPlayers();
+                case INITIALIZE_PLAYERS -> initializePlayers(source.getPlayerCount());
+                case GET_COMMAND -> updateAvailableCommands(be.getPlayer(), be.getCommands());
+                case REPAINT_BOARD -> handleRepaintBoard();
+            }
+        } else {
+            PlayerEvent pe = (PlayerEvent) e;
+            Player player = pe.getPlayer();
+            switch (e.getStatus()) {
+                case BUY -> handleBuyProperty(player, (Property) player.getCurrentCell(), pe.getResult());
+                case SELL -> handleSellProperty(player);
+                case PLAYER_STATUS -> handleGetPlayerStatus(player);
+                case CELL_STATUS -> handleGetCellStatus(player.getCurrentCell());
+                case PAY_FEES -> handlePayFees(player.getCurrentCell(), player, pe.getValue(), pe.getResult());
+                case PASS_TURN -> handleCurrentPlayerChange();
+                case PLAYER_MOVE -> handlePlayerGUIMove(pe.getPlayer(), pe.getValue(), player.getPosition());
+                case PLAYER_FORFEIT -> handleForfeitedPlayer(player);
+                case PLAYER_REQUEST_FORFEIT -> handleRequestForfeit(player);
+            }
         }
     }
 
@@ -263,7 +273,7 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @author Bardia Parmoun 101143006
      * @param players the list of the players to make icons for, List<Player>
      */
-    private void createPlayers(ArrayList<Player> players) {
+    private void createPlayers(List<Player> players) {
         JPanel statusPanel = new JPanel();
         statusPanel.setLayout(new GridLayout(players.size(), 1));
         statusPanel.setBackground(Color.decode(BACKGROUND_COLOR));
@@ -408,7 +418,7 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @author Kyra Lothrop 101145872
      * @param commands keeps track of the list of the commands, List<BoardModel.Command>
      */
-    private void updateAvailableCommands(Player player, ArrayList<BoardModel.Command> commands){
+    private void updateAvailableCommands(Player player, List<BoardModel.Command> commands){
         String availableCommands = "";
 
         for (BoardModel.Command command: commands){

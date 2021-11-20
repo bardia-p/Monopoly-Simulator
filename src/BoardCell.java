@@ -2,7 +2,7 @@ import java.util.Map;
 
 /**
  * Group 3
- * SYSC 3110 - Milestone 2 BoardCell Class
+ * SYSC 3110 - Milestone 3 BoardCell Class
  *
  * This document is the BoardCell. This class extends BoardCell and has a name, owner, and CellType.
  *
@@ -10,7 +10,7 @@ import java.util.Map;
  * @author Kyra Lothrop 101145872
  * @author Bardia Parmoun 101143006
  * @author Owen VanDusen 101152022
- * @version 1.0
+ * @version 2.0
  *
  */
 public abstract class BoardCell {

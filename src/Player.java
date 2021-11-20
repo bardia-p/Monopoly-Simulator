@@ -3,7 +3,7 @@ import java.util.List;
 
 /**
  * Group 3
- * SYSC 3110 - Milestone 2 Player Class
+ * SYSC 3110 - Milestone 3 Player Class
  *
  * This document is the Player. This class has the name, icon, cash value,
  * position on board, list of properties, the current property they are on, their rent status (paid rent, unpaid rent,
@@ -13,7 +13,7 @@ import java.util.List;
  * @author Kyra Lothrop 101145872
  * @author Bardia Parmoun 101143006
  * @author Owen VanDusen 101152022
- * @version 1.0
+ * @version 3.0
  */
 public class Player {
     /**
