@@ -497,7 +497,7 @@ public class BoardModel {
                 player.pay(Jail.FEE);
                 jail.endJail(player);
             }
-            else if (jail.getInJail().get(player) >= 3){ // Exceeded three rounds in jail
+            else if (jail.getRoundCountJail(player) > 3){ // Exceeded three rounds in jail
                 player.toggleLastRoundJail(); // Set to True
                 player.setFeesStatus(Player.StatusEnum.UNPAID_FEES);
                 sendBoardUpdate(new BoardEvent(this, Status.FORCE_PAY_JAIL, player));
