@@ -392,7 +392,7 @@ public class Player {
         playerInfo = "\tname='" + name + '\'' +
                 "\n\ticon='" + icon + '\'' +
                 "\n\tcash='" + cash + '\'' +
-                "\n\tposition='" + position + '\'' +
+                "\n\tposition='" + currentCell.getName()  + '\'' +
                 "\n\tbankrupt=" + bankrupt +
                 "\n\tproperties= { \n\t\t";
 

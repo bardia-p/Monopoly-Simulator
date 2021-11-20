@@ -49,15 +49,20 @@ public class BoardFrame extends JFrame implements BoardView  {
     /**
      * The main panel that keeps track of all the cells.
      */
-    private final JPanel mainPanel;
+    private JPanel mainPanel, logoPanel, cashPanel;
     /**
      * The main pane that includes the cells, the players, the status windows, etc
      */
-    private final JLayeredPane layeredPane;
+    private JLayeredPane layeredPane;
     /**
      * Keeps track of the dice panels.
      */
-    private final JPanel[] dicePanels;
+    private JPanel[] dicePanels;
+    /**
+     * Keeps track of the turn label.
+     */
+    private JLabel turnLabel;
+
     /**
      * Keeps track of the size of the board on each side.
      */
@@ -101,7 +106,7 @@ public class BoardFrame extends JFrame implements BoardView  {
     /**
      * The gap between the buttons in the command panel.
      */
-    private static final int COMMAND_PANEL_GAP = 10;
+    private static final int PANEL_GAP = 10;
     /**
      * Shifting the command panel in Y.
      */
@@ -126,6 +131,22 @@ public class BoardFrame extends JFrame implements BoardView  {
      * Keeps track of the location of the die column.
      */
     private static final int DICE_LOCATION_COLUMN = 8;
+    /**
+     * The width of the logo.
+     */
+    private static final int LOGO_WIDTH = 320;
+    /**
+     * The height of the logo.
+     */
+    private static final int LOGO_HEIGHT = 100;
+    /**
+     * The width of the cash icon.
+     */
+    private static final int CASH_WIDTH = 176;
+    /**
+     * The height of the cash icon.
+     */
+    private static final int CASH_HEIGHT = 100;
 
     /**
      * Constructor for the Board listener, creates the board model, adds the board listener to the board model,
@@ -137,6 +158,29 @@ public class BoardFrame extends JFrame implements BoardView  {
      */
     public BoardFrame(){
         super("Rich Uncle Pennybags!");
+
+        // Keeps track of the player labels and cell panels.
+        playerLabels = new HashMap<>();
+        playerStatusPanels = new HashMap<>();
+        boardCells = new ArrayList<>();
+        commandButtons = new ArrayList<>();
+
+        // Adding the frame to the model.
+        model = new BoardModel();
+        model.addBoardView(this);
+
+        controller = new BoardController(model);
+
+        createGUI();
+
+        model.play();
+    }
+
+    /**
+     * Creating the basic GUI of the monopoly.
+     */
+    private void createGUI(){
+        // Setting the frame settings.
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setResizable(false);
 
@@ -151,50 +195,34 @@ public class BoardFrame extends JFrame implements BoardView  {
         mainPanel = new JPanel();
         mainPanel.setLayout(new GridBagLayout());
         mainPanel.setBackground(Color.decode(BACKGROUND_COLOR));
-        mainPanel.setBounds(0, BOARD_SHIFT_Y + COMMAND_PANEL_GAP, BOARD_WIDTH, BOARD_HEIGHT);
+        mainPanel.setBounds(0, BOARD_SHIFT_Y + PANEL_GAP, BOARD_WIDTH, BOARD_HEIGHT);
 
         layeredPane.add(mainPanel,0);
 
-        // Keeps track of the player labels and cell panels.
-        playerLabels = new HashMap<>();
-        playerStatusPanels = new HashMap<>();
-        boardCells = new ArrayList<>();
+        // Creating the turn label.
+        turnLabel = new JLabel();
+        turnLabel.setBackground(Color.decode(BACKGROUND_COLOR));
+        turnLabel.setBounds(WINDOW_WIDTH/2 + BOARD_WIDTH/2 - 4*PANEL_GAP, PANEL_GAP,
+                WINDOW_WIDTH - BOARD_WIDTH, BOARD_SHIFT_Y);
 
-        // Adding the frame to the model.
-        model = new BoardModel();
-        model.addBoardView(this);
+        layeredPane.add(turnLabel,0);
 
-        controller = new BoardController(model);
+        // Creating the dice panel.
+        createDiceLayout();
 
-        commandButtons = new ArrayList<>();
+        // Creating the logo panel.
+        buildLogoDisplay();
 
-        dicePanels = new JPanel[2];
+        // Creating the cash panel.
+        buildCashDisplay();
 
-        GridBagConstraints c1 = new GridBagConstraints();
-        c1.gridx = DICE_LOCATION_ROW;
-        c1.gridy = DICE_LOCATION_COLUMN;
-        c1.fill = GridBagConstraints.HORIZONTAL;
-        c1.anchor = GridBagConstraints.NORTH;
+        // Adding the panels to board.
+        layeredPane.add(logoPanel,1);
+        layeredPane.add(cashPanel,1);
 
-        GridBagConstraints c2 = new GridBagConstraints();
-        c2.gridx = DICE_LOCATION_ROW - 1;
-        c2.gridy = DICE_LOCATION_COLUMN;
-        c2.fill = GridBagConstraints.HORIZONTAL;
-        c2.anchor = GridBagConstraints.NORTH;
-
-        dicePanels[0] = new JPanel(new BorderLayout());
-        dicePanels[0].setBackground(Color.decode(BACKGROUND_COLOR));
-
-        dicePanels[1] = new JPanel(new BorderLayout());
-        dicePanels[1].setBackground(Color.decode(BACKGROUND_COLOR));
-
-        mainPanel.add(dicePanels[0], c1);
-        mainPanel.add(dicePanels[1], c2);
-
+        // Making the frame visible.
         this.pack();
         this.setVisible(true);
-
-        model.play();
     }
 
     /**
@@ -297,7 +325,7 @@ public class BoardFrame extends JFrame implements BoardView  {
         JScrollPane statusPanelWithScroll = new JScrollPane(statusPanel,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 
-        statusPanelWithScroll.setBounds(BOARD_WIDTH, BOARD_SHIFT_Y + COMMAND_PANEL_GAP,
+        statusPanelWithScroll.setBounds(BOARD_WIDTH, BOARD_SHIFT_Y + PANEL_GAP,
                 WINDOW_WIDTH - BOARD_WIDTH, BOARD_HEIGHT);
         layeredPane.add(statusPanelWithScroll, 0);
     }
@@ -330,13 +358,85 @@ public class BoardFrame extends JFrame implements BoardView  {
     }
 
     /**
+     * Build logo display.
+     * @author Bardia Parmoun, 101143006
+     */
+    private void buildLogoDisplay(){
+        logoPanel = new JPanel();
+        logoPanel.setBounds(BOARD_WIDTH/2 - LOGO_WIDTH/2, BOARD_HEIGHT/2, LOGO_WIDTH, LOGO_HEIGHT);
+        logoPanel.setBackground(Color.decode(BACKGROUND_COLOR));
+
+        try {
+            BufferedImage image = ImageIO.read(Objects.requireNonNull(getClass().getResource
+                    ("images/central_logo.png")));
+
+
+            Image newImage = image.getScaledInstance(LOGO_WIDTH, LOGO_HEIGHT, Image.SCALE_DEFAULT);
+            JLabel label = new JLabel(new ImageIcon(newImage));
+            logoPanel.removeAll();
+            logoPanel.add(label);
+        }  catch(Exception e){
+            System.out.println("build logo display failed");
+        }
+    }
+
+    /**
+     * Build cash display.
+     * @author Bardia Parmoun, 101143006
+     */
+    private void buildCashDisplay(){
+        cashPanel = new JPanel();
+        cashPanel.setBounds(BOARD_WIDTH/4 - CASH_WIDTH/3, BOARD_HEIGHT/4 + CASH_HEIGHT/2, CASH_WIDTH, CASH_HEIGHT);
+        cashPanel.setBackground(Color.decode(BACKGROUND_COLOR));
+        try {
+            BufferedImage image = ImageIO.read(Objects.requireNonNull(getClass().getResource("images/money.png")));
+
+
+            Image newImage = image.getScaledInstance(CASH_WIDTH, CASH_HEIGHT, Image.SCALE_DEFAULT);
+            JLabel label = new JLabel(new ImageIcon(newImage));
+            cashPanel.removeAll();
+            cashPanel.add(label);
+        }  catch(Exception e){
+            System.out.println("build cash display failed");
+        }
+    }
+
+    /**
+     * Create dice panels
+     * @author Sarah Chow 101143033
+     */
+    private void createDiceLayout(){
+        GridBagConstraints die1_constraint = new GridBagConstraints();
+        die1_constraint.gridx = DICE_LOCATION_ROW;
+        die1_constraint.gridy = DICE_LOCATION_COLUMN;
+        die1_constraint.fill = GridBagConstraints.HORIZONTAL;
+        die1_constraint.anchor = GridBagConstraints.NORTH;
+
+        GridBagConstraints die2_constraint = new GridBagConstraints();
+        die2_constraint.gridx = DICE_LOCATION_ROW - 1;
+        die2_constraint.gridy = DICE_LOCATION_COLUMN;
+        die2_constraint.fill = GridBagConstraints.HORIZONTAL;
+        die2_constraint.anchor = GridBagConstraints.NORTH;
+
+        // Creating the dice panels.
+        dicePanels = new JPanel[2];
+        dicePanels[0] = new JPanel(new BorderLayout());
+        dicePanels[0].setBackground(Color.decode(BACKGROUND_COLOR));
+
+        dicePanels[1] = new JPanel(new BorderLayout());
+        dicePanels[1].setBackground(Color.decode(BACKGROUND_COLOR));
+
+        mainPanel.add(dicePanels[0], die1_constraint);
+        mainPanel.add(dicePanels[1], die2_constraint);
+    }
+
+    /**
      * Method to animate the rolling of random dice numbers and to visually land on a value.
      * @author Sarah Chow 101143033
      * @param randomRoll value to land on, int
      * @param dieIndex keeps track of the die index, int
      */
     private void buildDiceDisplay(int randomRoll, int dieIndex){
-
         try {
             BufferedImage dieImage1 = ImageIO.read(Objects.requireNonNull(getClass().getResource
                     ("images/dice/dice1.png")));
@@ -430,6 +530,8 @@ public class BoardFrame extends JFrame implements BoardView  {
         for(JButton b: commandButtons){
             b.setEnabled(availableCommands.contains(b.getText().toLowerCase()));
         }
+
+        turnLabel.setText("Turn: " + player.getIconName().toUpperCase());
 
         updatePlayerStatusPanel(player);
         pack();
@@ -536,9 +638,9 @@ public class BoardFrame extends JFrame implements BoardView  {
      */
     private void constructBoard(List<BoardCell> cells) {
         // Command buttons
-        JPanel commandsPanel = new JPanel(new GridLayout(2,4, COMMAND_PANEL_GAP, COMMAND_PANEL_GAP));
-        commandsPanel.setBounds(COMMAND_PANEL_GAP, COMMAND_SHIFT_Y,BOARD_WIDTH - 2 * COMMAND_PANEL_GAP,
-                COMMAND_HEIGHT + COMMAND_PANEL_GAP);
+        JPanel commandsPanel = new JPanel(new GridLayout(2,4, PANEL_GAP, PANEL_GAP));
+        commandsPanel.setBounds(PANEL_GAP, COMMAND_SHIFT_Y,BOARD_WIDTH - 2 * PANEL_GAP,
+                COMMAND_HEIGHT + PANEL_GAP);
 
         String[] buttonsText = {"Roll", "Pass", "Forfeit", "Buy", "Sell", "Pay Rent", "Pay Tax", "Player Status",
                 "Cell Status"};
@@ -781,6 +883,7 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @author Owen VanDusen 101152022
      */
     private void handleCurrentPlayerChange() {
+        turnLabel.setText("Passing the turn!");
         for(JButton b: commandButtons){
             b.setEnabled(false);
         }
