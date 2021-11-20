@@ -128,6 +128,16 @@ public class BoardFrame extends JFrame implements BoardView  {
     private static final int DICE_LOCATION_COLUMN = 8;
 
     /**
+     * Keeps track of location of Jail square.
+     */
+    public static final int JAIL_LOCATION = 10;
+
+    /**
+     * Keeps track of location of Jail square.
+     */
+    public static final int GOTOJAIL_LOCATION = 30;
+
+    /**
      * Constructor for the Board listener, creates the board model, adds the board listener to the board model,
      * creates the board controller and runs the play method.
      * @author Sarah Chow 101143033
@@ -223,6 +233,9 @@ public class BoardFrame extends JFrame implements BoardView  {
             case REPAINT_BOARD -> handleRepaintBoard();
             case PLAYER_FORFEIT -> handleForfeitedPlayer(e.getPlayer());
             case PLAYER_REQUEST_FORFEIT -> handleRequestForfeit(e.getPlayer());
+            case GO_TO_JAIL -> handleGoToJail(e.getPlayer());
+            case EXIT_JAIL -> handleExitJail(e.getPlayer());
+            case FORCE_PAY_JAIL -> handleForceExitJail(e.getPlayer());
         }
     }
 
@@ -530,7 +543,7 @@ public class BoardFrame extends JFrame implements BoardView  {
         commandsPanel.setBounds(COMMAND_PANEL_GAP, COMMAND_SHIFT_Y,BOARD_WIDTH - 2 * COMMAND_PANEL_GAP,
                 COMMAND_HEIGHT + COMMAND_PANEL_GAP);
 
-        String[] buttonsText = {"Roll", "Pass", "Forfeit", "Buy", "Sell", "Pay Rent", "Pay Tax", "Player Status",
+        String[] buttonsText = {"Roll", "Pass", "Forfeit", "Buy", "Sell", "Pay Rent", "Pay Fees", "Player Status",
                 "Cell Status"};
 
         commandsPanel.setBackground(Color.decode(BACKGROUND_COLOR));
@@ -548,7 +561,7 @@ public class BoardFrame extends JFrame implements BoardView  {
                 case "Buy" -> commandButton.setActionCommand(BoardModel.Command.BUY.getStringCommand());
                 case "Sell" -> commandButton.setActionCommand(BoardModel.Command.SELL.getStringCommand());
                 case "Pay Rent" -> commandButton.setActionCommand(BoardModel.Command.PAY_RENT.getStringCommand());
-                case "Pay Tax" -> commandButton.setActionCommand(BoardModel.Command.PAY_TAX.getStringCommand());
+                case "Pay Fees" -> commandButton.setActionCommand(BoardModel.Command.PAY_FEES.getStringCommand());
                 case "Player Status" -> commandButton.setActionCommand(BoardModel.Command.PLAYER_STATUS.getStringCommand());
                 case "Cell Status" -> commandButton.setActionCommand(BoardModel.Command.CELL_STATUS.getStringCommand());
             }
@@ -714,6 +727,39 @@ public class BoardFrame extends JFrame implements BoardView  {
         else{
             JOptionPane.showMessageDialog(null, "Sell cancelled!");
         }
+    }
+
+    /**
+     * Displays the player going to Jail.
+     * @author Sarah Chow 101143033
+     * @param player player to go to jail, Player
+     */
+    public void handleGoToJail(Player player){
+        JOptionPane.showMessageDialog(null,
+                String.format("Player %s has been sent to JAIL!", player.getIconName().toUpperCase()));
+        handlePlayerGUIMove(player, GOTOJAIL_LOCATION - JAIL_LOCATION, GOTOJAIL_LOCATION);
+    }
+
+    public void handleExitJail(Player player){
+
+        int ans = 0;
+
+        if (player.getNumDoubles() < 1) {
+            ans = JOptionPane.showConfirmDialog(null,
+                    "Would you like to pay $50 to leave JAIL?");
+        }
+
+        if (ans == JOptionPane.YES_OPTION || player.getNumDoubles() > 0){
+            JOptionPane.showMessageDialog(null,
+                    String.format("Player %s left JAIL!", player.getIconName().toUpperCase()));
+            player.toggleResortInJail();
+        }
+    }
+
+    public void handleForceExitJail(Player player){
+        JOptionPane.showMessageDialog(null,
+                "You've exceeded three turns in JAIL. Please pay $50 to the bank!");
+
     }
 
     /**

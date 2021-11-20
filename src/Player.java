@@ -81,6 +81,10 @@ public class Player {
      */
     public enum StatusEnum {NO_FEES, UNPAID_FEES, PAID_FEES}
 
+    private boolean resortInJail;
+
+    private boolean lastRoundJail;
+
     /**
      * Constructor for Player, sets all values.
      * @author Sarah Chow 101143033
@@ -104,7 +108,26 @@ public class Player {
         this.request_forfeit = false;
         this.propertyToSell = null;
         this.confirmSell = false;
+        this.resortInJail = false;
+        this.lastRoundJail = false;
     }
+
+    public void toggleLastRoundJail(){
+        this.lastRoundJail = !this.lastRoundJail;
+    }
+
+    public boolean getLastRoundJail(){
+        return this.lastRoundJail;
+    }
+
+    public void toggleResortInJail() {
+        this.resortInJail = !this.resortInJail;
+    }
+
+    public boolean getResortInJail(){
+        return this.resortInJail;
+    }
+
 
     /**
      * Method to deduct the amount the player must pay.
