@@ -223,6 +223,7 @@ public class BoardFrame extends JFrame implements BoardView  {
             case REPAINT_BOARD -> handleRepaintBoard();
             case PLAYER_FORFEIT -> handleForfeitedPlayer(e.getPlayer());
             case PLAYER_REQUEST_FORFEIT -> handleRequestForfeit(e.getPlayer());
+            case BUILD -> handleBuildHouses(e.getPlayer());
         }
     }
 
@@ -531,7 +532,7 @@ public class BoardFrame extends JFrame implements BoardView  {
                 COMMAND_HEIGHT + COMMAND_PANEL_GAP);
 
         String[] buttonsText = {"Roll", "Pass", "Forfeit", "Buy", "Sell", "Pay Rent", "Pay Tax", "Player Status",
-                "Cell Status"};
+                "Cell Status", "Build"};
 
         commandsPanel.setBackground(Color.decode(BACKGROUND_COLOR));
 
@@ -551,6 +552,7 @@ public class BoardFrame extends JFrame implements BoardView  {
                 case "Pay Tax" -> commandButton.setActionCommand(BoardModel.Command.PAY_TAX.getStringCommand());
                 case "Player Status" -> commandButton.setActionCommand(BoardModel.Command.PLAYER_STATUS.getStringCommand());
                 case "Cell Status" -> commandButton.setActionCommand(BoardModel.Command.CELL_STATUS.getStringCommand());
+                case "Build" -> commandButton.setActionCommand(BoardModel.Command.BUILD.getStringCommand());
             }
 
             commandButton.setEnabled(false);
@@ -790,6 +792,10 @@ public class BoardFrame extends JFrame implements BoardView  {
         else{
             JOptionPane.showMessageDialog(null, "Forfeit request cancelled!");
         }
+    }
+
+    private void handleBuildHouses(Player player){
+
     }
 
     /**

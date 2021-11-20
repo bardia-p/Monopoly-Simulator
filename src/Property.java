@@ -28,6 +28,36 @@ public class Property extends BoardCell {
      * Keeps track of whether a property attribute has been recently changed (Excluding self).
      */
     private boolean recentlyChanged;
+    /**
+     * Keeps track of which group a property belongs to.
+     */
+    private NeighborhoodEnum neighborhood;
+    /**
+     * Keeps track of the grouping of properties on the board according to their colours.
+     */
+    public enum NeighborhoodEnum{
+        BROWN(2,50),
+        SKY(3,50),
+        MAGENTA(3,100),
+        ORANGE(3,100),
+        RED(3,150),
+        YELLOW(3,150),
+        GREEN(3,200),
+        INDIGO(2,200);
+
+        private final int numProperties;
+        private final int houseCost;
+        NeighborhoodEnum(int numProperties, int houseCost){
+            this.numProperties = numProperties;
+            this.houseCost = houseCost;
+        }
+
+        public int getNumProperties(){
+            return this.numProperties;
+        }
+
+        public int getHouseCost(){return this.houseCost;}
+    }
 
     /**
      * Constructor for the Property, sets all values and an owner for the property.
@@ -39,11 +69,12 @@ public class Property extends BoardCell {
      * @param price Property price, int
      * @param rent Property rent, int
      */
-    Property(String name, int price, int rent, String imgName){
+    Property(String name, int price, int rent, NeighborhoodEnum neighborhood, String imgName){
         super(name, null, CellType.PROPERTY, imgName);
         this.price = price;
         this.rent = rent;
         this.recentlyChanged = false;
+        this.neighborhood = neighborhood;
     }
 
     /**
@@ -79,6 +110,23 @@ public class Property extends BoardCell {
      */
     public boolean getRecentlyChanged() {
         return recentlyChanged;
+    }
+
+    /**
+     * Accessor to the neighborhood of the property
+     * @author Owen VanDusen 101152022
+     * @return the neighborhood of the property, NeighborhoodEnum
+     */
+    public NeighborhoodEnum getNeighborhood(){
+        return this.neighborhood;
+    };
+
+    /**
+     * Accessor to set the neighborhood of a property
+     * @param neighborhood
+     */
+    public void setNeighborhood(NeighborhoodEnum neighborhood){
+        this.neighborhood = neighborhood;
     }
 
     /**
