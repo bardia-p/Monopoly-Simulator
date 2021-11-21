@@ -6,7 +6,7 @@ import java.util.List;
  * SYSC 3110 - Milestone 3 Player Class
  *
  * This document is the Player. This class has the name, icon, cash value,
- * position on board, list of properties, the current property they are on, their rent status (paid rent, unpaid rent,
+ * position on board, list of ownedLocations, the current property they are on, their rent status (paid rent, unpaid rent,
  * no rent to pay), number of doubles rolled, if they roll again, if they are bankrupt, and their player rank.
  *
  * @author Sarah Chow 101143033
@@ -33,9 +33,9 @@ public class Player {
      */
     private int position;
     /**
-     * Keeps track of properties owned by the player.
+     * Keeps track of ownedLocations owned by the player.
      */
-    private final List<Property> properties;
+    private final List<BoardCell> ownedLocations;
     /**
      * Keeps track of the property the play is currently standing on.
      */
@@ -62,24 +62,24 @@ public class Player {
     private int rank;
 
     /**
-     * Keeps track of whether the player would like to forfeit.
-     */
-    private boolean request_forfeit;
-
-    /**
-     * Property the player would like to sell
-     */
-    private Property propertyToSell;
-
-    /**
      * Keeps track of whether the player would like to sell a property.
      */
-    private boolean confirmSell;
+    public enum StatusEnum {NO_FEES, UNPAID_FEES, PAID_FEES}
+
+    /**
+     * Keeps track of the number of railroad the player owns
+     */
+    private int numRailroadsOwned;
+
+    /**
+     * Keeps track of the number of utilities the player owns
+     */
+    private int numUtilitiesOwned;
 
     /**
      * Possible values of player debt status.
      */
-    public enum StatusEnum {NO_FEES, UNPAID_FEES, PAID_FEES}
+    private boolean resortInJail;
 
     Player(String name, BoardModel.Icon icon, int cash){
         this(name, icon);
@@ -101,15 +101,32 @@ public class Player {
         this.icon = icon;
         this.cash = 1500;
         this.position = 0;
-        this.properties = new ArrayList<>();
+        this.ownedLocations = new ArrayList<>();
         this.numDoubles = 0;
         this.rollAgain = false;
         this.feesStatus = StatusEnum.NO_FEES;
         this.rank = 0;
-        this.request_forfeit = false;
-        this.propertyToSell = null;
-        this.confirmSell = false;
+        this.resortInJail = false;
     }
+
+
+    /**
+     * Method to toggle resort in jail boolean value.
+     * @author Sarah Chow 101143033
+     */
+    public void setResortInJail(boolean jailStatus) {
+        this.resortInJail = jailStatus;
+    }
+
+    /**
+     * Accessor to get the resort in jail value.
+     * @author Sarah Chow 101143033
+     * @return if the player resorts in jail, boolean
+     */
+    public boolean getResortInJail(){
+        return this.resortInJail;
+    }
+
 
     /**
      * Method to deduct the amount the player must pay.
@@ -123,39 +140,21 @@ public class Player {
     /**
      * Method to purchase a property.
      * @author Sarah Chow 101143033
-     * @param property property object to be purchased, Property
+     * @param location  object to be purchased, Property
      */
-    public void buyProperty(Property property){
-        this.properties.add(property);
-        this.cash -= property.getPrice();
+    public void buyLocation(BoardCell location){
+        this.ownedLocations.add(location);
+        this.cash -= ((Buyable) location).getPrice();
     }
 
     /**
      * Method to sell a property.
      * @author Sarah Chow 101143033
-     * @param property property object to be sold, Property
+     * @param location property object to be sold, Property
      */
-    public void sellProperty(Property property){
-        this.properties.remove(property);
-        this.cash += property.getPrice();
-        this.toggleConfirmSell();
-    }
-
-    /**
-     * Accessor to toggle the confirm sell boolean value.
-     * @author Sarah Chow 101143033
-     */
-    public void toggleConfirmSell(){
-        this.confirmSell = !this.confirmSell;
-    }
-
-    /**
-     * Accessor to get the confirm sell boolean value.
-     * @author Sarah Chow 101143033
-     * @return the confirm sell value, boolean
-     */
-    public boolean getConfirmSell(){
-        return this.confirmSell;
+    public void sellProperty(BoardCell location){
+        this.ownedLocations.remove(location);
+        this.cash += ((Buyable) location).getPrice();
     }
 
     /**
@@ -165,8 +164,11 @@ public class Player {
     public void setBankrupt(){
         this.bankrupt = true;
         this.cash = 0;
-        for (Property property: properties){
-            property.setOwner(null);
+        for (BoardCell location: ownedLocations){
+            if(location.getType().equals(BoardCell.CellType.PROPERTY)
+                    || location.getType().equals(BoardCell.CellType.RAILROAD)) {
+                location.setOwner(null);
+            }
         }
     }
 
@@ -323,30 +325,27 @@ public class Player {
     }
 
     /**
-     * Accessor to get all the player's properties.
+     * Accessor to get all the player's ownedLocations.
      * @author Sarah Chow 101143033
-     * @return all the user's properties, List<Property>
+     * @return all the user's ownedLocations, List<Property>
      */
-    public List<Property> getProperties(boolean sellable) {
+    public List<BoardCell> getOwnedLocations(boolean sellable) {
         if(sellable){
-            ArrayList<Property> sellableProperties = new ArrayList<>();
-            for (Property property: properties){
-                if (!property.getRecentlyChanged()){
-                    sellableProperties.add(property);
+            ArrayList<BoardCell> sellableLocations = new ArrayList<>();
+            for (BoardCell location: ownedLocations){
+                if(location.getType().equals(BoardCell.CellType.PROPERTY)
+                || location.getType().equals(BoardCell.CellType.RAILROAD)
+                || location.getType().equals(BoardCell.CellType.UTILITY)){
+                    if (!((Buyable) location).getRecentlyChanged()){
+                        sellableLocations.add(location);
+                    }
                 }
+
             }
 
-            return sellableProperties;
+            return sellableLocations;
         }
-        return properties;
-    }
-
-    public void setPropertyToSell(Property propertyToSell) {
-        this.propertyToSell = propertyToSell;
-    }
-
-    public Property getPropertyToSell() {
-        return propertyToSell;
+        return ownedLocations;
     }
 
     /**
@@ -368,22 +367,40 @@ public class Player {
     }
 
     /**
-     * Accessor to toggle the request forfeit boolean variable.
-     * @author Sarah Chow 101143033
+     * Accessor to get the number of railroads owned by the player
+     * @author Kyra Lothrop 101145872
+     * @return the number of railroads owned
      */
-    public void toggleRequest_forfeit() {
-        this.request_forfeit = !this.request_forfeit;
+    public int getNumRailroadsOwned() {
+        return numRailroadsOwned;
     }
 
     /**
-     * Accessor to get whether the player has requested to forfeit.
-     * @author Sarah Chow 101143033
-     * @return whether the player would like to forfeit, boolean
+     * Setter for the number of railroads owned by the player
+     * @author Kyra Lothrop 101145872
+     * @param numRailroadsOwned value to set the number of railroads owned
      */
-    public boolean getRequest_forfeit(){
-        return request_forfeit;
+    public void setNumRailroadsOwned(int numRailroadsOwned) {
+        this.numRailroadsOwned = numRailroadsOwned;
     }
 
+    /**
+     * Accessor to get the number of utilities owned by the player
+     * @author Kyra Lothrop 101145872
+     * @return the number of utilities owned
+     */
+    public int getNumUtilitiesOwned() {
+        return numUtilitiesOwned;
+    }
+
+    /**
+     * Setter for the number of utilities owned by the player
+     * @author Kyra Lothrop 101145872
+     * @param numUtilitiesOwned value to set the number of utilities owned
+     */
+    public void setNumUtilitiesOwned(int numUtilitiesOwned) {
+        this.numUtilitiesOwned = numUtilitiesOwned;
+    }
 
     /**
      * Accessor method to package relevant information into a string.
@@ -392,22 +409,22 @@ public class Player {
      */
     @Override
     public String toString() {
-        String playerInfo;
+        StringBuilder playerInfo;
 
-        playerInfo = "\tname='" + name + '\'' +
+        playerInfo = new StringBuilder("\tname='" + name + '\'' +
                 "\n\ticon='" + icon + '\'' +
                 "\n\tcash='" + cash + '\'' +
-                "\n\tposition='" + currentCell.getName()  + '\'' +
+                "\n\tposition='" + currentCell.getName() + '\'' +
                 "\n\tbankrupt=" + bankrupt +
-                "\n\tproperties= { \n\t\t";
+                "\n\townedLocations= { \n\t\t");
 
-        for (Property property: properties)
+        for (BoardCell location: ownedLocations)
         {
-            playerInfo += property.getName() + "\n\t\t";
+            playerInfo.append(location.getName()).append("\n\t\t");
         }
 
-        playerInfo += "}";
+        playerInfo.append("}");
 
-        return playerInfo;
+        return playerInfo.toString();
     }
 }

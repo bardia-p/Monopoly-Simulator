@@ -28,7 +28,7 @@ public abstract class MonopolyEvent extends EventObject {
     /**
      * An enum for the different event types.
      */
-    public enum EventType {BOARD_EVENT, PLAYER_EVENT};
+    public enum EventType {BOARD_EVENT, PLAYER_EVENT}
 
     /**
      * The main constructor for MonopolyEvent

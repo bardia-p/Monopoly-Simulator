@@ -1,5 +1,3 @@
-import java.util.Map;
-
 /**
  * Group 3
  * SYSC 3110 - Milestone 3 BoardCell Class
@@ -34,7 +32,7 @@ public abstract class BoardCell {
     /**
      * Keeps track of all the possible cell types.
      */
-    public enum CellType {PROPERTY, GO, FREE_PARKING, JAIL, TAX, UTILITY, RAILROAD, GO_TO_JAIL}
+    public enum CellType {PROPERTY, GO, FREE_PARKING, JAIL, TAX, UTILITY, RAILROAD, GO_TO_JAIL, CHANCE_AND_CHEST}
 
     /**
      * The constructor for board cell.

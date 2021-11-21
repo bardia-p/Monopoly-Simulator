@@ -15,7 +15,7 @@
  */
 public class PlayerEvent extends MonopolyEvent {
     private int value;
-    private Player player;
+    private final Player player;
     private boolean result;
 
     /**

@@ -12,7 +12,7 @@
  * @version 3.0
  *
  */
-public class Property extends BoardCell {
+public class Property extends BoardCell implements Buyable{
     /**
      * Keeps track of the property buying price.
      */

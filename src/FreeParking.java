@@ -2,7 +2,7 @@
  * Group 3
  * SYSC 3110 - Milestone 3 Free Parking Class
  *
- * This document is FreeParking Go. This class extends BoardCell and it as a reward attribute
+ * This document is FreeParking Go. This class extends BoardCell.
  *
  * @author Sarah Chow 101143033
  * @author Kyra Lothrop 101145872
