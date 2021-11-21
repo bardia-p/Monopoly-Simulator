@@ -16,7 +16,14 @@ import java.util.HashMap;
 
 public class Jail extends BoardCell{
 
+    /**
+     * Keeps track of players in jail and number of rounds spent in jail.
+     */
     private HashMap<Player, Integer> inJail;
+
+    /**
+     * Fee required to pay to leave jail.
+     */
     public static final int FEE = 50;
 
     /**

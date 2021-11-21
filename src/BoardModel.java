@@ -374,6 +374,12 @@ public class BoardModel {
         sendBoardUpdate(new BoardEvent(this, BoardModel.Status.GET_COMMAND, commands, player));
     }
 
+    /**
+     * Method to check the player's fee status.
+     * @author Bardia Parmoun 101143006
+     * @param player player object to check status, Player
+     * @return if the player needs to pay fees, boolean
+     */
     private boolean checkPlayerFeeStatus(Player player){
         BoardCell currentCell = player.getCurrentCell();
 
@@ -647,6 +653,11 @@ public class BoardModel {
         }
     }
 
+    /**
+     * Method if player requests to forfeit.
+     * @author Bardia Parmoun 101143006
+     * @param player player who requested to forfeit.
+     */
     public void request_forfeit(Player player){
         sendBoardUpdate(new BoardEvent(this, Status.PLAYER_REQUEST_FORFEIT, player));
     }
