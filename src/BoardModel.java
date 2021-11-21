@@ -59,8 +59,8 @@ public class BoardModel {
      * Keeps track of the possible board statuses.
      */
     public enum Status {GET_NUM_PLAYERS, CREATE_PLAYER_ICONS, INITIALIZE_BOARD, INITIALIZE_MONOPOLY, INITIALIZE_PLAYERS,
-        GET_COMMAND, PLAYER_ROLL, PLAYER_MOVE, BUY, SELL, PAY_FEES, PLAYER_STATUS, CELL_STATUS, PLAYER_FORFEIT,
-        PLAYER_REQUEST_FORFEIT, PASS_TURN, REPAINT_BOARD, GAME_OVER, PASS_GO}
+        GET_COMMAND, PLAYER_ROLL, PLAYER_MOVE, BUY, SELL, PAY_FEES, PLAYER_STATUS, CELL_STATUS, GO_TO_JAIL,
+        EXIT_JAIL, FORCE_PAY_JAIL, PLAYER_REQUEST_FORFEIT, PASS_TURN, REPAINT_BOARD, GAME_OVER, PASS_GO}
 
     /**
      * Keeps track of the possible player commands.
@@ -68,15 +68,12 @@ public class BoardModel {
     public enum Command{
         BUY ("buy"),
         SELL ("sell"),
-        PAY_RENT ("pay rent"),
         PLAYER_STATUS ("player status"),
-        BOARD_STATUS ("board status"),
         PASS ("pass"),
         ROLL_AGAIN ("roll"),
         CELL_STATUS ("cell status"),
         FORFEIT ("forfeit"),
-        CONFIRM_FORFEIT("confirm_forfeit"),
-        PAY_TAX ("pay tax"),
+        PAY_FEES ("pay fees"),
         REPAINT("repaint");
 
         private final String stringCommand;
@@ -167,10 +164,7 @@ public class BoardModel {
         else if(command.equals((Command.SELL.getStringCommand()))){
             sellLocationPrompt(turn);
         }
-        else if(command.equals((Command.PAY_RENT.getStringCommand()))){
-            payFees(turn.getCurrentCell(), turn);
-        }
-        else if(command.equals((Command.PAY_TAX.getStringCommand()))){
+        else if(command.equals((Command.PAY_FEES.getStringCommand()))){
             payFees(turn.getCurrentCell(), turn);
         }
         else if (command.equals((Command.PLAYER_STATUS.getStringCommand()))){
@@ -181,9 +175,6 @@ public class BoardModel {
         }
         else if(command.equals((Command.FORFEIT.getStringCommand()))){
             request_forfeit(turn);
-        }
-        else if(command.equals((Command.CONFIRM_FORFEIT.getStringCommand()))){
-            forfeit(turn);
         }
 
         // Avoids race conditions.
@@ -213,7 +204,7 @@ public class BoardModel {
                 new EmptyCell("Chance Card", BoardCell.CellType.CHANCE_AND_CHEST, "images/board/chance_1.jpg"),
                 new Property("Vermont Avenue",100,6, "images/board/vermont.jpg"),
                 new Property("Connecticut Avenue",120,8, "images/board/connecticut.jpg"),
-                new EmptyCell("JAIL", BoardCell.CellType.JAIL, "images/board/jail.jpg"),
+                new Jail("JAIL", bank,"images/board/jail.jpg"),
                 new Property("St. Charles Place",140,10, "images/board/st_charles.jpg"),
                 new Utility("Electric Company", 150,  new Integer[]{4, 10}, "images/board/electric.jpg"),
                 new Property("States Avenue",140,10, "images/board/states_avenue.jpg"),
@@ -233,7 +224,7 @@ public class BoardModel {
                 new Property("Ventnor Avenue",260,22, "images/board/ventnor.jpg"),
                 new Utility("Water Works", 150,  new Integer[]{4, 10}, "images/board/water_works.jpg"),
                 new Property("Marvin Garden",280,24, "images/board/marvin.jpg"),
-                new EmptyCell("GO TO JAIL", BoardCell.CellType.GO_TO_JAIL, "images/board/go_to_jail.jpg"),
+                new GoToJail("GO TO JAIL", "images/board/go_to_jail.jpg"),
                 new Property("Pacific Avenue",300,26, "images/board/pacific.jpg"),
                 new Property("North Carolina Avenue",300,26, "images/board/north_carolina.jpg"),
                 new EmptyCell("Community Chest", BoardCell.CellType.CHANCE_AND_CHEST, "images/board/chest_3.jpg"),
@@ -349,29 +340,20 @@ public class BoardModel {
             }
         }
 
-        // Checks to see if the sell has an owner and if you have paid the fees for it.
-        if (currentCell.getOwner() != player && currentCell.getOwner() != null &&
-                player.getFeesStatus() != Player.StatusEnum.PAID_FEES) {
-            if (currentCell.getType() == BoardCell.CellType.PROPERTY ||
-                    currentCell.getType() == BoardCell.CellType.RAILROAD||
-                    currentCell.getType() == BoardCell.CellType.UTILITY){
-                commands.add(BoardModel.Command.PAY_RENT);
-            } else if (currentCell.getType() == BoardCell.CellType.TAX){
-                commands.add(BoardModel.Command.PAY_TAX);
-            }
-            player.setFeesStatus(Player.StatusEnum.UNPAID_FEES);
-        }
-
-
-
         // Handles selling the property
         if (player.getOwnedLocations(true).size() > 0){
             commands.add(BoardModel.Command.SELL);
         }
 
-        // If the player has paid their rent they can pass or roll again.
-        if (player.getFeesStatus() != Player.StatusEnum.UNPAID_FEES) {
-            if (player.hasAnotherRoll()) {
+        if (checkPlayerFeeStatus(player)){
+            commands.add(Command.PAY_FEES);
+
+            if (player.getFeesStatus() != Player.StatusEnum.UNPAID_FEES){
+                commands.add(BoardModel.Command.PASS);
+            }
+        } else {
+            // If the player has paid their fees they can pass or roll again.
+            if (player.hasAnotherRoll() && !player.getResortInJail()) {
                 commands.add(Command.ROLL_AGAIN);
             } else {
                 commands.add(BoardModel.Command.PASS);
@@ -387,6 +369,34 @@ public class BoardModel {
 
 
         sendBoardUpdate(new BoardEvent(this, BoardModel.Status.GET_COMMAND, commands, player));
+    }
+
+    /**
+     * Method to check the player's fee status.
+     * @author Bardia Parmoun 101143006
+     * @param player player object to check status, Player
+     * @return if the player needs to pay fees, boolean
+     */
+    private boolean checkPlayerFeeStatus(Player player){
+        BoardCell currentCell = player.getCurrentCell();
+
+        if (currentCell.getType() == BoardCell.CellType.JAIL){
+            Jail jail = (Jail) currentCell;
+            if (jail.isPlayersLastRound(player)){
+                player.setFeesStatus(Player.StatusEnum.UNPAID_FEES);
+                sendBoardUpdate(new BoardEvent(this, Status.FORCE_PAY_JAIL, player));
+                return true;
+            } else if (jail.getRoundCountJail(player) !=0 && player.getFeesStatus() != Player.StatusEnum.PAID_FEES){
+                return true;
+            }
+        } // Checks to see if the cell has an owner and if you have paid the fees for it.
+        else if (currentCell.getOwner() != player && currentCell.getOwner() != null &&
+                player.getFeesStatus() != Player.StatusEnum.PAID_FEES) {
+            player.setFeesStatus(Player.StatusEnum.UNPAID_FEES);
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -417,13 +427,21 @@ public class BoardModel {
         dice[0] = rand.nextInt((6 - 1) + 1) + 1;
         dice[1] = rand.nextInt((6 - 1) + 1) + 1;
 
-        if (dice[0] == dice[1]){
-            setDoubleRoll(player);
-        }
-
         sendBoardUpdate(new BoardEvent(this, Status.PLAYER_ROLL, player, dice));
 
-        move(player, dice[0] + dice[1]);
+        if (dice[0] == dice[1]){
+            if (player.getResortInJail()){
+                player.addNumDoubles();
+                exitJail(player, true);
+            }
+            else{
+                setDoubleRoll(player);
+            }
+        }
+
+        if (!player.getResortInJail()){
+            move(player, dice[0] + dice[1]);
+        }
     }
 
     /**
@@ -433,13 +451,22 @@ public class BoardModel {
      * @param amountToMove distance the player should move, int
      */
     public void move(Player player, int amountToMove){
-        sendBoardUpdate(new BoardEvent(this, Status.PLAYER_MOVE, player, amountToMove, player.getPosition()));
 
         int originalPosition = player.getPosition();
 
+        sendBoardUpdate(new BoardEvent(this, Status.PLAYER_MOVE, player, amountToMove, player.getPosition()));
+
         int newPlayerPosition = (player.getPosition() + amountToMove) % SIZE_OF_BOARD;
+
         player.setPosition(newPlayerPosition);
         player.setCurrentCell(cells.get(newPlayerPosition));
+
+        // Player lands on go to Jail, do not have other options.
+        if (player.getCurrentCell().getType() == BoardCell.CellType.GO_TO_JAIL) {
+            sendToJail(player);
+        } else {
+            getCommand(player);
+        }
 
         for(int i = 1; i<=amountToMove; i++){
             if(cells.get((originalPosition + i)% SIZE_OF_BOARD).getType() == BoardCell.CellType.GO) {
@@ -449,6 +476,38 @@ public class BoardModel {
         }
 
         getCommand(player);
+
+    }
+
+    /**
+     * Sends the player to jail
+     * @author Sarah Chow 101143033
+     * @param player player in jail, Player
+     */
+    private void sendToJail(Player player){
+        sendBoardUpdate(new BoardEvent(this, Status.GO_TO_JAIL, player));
+
+        int newPlayerPosition = BoardFrame.JAIL_LOCATION;
+        player.setPosition(newPlayerPosition);
+        player.setCurrentCell(cells.get(newPlayerPosition));
+        player.setResortInJail(true); // Set to True
+        ((Jail)player.getCurrentCell()).incrementJailRound(player);
+    }
+
+    /**
+     * The player exits jail.
+     * @author Bardia Parmoun 101143006
+     * @param player player in jail, Player
+     */
+    private void exitJail(Player player, boolean rolledDouble){
+        Jail jail = (Jail) player.getCurrentCell();
+        jail.endJail(player);
+        sendBoardUpdate(new BoardEvent(this, Status.EXIT_JAIL, player));
+        player.setResortInJail(false); // Set to True
+
+        if (!rolledDouble){
+            player.setRollAgain(true);
+        }
     }
 
     /**
@@ -487,10 +546,6 @@ public class BoardModel {
      */
     public void sellLocationPrompt(Player player){
         sendBoardUpdate(new BoardEvent(this, Status.SELL, player));
-
-        if (player.getConfirmSell()){
-            sellProperty(player, player.getLocationToSell());
-        }
     }
 
     /**
@@ -533,7 +588,7 @@ public class BoardModel {
 
     /**
      * Action the player must take when landing on property owned by another player. Pays the
-     * rent of the property from the current player to the owner.
+     * rent of the property from the current player to the owner. Pays jail fee if that is the case.
      * @author Owen VanDusen 101152022
      * @param boardCell board cell with the fees, BoardCell
      * @param player player paying rent, Player
@@ -547,6 +602,8 @@ public class BoardModel {
             fees = ((Property) boardCell).getRent();
         } else if (boardCell.getType() == BoardCell.CellType.TAX){
             fees = ((Tax) boardCell).getTax();
+        } else if (boardCell.getType() == BoardCell.CellType.JAIL){
+            fees = ((Jail) boardCell).FEE;
         } else if (boardCell.getType() == BoardCell.CellType.RAILROAD){
             fees = ((Railroad) boardCell).getRent(boardCell.getOwner().getNumRailroadsOwned());
         } else if (boardCell.getType() == BoardCell.CellType.UTILITY){
@@ -562,6 +619,10 @@ public class BoardModel {
             player.pay(fees);
             player.setFeesStatus(Player.StatusEnum.PAID_FEES);
             result = true;
+
+            if (boardCell.getType() == BoardCell.CellType.JAIL){
+                exitJail(player, false);
+            }
         }
 
         //Inform player they have paid rent
@@ -606,14 +667,23 @@ public class BoardModel {
     public void setDoubleRoll(Player player){
         player.setFeesStatus(Player.StatusEnum.NO_FEES);
         player.addNumDoubles();
-        player.setRollAgain(true);
+
+        // Roll 3 doubles in a row
+        if (player.getNumDoubles() >= 3){
+            sendBoardUpdate(new BoardEvent(this, Status.GO_TO_JAIL, player));
+        }
+        else{
+            player.setRollAgain(true);
+        }
     }
 
+    /**
+     * Method if player requests to forfeit.
+     * @author Bardia Parmoun 101143006
+     * @param player player who requested to forfeit.
+     */
     public void request_forfeit(Player player){
         sendBoardUpdate(new BoardEvent(this, Status.PLAYER_REQUEST_FORFEIT, player));
-        if (player.getRequest_forfeit()){
-            forfeit(player);
-        }
     }
 
     /**
@@ -625,7 +695,6 @@ public class BoardModel {
     public void forfeit(Player player) {
         player.setBankrupt();
         player.setRank(numPlayers--);
-        sendBoardUpdate(new BoardEvent(this, Status.PLAYER_FORFEIT, player));
         passTurn(player);
     }
 
@@ -653,8 +722,14 @@ public class BoardModel {
             for (Player player: players){
                 turn = player;
                 if (!player.isBankrupt()){
-                    roll(player);
 
+                    // Checks to see if the player is in jail.
+                    if (player.getResortInJail()){
+                        Jail jail = (Jail) player.getCurrentCell();
+                        jail.incrementJailRound(player); // Pass their turn in jail
+                    }
+
+                    roll(player);
                     getCommand(player);
 
                     // Keeps prompting the player for commands until their turn is over.
@@ -664,8 +739,6 @@ public class BoardModel {
                             checkDoubleRoll = false;
                         }
                     }
-
-
                 }
 
                 // Checks to see if the game is over

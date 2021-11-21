@@ -62,19 +62,9 @@ public class Player {
     private int rank;
 
     /**
-     * Keeps track of whether the player would like to forfeit.
-     */
-    private boolean request_forfeit;
-
-    /**
-     * Property the player would like to sell
-     */
-    private BoardCell locationToSell;
-
-    /**
      * Keeps track of whether the player would like to sell a property.
      */
-    private boolean confirmSell;
+    public enum StatusEnum {NO_FEES, UNPAID_FEES, PAID_FEES}
 
     /**
      * Keeps track of the number of railroad the player owns
@@ -89,7 +79,7 @@ public class Player {
     /**
      * Possible values of player debt status.
      */
-    public enum StatusEnum {NO_FEES, UNPAID_FEES, PAID_FEES}
+    private boolean resortInJail;
 
     /**
      * Constructor for Player, sets all values.
@@ -111,12 +101,27 @@ public class Player {
         this.rollAgain = false;
         this.feesStatus = StatusEnum.NO_FEES;
         this.rank = 0;
-        this.request_forfeit = false;
-        this.locationToSell = null;
-        this.confirmSell = false;
-        this.numRailroadsOwned = 0;
-        this.numUtilitiesOwned = 0;
+        this.resortInJail = false;
     }
+
+
+    /**
+     * Method to toggle resort in jail boolean value.
+     * @author Sarah Chow 101143033
+     */
+    public void setResortInJail(boolean jailStatus) {
+        this.resortInJail = jailStatus;
+    }
+
+    /**
+     * Accessor to get the resort in jail value.
+     * @author Sarah Chow 101143033
+     * @return if the player resorts in jail, boolean
+     */
+    public boolean getResortInJail(){
+        return this.resortInJail;
+    }
+
 
     /**
      * Method to deduct the amount the player must pay.
@@ -145,24 +150,6 @@ public class Player {
     public void sellProperty(BoardCell location){
         this.ownedLocations.remove(location);
         this.cash += ((Buyable) location).getPrice();
-        this.toggleConfirmSell();
-    }
-
-    /**
-     * Accessor to toggle the confirm sell boolean value.
-     * @author Sarah Chow 101143033
-     */
-    public void toggleConfirmSell(){
-        this.confirmSell = !this.confirmSell;
-    }
-
-    /**
-     * Accessor to get the confirm sell boolean value.
-     * @author Sarah Chow 101143033
-     * @return the confirm sell value, boolean
-     */
-    public boolean getConfirmSell(){
-        return this.confirmSell;
     }
 
     /**
@@ -356,14 +343,6 @@ public class Player {
         return ownedLocations;
     }
 
-    public void setPropertyToSell(BoardCell locationToSell) {
-        this.locationToSell = locationToSell;
-    }
-
-    public BoardCell getLocationToSell() {
-        return locationToSell;
-    }
-
     /**
      * Accessor to set the rank of the player when they go bankrupt.
      * @author Kyra Lothrop 101145872
@@ -380,23 +359,6 @@ public class Player {
      */
     public int getRank(){
         return rank;
-    }
-
-    /**
-     * Accessor to toggle the request forfeit boolean variable.
-     * @author Sarah Chow 101143033
-     */
-    public void toggleRequest_forfeit() {
-        this.request_forfeit = !this.request_forfeit;
-    }
-
-    /**
-     * Accessor to get whether the player has requested to forfeit.
-     * @author Sarah Chow 101143033
-     * @return whether the player would like to forfeit, boolean
-     */
-    public boolean getRequest_forfeit(){
-        return request_forfeit;
     }
 
     /**
