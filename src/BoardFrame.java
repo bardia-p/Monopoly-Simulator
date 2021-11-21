@@ -713,12 +713,13 @@ public class BoardFrame extends JFrame implements BoardView  {
         int ans = JOptionPane.showConfirmDialog(null, panel,
                 "SELL PROPERTY", JOptionPane.OK_CANCEL_OPTION);
         if (ans == JOptionPane.OK_OPTION){
-            for (Property p : player.getProperties(true)){
-                if (group.getSelection().getActionCommand().equals(p.getName())){
-                    player.toggleConfirmSell();
-                    player.setPropertyToSell(p);
-                    JOptionPane.showMessageDialog(null, "Player " +
-                            player.getIconName().toUpperCase() + " sold " + p.getName().toUpperCase());
+            if (group.getSelection() != null) {
+                for (Property p : player.getProperties(true)){
+                    if (group.getSelection().getActionCommand().equals(p.getName())){
+                        model.sellProperty(player, p);
+                        JOptionPane.showMessageDialog(null, "Player " +
+                                player.getIconName().toUpperCase() + " sold " + p.getName().toUpperCase());
+                    }
                 }
             }
         }

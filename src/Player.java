@@ -62,16 +62,6 @@ public class Player {
     private int rank;
 
     /**
-     * Property the player would like to sell
-     */
-    private Property propertyToSell;
-
-    /**
-     * Keeps track of whether the player would like to sell a property.
-     */
-    private boolean confirmSell;
-
-    /**
      * Possible values of player debt status.
      */
     public enum StatusEnum {NO_FEES, UNPAID_FEES, PAID_FEES}
@@ -101,8 +91,6 @@ public class Player {
         this.rollAgain = false;
         this.feesStatus = StatusEnum.NO_FEES;
         this.rank = 0;
-        this.propertyToSell = null;
-        this.confirmSell = false;
         this.resortInJail = false;
     }
 
@@ -152,24 +140,6 @@ public class Player {
     public void sellProperty(Property property){
         this.properties.remove(property);
         this.cash += property.getPrice();
-        this.toggleConfirmSell();
-    }
-
-    /**
-     * Accessor to toggle the confirm sell boolean value.
-     * @author Sarah Chow 101143033
-     */
-    public void toggleConfirmSell(){
-        this.confirmSell = !this.confirmSell;
-    }
-
-    /**
-     * Accessor to get the confirm sell boolean value.
-     * @author Sarah Chow 101143033
-     * @return the confirm sell value, boolean
-     */
-    public boolean getConfirmSell(){
-        return this.confirmSell;
     }
 
     /**
@@ -353,14 +323,6 @@ public class Player {
             return sellableProperties;
         }
         return properties;
-    }
-
-    public void setPropertyToSell(Property propertyToSell) {
-        this.propertyToSell = propertyToSell;
-    }
-
-    public Property getPropertyToSell() {
-        return propertyToSell;
     }
 
     /**

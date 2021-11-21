@@ -528,10 +528,6 @@ public class BoardModel {
      */
     public void sellPropertyPrompt(Player player){
         sendBoardUpdate(new BoardEvent(this, Status.SELL, player));
-
-        if (player.getConfirmSell()){
-            sellProperty(player, player.getPropertyToSell());
-        }
     }
 
     /**
