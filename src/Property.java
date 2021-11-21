@@ -1,6 +1,3 @@
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 /**
  * Group 3
  * SYSC 3110 - Milestone 2 Property Class
@@ -15,7 +12,7 @@ import java.util.Map;
  * @version 1.0
  *
  */
-public class Property extends BoardCell {
+public class Property extends BoardCell implements Buyable{
     /**
      * Keeps track of the property buying price.
      */

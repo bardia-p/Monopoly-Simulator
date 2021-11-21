@@ -216,13 +216,13 @@ public class BoardFrame extends JFrame implements BoardView  {
     public void handleBoardUpdate(BoardEvent e) {
         switch (e.getType()) {
             case PLAYER_ROLL -> handleRoll(e.getDice());
-            case BUY -> handleBuyProperty(e.getPlayer(), (Property) e.getBoardCell(), e.getResult());
+            case BUY -> handleBuyLocation(e.getPlayer(), e.getBoardCell(), e.getResult());
             case SELL -> handleSellProperty(e.getPlayer());
             case PLAYER_STATUS -> handleGetPlayerStatus(e.getPlayer());
             case CELL_STATUS -> handleGetCellStatus(e.getPlayer().getCurrentCell());
             case INITIALIZE_MONOPOLY -> handleWelcomeMonopoly();
             case PAY_FEES -> handlePayFees(e.getPlayer().getCurrentCell(), e.getPlayer(), e.getValue(), e.getResult());
-            case PASS_TURN -> handleCurrentPlayerChange();
+            case PASS_TURN -> disableButtons();
             case GAME_OVER -> handleWinner(e.getPlayers());
             case INITIALIZE_BOARD -> constructBoard(e.getCells());
             case CREATE_PLAYER_ICONS -> createPlayers((ArrayList<Player>) e.getPlayers());
@@ -235,6 +235,7 @@ public class BoardFrame extends JFrame implements BoardView  {
             case GO_TO_JAIL -> handleGoToJail(e.getPlayer());
             case EXIT_JAIL -> handleExitJail(e.getPlayer());
             case FORCE_PAY_JAIL -> handleForceExitJail(e.getPlayer());
+            case PASS_GO -> handlePassGo(e.getPlayer());
         }
     }
 
@@ -258,6 +259,7 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @param originalPos the original position of the player, int
      */
     private void handlePlayerGUIMove(Player player, int amountToMove, int originalPos){
+        disableButtons();
         for (int i = originalPos; i < originalPos + amountToMove + 1; i++){
             int newPlayerPosition =  i % BoardModel.SIZE_OF_BOARD;
             showCurrentCell(player, newPlayerPosition);
@@ -381,6 +383,7 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @param dice value of the dice, int[]
      */
     private void handleRoll(int[] dice) {
+        disableButtons();
         int die1 = dice[0];
         int die2 = dice[1];
 
@@ -669,17 +672,17 @@ public class BoardFrame extends JFrame implements BoardView  {
      * Displays whether the current player can afford the property they attempted to buy or not.
      * @author Owen VanDusen 101152022
      * @param player player performing actions, Player
-     * @param property property that is in contention for purchasing, Property
+     * @param location property that is in contention for purchasing, Property
      * @param result if the player can afford the property, boolean
      */
-    private void handleBuyProperty(Player player, Property property, boolean result) {
+    private void handleBuyLocation(Player player, BoardCell location, boolean result) {
         String buyMessage;
         if (result){
-            buyMessage = "Player " + player.getIconName().toUpperCase() + " bought " + property.getName();
+            buyMessage = "Player " + player.getIconName().toUpperCase() + " bought " + location.getName();
         } else {
-            buyMessage = "Player " + player.getIconName().toUpperCase() + " cannot afford " + property.getName();
+            buyMessage = "Player " + player.getIconName().toUpperCase() + " cannot afford " + location.getName();
         }
-        JOptionPane.showMessageDialog(null, buyMessage, "BUY PROPERTY", JOptionPane.PLAIN_MESSAGE);
+        JOptionPane.showMessageDialog(null, buyMessage, "BUY LOCATION", JOptionPane.PLAIN_MESSAGE);
     }
 
     /**
@@ -688,18 +691,18 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @param player player performing actions, Player
      */
     private void handleSellProperty(Player player) {
-        JPanel panel = new JPanel(new GridLayout(player.getProperties(true).size(), 2));
+        JPanel panel = new JPanel(new GridLayout(player.getOwnedLocations(true).size(), 2));
         ButtonGroup group = new ButtonGroup();
 
-        for (Property p : player.getProperties(true)) {
+        for (BoardCell l : player.getOwnedLocations(true)) {
 
-            JRadioButton button = new JRadioButton(p.getName().toUpperCase());
+            JRadioButton button = new JRadioButton(l.getName().toUpperCase());
 
-            String message = "<html>" + p + "</html>";
+            String message = "<html>" + l + "</html>";
 
             JLabel des = new JLabel(message);
 
-            button.setActionCommand(p.getName());
+            button.setActionCommand(l.getName());
             group.add(button);
 
             des.setVisible(true);
@@ -714,11 +717,11 @@ public class BoardFrame extends JFrame implements BoardView  {
                 "SELL PROPERTY", JOptionPane.OK_CANCEL_OPTION);
         if (ans == JOptionPane.OK_OPTION){
             if (group.getSelection() != null) {
-                for (Property p : player.getProperties(true)){
-                    if (group.getSelection().getActionCommand().equals(p.getName())){
-                        model.sellProperty(player, p);
+                for (BoardCell l : player.getOwnedLocations(true)){
+                    if (group.getSelection().getActionCommand().equals(l.getName())){
+                        model.sellProperty(player, l);
                         JOptionPane.showMessageDialog(null, "Player " +
-                                player.getIconName().toUpperCase() + " sold " + p.getName().toUpperCase());
+                                player.getIconName().toUpperCase() + " sold " + l.getName().toUpperCase());
                     }
                 }
             }
@@ -814,7 +817,7 @@ public class BoardFrame extends JFrame implements BoardView  {
      * Displays a breaker to indicate change of turn.
      * @author Owen VanDusen 101152022
      */
-    private void handleCurrentPlayerChange() {
+    private void disableButtons() {
         for(JButton b: commandButtons){
             b.setEnabled(false);
         }
@@ -872,6 +875,16 @@ public class BoardFrame extends JFrame implements BoardView  {
             }
         }
         JOptionPane.showMessageDialog(null, gameOverMessage, "GAME OVER!", JOptionPane.PLAIN_MESSAGE);
+    }
+
+    /**
+     * Display that the user has passed GO
+     * @author Kyra Lothrop 101145872
+     * @param player the player that passed GO
+     */
+    private void handlePassGo(Player player) {
+        String message = "Player " + player.getIconName().toUpperCase() +  " passed go!";
+        JOptionPane.showMessageDialog(null, message, "PASSED GO", JOptionPane.PLAIN_MESSAGE);
     }
 
     /**

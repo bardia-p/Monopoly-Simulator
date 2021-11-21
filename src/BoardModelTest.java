@@ -76,13 +76,13 @@ public class BoardModelTest {
     @Test
     public void testPlayerBuyProperty(){
         boardModel.move(p1,8);
-        boardModel.buyProperty((Property) p1.getCurrentCell(), p1);
+        boardModel.buyLocation((Property) p1.getCurrentCell(), p1);
         boardModel.move(p2, 3);
-        boardModel.buyProperty((Property) p2.getCurrentCell(), p2);
+        boardModel.buyLocation((Property) p2.getCurrentCell(), p2);
         boardModel.move(p2, 3);
-        boardModel.buyProperty((Property) p2.getCurrentCell(), p2);
-        assertEquals(1,p1.getProperties(false).size());
-        assertEquals(2, p2.getProperties(false).size());
+        boardModel.buyLocation((Property) p2.getCurrentCell(), p2);
+        assertEquals(1,p1.getOwnedLocations(false).size());
+        assertEquals(2, p2.getOwnedLocations(false).size());
     }
 
     /**
@@ -118,7 +118,7 @@ public class BoardModelTest {
         assertEquals(1500, p1.getCash());
 
         boardModel.move(p2, 9);
-        boardModel.buyProperty((Property) p2.getCurrentCell(), p2);
+        boardModel.buyLocation((Property) p2.getCurrentCell(), p2);
 
         boardModel.move(p1, 9);
         boardModel.payFees(p1.getCurrentCell(),p1);
@@ -134,21 +134,21 @@ public class BoardModelTest {
      */
     @Test
     public void testPlayerSellProperty(){
-        assertEquals(0,p1.getProperties(false).size());
+        assertEquals(0,p1.getOwnedLocations(false).size());
 
         boardModel.move(p1,3);
-        boardModel.buyProperty((Property)p1.getCurrentCell(), p1);
-        assertEquals(1,p1.getProperties(false).size());
+        boardModel.buyLocation((Property)p1.getCurrentCell(), p1);
+        assertEquals(1,p1.getOwnedLocations(false).size());
 
         boardModel.move(p1, 10);
-        boardModel.buyProperty((Property)p1.getCurrentCell(), p1);
+        boardModel.buyLocation((Property)p1.getCurrentCell(), p1);
         boardModel.move(p1,5);
-        boardModel.buyProperty((Property)p1.getCurrentCell(), p1);
-        assertEquals(3,p1.getProperties(false).size());
+        boardModel.buyLocation((Property)p1.getCurrentCell(), p1);
+        assertEquals(3,p1.getOwnedLocations(false).size());
 
-        boardModel.sellProperty(p1, p1.getProperties(false).get(0));
-        boardModel.sellProperty(p1, p1.getProperties(false).get(0));
-        assertEquals(1,p1.getProperties(false).size());
+        boardModel.sellProperty(p1, p1.getOwnedLocations(false).get(0));
+        boardModel.sellProperty(p1, p1.getOwnedLocations(false).get(0));
+        assertEquals(1,p1.getOwnedLocations(false).size());
     }
 
     /**
@@ -159,14 +159,14 @@ public class BoardModelTest {
     @Test
     public void testPropertyNotImmediatelySellable(){
         boardModel.move(p2,1);
-        boardModel.buyProperty((Property) p2.getCurrentCell(), p2);
-        assertEquals(0,p2.getProperties(true).size());
+        boardModel.buyLocation((Property) p2.getCurrentCell(), p2);
+        assertEquals(0,p2.getOwnedLocations(true).size());
 
         boardModel.move(p1,3);
-        boardModel.buyProperty((Property) p1.getCurrentCell(), p1);
+        boardModel.buyLocation((Property) p1.getCurrentCell(), p1);
         boardModel.move(p1, 5);
-        boardModel.buyProperty((Property)p1.getCurrentCell(), p1);
-        assertEquals(0,p1.getProperties(true).size());
+        boardModel.buyLocation((Property)p1.getCurrentCell(), p1);
+        assertEquals(0,p1.getOwnedLocations(true).size());
     }
 
     /**
@@ -191,15 +191,15 @@ public class BoardModelTest {
     @Test
     public void testPropertiesBecomeSellableAfterTurnPass(){
         boardModel.move(p1,3);
-        boardModel.buyProperty((Property) p1.getCurrentCell(), p1);
+        boardModel.buyLocation((Property) p1.getCurrentCell(), p1);
         assertTrue(((Property) p1.getCurrentCell()).getRecentlyChanged());
-        assertEquals(0, p1.getProperties(true).size());
-        assertEquals(1, p1.getProperties(false).size());
+        assertEquals(0, p1.getOwnedLocations(true).size());
+        assertEquals(1, p1.getOwnedLocations(false).size());
 
         boardModel.passTurn(p1);
         assertFalse(((Property) p1.getCurrentCell()).getRecentlyChanged());
-        assertEquals(1, p1.getProperties(true).size());
-        assertEquals(1, p1.getProperties(false).size());
+        assertEquals(1, p1.getOwnedLocations(true).size());
+        assertEquals(1, p1.getOwnedLocations(false).size());
     }
 
     /**
