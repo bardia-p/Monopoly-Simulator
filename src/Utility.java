@@ -82,6 +82,17 @@ public class Utility extends BoardCell implements Buyable{
      */
     @Override
     public String toString() {
-        return "\n\tname='" + super.getName() + '\'';
+        String utilityInfo = "\n\tname='" + super.getName() + '\'' +
+                "\n\tprice='" + price + '\'' +
+                "\n\trent='dice roll * " + rentValues[0] + ", if the owner owns one utility." +
+                "\n\t\tdice roll * " + rentValues[1] + ", if the owner owns two utilities." + '\'';
+
+        if (super.getOwner() != null){
+            utilityInfo += "\n\tproperty owner='" + super.getOwner().getIconName() + '\'';
+
+        } else {
+            utilityInfo += "\n\tproperty owner='no owner'";
+        }
+        return utilityInfo;
     }
 }

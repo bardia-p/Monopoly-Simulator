@@ -83,6 +83,19 @@ public class Railroad extends BoardCell implements Buyable{
      */
     @Override
     public String toString() {
-        return "\n\tname='" + super.getName() + '\'';
+        String railroadInfo = "\n\tname='" + super.getName() + '\'' +
+                "\n\tprice='" + price + '\'' +
+                "\n\trent='" + rentValues[0] + ", if the owner owns one railroad." +
+                "\n\t\t'" + rentValues[1] + ", if the owner owns two railroads." +
+                "\n\t\t'" + rentValues[2] + ", if the owner owns three railroads." +
+                "\n\t\t'" + rentValues[3] + ", if the owner owns four railroads." + '\'';
+
+        if (super.getOwner() != null){
+            railroadInfo += "\n\tproperty owner='" + super.getOwner().getIconName() + '\'';
+
+        } else {
+            railroadInfo += "\n\tproperty owner='no owner'";
+        }
+        return railroadInfo;
     }
 }
