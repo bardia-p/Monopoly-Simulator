@@ -227,11 +227,6 @@ public class BoardFrame extends JFrame implements BoardView  {
         }
     }
 
-    private void handlePassGo(Player player) {
-        String message = "Player " + player.getIconName().toUpperCase() +  " passed go!";
-        JOptionPane.showMessageDialog(null, message, "PASSED GO", JOptionPane.PLAIN_MESSAGE);
-    }
-
     /**
      * Repaints the board when the window has changed to make sure everything is visible.
      * @author Bardia Parmoun 101143006
@@ -833,6 +828,16 @@ public class BoardFrame extends JFrame implements BoardView  {
             }
         }
         JOptionPane.showMessageDialog(null, gameOverMessage, "GAME OVER!", JOptionPane.PLAIN_MESSAGE);
+    }
+
+    /**
+     * Display that the user has passed GO
+     * @author Kyra Lothrop 101145872
+     * @param player the player that passed GO
+     */
+    private void handlePassGo(Player player) {
+        String message = "Player " + player.getIconName().toUpperCase() +  " passed go!";
+        JOptionPane.showMessageDialog(null, message, "PASSED GO", JOptionPane.PLAIN_MESSAGE);
     }
 
     /**

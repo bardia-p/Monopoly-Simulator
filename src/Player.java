@@ -342,7 +342,8 @@ public class Player {
             ArrayList<BoardCell> sellableLocations = new ArrayList<>();
             for (BoardCell location: ownedLocations){
                 if(location.getType().equals(BoardCell.CellType.PROPERTY)
-                || location.getType().equals(BoardCell.CellType.RAILROAD)){
+                || location.getType().equals(BoardCell.CellType.RAILROAD)
+                || location.getType().equals(BoardCell.CellType.UTILITY)){
                     if (!((Buyable) location).getRecentlyChanged()){
                         sellableLocations.add(location);
                     }
@@ -398,22 +399,41 @@ public class Player {
         return request_forfeit;
     }
 
+    /**
+     * Accessor to get the number of railroads owned by the player
+     * @author Kyra Lothrop 101145872
+     * @return the number of railroads owned
+     */
     public int getNumRailroadsOwned() {
         return numRailroadsOwned;
     }
 
+    /**
+     * Setter for the number of railroads owned by the player
+     * @author Kyra Lothrop 101145872
+     * @param numRailroadsOwned value to set the number of railroads owned
+     */
     public void setNumRailroadsOwned(int numRailroadsOwned) {
         this.numRailroadsOwned = numRailroadsOwned;
     }
 
+    /**
+     * Accessor to get the number of utilities owned by the player
+     * @author Kyra Lothrop 101145872
+     * @return the number of utilities owned
+     */
     public int getNumUtilitiesOwned() {
         return numUtilitiesOwned;
     }
 
+    /**
+     * Setter for the number of utilities owned by the player
+     * @author Kyra Lothrop 101145872
+     * @param numUtilitiesOwned value to set the number of utilities owned
+     */
     public void setNumUtilitiesOwned(int numUtilitiesOwned) {
         this.numUtilitiesOwned = numUtilitiesOwned;
     }
-
 
     /**
      * Accessor method to package relevant information into a string.

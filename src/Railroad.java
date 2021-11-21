@@ -1,8 +1,8 @@
 /**
  * Group 3
- * SYSC 3110 - Milestone 2 Go Class
+ * SYSC 3110 - Milestone 3 Railroad Class
  *
- * This document is the Railroad. This class extends BoardCell.
+ * This document is the Railroad. This class extends BoardCell and implements Buyable.
  *
  * @author Sarah Chow 101143033
  * @author Kyra Lothrop 101145872
@@ -13,35 +13,74 @@
 
 public class Railroad extends BoardCell implements Buyable{
 
+    /**
+     * Keeps track of the railroad buying price.
+     */
     private final int price;
-
+    /**
+     * Keeps track of whether a railroad attribute has been recently changed (Excluding self).
+     */
     private boolean recentlyChanged;
+    /**
+     * Keeps track of the rent value depending on the number of railroads owned
+     */
+    private final Integer[] rentValues;
 
-    private Integer[] rentValues;   //final?
-
-    public Railroad(String name, int price, String imgName) {
+    /**
+     * Constructor for the Railroad
+     * @author Kyra Lothrop 101145872
+     * @param name Railroad name, String
+     * @param price Railroad price, int
+     * @param imgName Railroad image, String
+     */
+    public Railroad(String name, int price, Integer[] rentValues, String imgName) {
         super(name, null, CellType.RAILROAD, imgName);
         this.price = price;
         this.recentlyChanged = false;
-        this.rentValues = new Integer[]{25, 50, 100, 200};
+        this.rentValues = rentValues;
     }
 
+    /**
+     * Accessor to calculate rent.
+     * @author Kyra Lothrop
+     * @param numRailroads number of railroads the player owns, int
+     * @return the rent for the railroad
+     */
     public int getRent(int numRailroads) {
         return rentValues[numRailroads-1];
     }
 
+    /**
+     * Accessor for the price of the railroad.
+     * @author Kyra Lothrop 101145872
+     * @return price of the railroad
+     */
     public int getPrice() {
         return this.price;
     }
 
+    /**
+     * Accessor to toggle the value of recentlyChanged.
+     * @author Kyra Lothrop 101145872
+     */
     public void toggleRecentlyChanged(){
         this.recentlyChanged = !this.recentlyChanged;
     }
 
+    /**
+     * Accessor to get recentlyChanged attribute.
+     * @author Kyra Lothrop 101145872
+     * @return if the railroad has recently been changed, boolean
+     */
     public boolean getRecentlyChanged() {
         return recentlyChanged;
     }
 
+    /**
+     * Accessor method to package relevant information into a string.
+     * @author Kyra Lothrop 101145872
+     * @return the railroad's current information, String
+     */
     @Override
     public String toString() {
         return "\n\tname='" + super.getName() + '\'';
