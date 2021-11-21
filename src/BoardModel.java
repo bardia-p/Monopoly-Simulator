@@ -143,7 +143,7 @@ public class BoardModel {
         cells = new ArrayList<>();
         players = new ArrayList<>();
         dice =  new int[2];
-        buildableProperties = new ArrayList<Property.NeighborhoodEnum>();
+        buildableProperties = new ArrayList<Property.NeighborhoodEnum>(8);
         bank = new Player("Bank", Icon.BANK);
         gameFinish = false;
         turn = null;
@@ -420,6 +420,7 @@ public class BoardModel {
 
     private boolean setBuildableProperties(){
         boolean buildable = false;
+        buildableProperties.clear();
         if(turn != null) {
             int brown = 0, sky = 0, magenta = 0, orange = 0, red = 0, yellow = 0, green = 0, indigo = 0;
             for (Property p : turn.getProperties(false)) {
@@ -427,56 +428,56 @@ public class BoardModel {
                     case BROWN -> {
                         brown += 1;
                         if (p.getNeighborhood().getNumProperties() == brown) {
-                            buildableProperties.add(0,Property.NeighborhoodEnum.BROWN);
+                            buildableProperties.add(Property.NeighborhoodEnum.BROWN);
                             buildable = true;
                         }
                     }
                     case SKY -> {
                         sky += 1;
                         if (p.getNeighborhood().getNumProperties() == sky) {
-                            buildableProperties.add(1,Property.NeighborhoodEnum.SKY);
+                            buildableProperties.add(Property.NeighborhoodEnum.SKY);
                             buildable = true;
                         }
                     }
                     case MAGENTA -> {
                         magenta += 1;
                         if (p.getNeighborhood().getNumProperties() == magenta) {
-                            buildableProperties.add(2, Property.NeighborhoodEnum.MAGENTA);
+                            buildableProperties.add( Property.NeighborhoodEnum.MAGENTA);
                             buildable = true;
                         }
                     }
                     case ORANGE -> {
                         orange += 1;
                         if (p.getNeighborhood().getNumProperties() == orange) {
-                            buildableProperties.add(3,Property.NeighborhoodEnum.ORANGE);
+                            buildableProperties.add(Property.NeighborhoodEnum.ORANGE);
                             buildable = true;
                         }
                     }
                     case RED -> {
                         red += 1;
                         if (p.getNeighborhood().getNumProperties() == red) {
-                            buildableProperties.add(4,Property.NeighborhoodEnum.RED);
+                            buildableProperties.add(Property.NeighborhoodEnum.RED);
                             buildable = true;
                         }
                     }
                     case YELLOW -> {
                         yellow += 1;
                         if (p.getNeighborhood().getNumProperties() == yellow) {
-                            buildableProperties.add(5,Property.NeighborhoodEnum.YELLOW);
+                            buildableProperties.add(Property.NeighborhoodEnum.YELLOW);
                             buildable = true;
                         }
                     }
                     case GREEN -> {
                         green += 1;
                         if (p.getNeighborhood().getNumProperties() == green) {
-                            buildableProperties.add(6,Property.NeighborhoodEnum.GREEN);
+                            buildableProperties.add(Property.NeighborhoodEnum.GREEN);
                             buildable = true;
                         }
                     }
                     case INDIGO -> {
                         indigo += 1;
                         if (p.getNeighborhood().getNumProperties() == indigo) {
-                            buildableProperties.add(7,Property.NeighborhoodEnum.INDIGO);
+                            buildableProperties.add(Property.NeighborhoodEnum.INDIGO);
                             buildable = true;
                         }
                     }

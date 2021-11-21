@@ -33,6 +33,10 @@ public class Property extends BoardCell {
      */
     private NeighborhoodEnum neighborhood;
     /**
+     * Keeps track of the number of houses on a given property
+     */
+    private int numHouses;
+    /**
      * Keeps track of the grouping of properties on the board according to their colours.
      */
     public enum NeighborhoodEnum{
@@ -47,6 +51,7 @@ public class Property extends BoardCell {
 
         private final int numProperties;
         private final int houseCost;
+
         NeighborhoodEnum(int numProperties, int houseCost){
             this.numProperties = numProperties;
             this.houseCost = houseCost;
@@ -71,10 +76,11 @@ public class Property extends BoardCell {
      */
     Property(String name, int price, int rent, NeighborhoodEnum neighborhood, String imgName){
         super(name, null, CellType.PROPERTY, imgName);
-        this.price = price;
+        this.price = 50;
         this.rent = rent;
         this.recentlyChanged = false;
         this.neighborhood = neighborhood;
+        this.numHouses = 0;
     }
 
     /**
