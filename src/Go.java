@@ -1,6 +1,3 @@
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 /**
  * Group 3
  * SYSC 3110 - Milestone 3 Go Class

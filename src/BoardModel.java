@@ -60,7 +60,7 @@ public class BoardModel {
      */
     public enum Status {GET_NUM_PLAYERS, CREATE_PLAYER_ICONS, INITIALIZE_BOARD, INITIALIZE_MONOPOLY, INITIALIZE_PLAYERS,
         GET_COMMAND, PLAYER_ROLL, PLAYER_MOVE, BUY, SELL, PAY_FEES, PLAYER_STATUS, CELL_STATUS, PLAYER_FORFEIT,
-        PLAYER_REQUEST_FORFEIT, PASS_TURN, REPAINT_BOARD, GAME_OVER}
+        PLAYER_REQUEST_FORFEIT, PASS_TURN, REPAINT_BOARD, GAME_OVER, FREE_PARKING}
 
     /**
      * Keeps track of the possible player commands.
@@ -70,7 +70,6 @@ public class BoardModel {
         SELL ("sell"),
         PAY_RENT ("pay rent"),
         PLAYER_STATUS ("player status"),
-        BOARD_STATUS ("board status"),
         PASS ("pass"),
         ROLL_AGAIN ("roll"),
         CELL_STATUS ("cell status"),
@@ -139,7 +138,7 @@ public class BoardModel {
         cells = new ArrayList<>();
         players = new ArrayList<>();
         dice =  new int[2];
-        bank = new Player("Bank", Icon.BANK);
+        bank = new Player("Bank", Icon.BANK, 0);
         gameFinish = false;
         turn = null;
         numPlayers = 0;
@@ -225,8 +224,7 @@ public class BoardModel {
                 new EmptyCell("Community Chest", BoardCell.CellType.UTILITY, "images/board/chest_2.jpg"),
                 new Property("Tennessee Avenue",180,14, "images/board/tennessee.jpg"),
                 new Property("New York Avenue",200,16, "images/board/new_york.jpg"),
-                new EmptyCell("FREE PARKING", BoardCell.CellType.FREE_PARKING,
-                        "images/board/free_parking.jpg"),
+                new FreeParking("images/board/free_parking.jpg"),
                 new Property("Kentucky Avenue",220,18, "images/board/kentucky.jpg"),
                 new EmptyCell("Chance Card", BoardCell.CellType.UTILITY, "images/board/chance_2.jpg"),
                 new Property("Indiana Avenue",220,18, "images/board/indiana.jpg"),
@@ -430,6 +428,10 @@ public class BoardModel {
         player.setPosition(newPlayerPosition);
         player.setCurrentCell(cells.get(newPlayerPosition));
         getCommand(player);
+
+        if (player.getCurrentCell().getType() == BoardCell.CellType.FREE_PARKING){
+            handleFreeParking(player);
+        }
     }
 
     /**
@@ -598,6 +600,17 @@ public class BoardModel {
     }
 
     /**
+     * A method for handling free parking.
+     * @param player Player
+     * @author Bardia Parmoun, 101143006
+     */
+    public void handleFreeParking(Player player){
+        player.getMoney(bank.getCash());
+        bank.setCash(0);
+        sendBoardUpdate(new PlayerEvent(this, Status.FREE_PARKING, player));
+    }
+
+    /**
      * Primary loop of the program. Alternates the active players based on the list generated
      * and gets the actions they are able to take. Once there is only one player remaining finishes
      * the game and exits the loop.
@@ -682,5 +695,14 @@ public class BoardModel {
      */
     public Player getCurrentTurn() {
         return turn;
+    }
+
+    /**
+     * Returns the total money in the bank.
+     * @return the money inside the bank, int
+     * @author Owen VanDusen 101152022
+     */
+    public int getBankMoney(){
+        return bank.getCash();
     }
 }

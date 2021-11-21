@@ -81,6 +81,11 @@ public class Player {
      */
     public enum StatusEnum {NO_FEES, UNPAID_FEES, PAID_FEES}
 
+    Player(String name, BoardModel.Icon icon, int cash){
+        this(name, icon);
+        this.cash = cash;
+    }
+
     /**
      * Constructor for Player, sets all values.
      * @author Sarah Chow 101143033

@@ -147,6 +147,24 @@ public class BoardFrame extends JFrame implements BoardView  {
      * The height of the cash icon.
      */
     private static final int CASH_HEIGHT = 100;
+    /**
+     * The height of the cell.
+     */
+    private static final int CELL_HEIGHT = 130;
+    /**
+     * Keeps track of location of Jail square.
+     */
+    public static final int JAIL_LOCATION = 10;
+    /**
+     * Keeps track of the location of free parking.
+     */
+    public static final int FREE_PARKING_LOCATION = 20;
+    /**
+     * Keeps track of location of Jail square.
+     */
+    public static final int GOTOJAIL_LOCATION = 30;
+
+
 
     /**
      * Constructor for the Board listener, creates the board model, adds the board listener to the board model,
@@ -201,8 +219,10 @@ public class BoardFrame extends JFrame implements BoardView  {
 
         // Creating the turn label.
         turnLabel = new JLabel();
+        TitledBorder title = BorderFactory.createTitledBorder("Current Turn");
+        turnLabel.setBorder(title);
         turnLabel.setBackground(Color.decode(BACKGROUND_COLOR));
-        turnLabel.setBounds(WINDOW_WIDTH/2 + BOARD_WIDTH/2 - 4*PANEL_GAP, PANEL_GAP,
+        turnLabel.setBounds(BOARD_WIDTH, PANEL_GAP,
                 WINDOW_WIDTH - BOARD_WIDTH, BOARD_SHIFT_Y);
 
         layeredPane.add(turnLabel,0);
@@ -218,7 +238,7 @@ public class BoardFrame extends JFrame implements BoardView  {
 
         // Adding the panels to board.
         layeredPane.add(logoPanel,1);
-        layeredPane.add(cashPanel,1);
+        layeredPane.moveToFront(logoPanel);
 
         // Making the frame visible.
         this.pack();
@@ -260,6 +280,7 @@ public class BoardFrame extends JFrame implements BoardView  {
                 case PLAYER_MOVE -> handlePlayerGUIMove(pe.getPlayer(), pe.getValue(), player.getPosition());
                 case PLAYER_FORFEIT -> handleForfeitedPlayer(player);
                 case PLAYER_REQUEST_FORFEIT -> handleRequestForfeit(player);
+                case FREE_PARKING -> handleFreeParking(player);
             }
         }
     }
@@ -385,8 +406,10 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @author Bardia Parmoun, 101143006
      */
     private void buildCashDisplay(){
-        cashPanel = new JPanel();
-        cashPanel.setBounds(BOARD_WIDTH/4 - CASH_WIDTH/3, BOARD_HEIGHT/4 + CASH_HEIGHT/2, CASH_WIDTH, CASH_HEIGHT);
+        cashPanel = new JPanel(new BorderLayout());
+        cashPanel.setBounds(CELL_HEIGHT, BOARD_SHIFT_Y + CELL_HEIGHT + PANEL_GAP, CASH_WIDTH/4 + CASH_WIDTH,
+                CASH_HEIGHT);
+
         cashPanel.setBackground(Color.decode(BACKGROUND_COLOR));
         try {
             BufferedImage image = ImageIO.read(Objects.requireNonNull(getClass().getResource("images/money.png")));
@@ -394,8 +417,13 @@ public class BoardFrame extends JFrame implements BoardView  {
 
             Image newImage = image.getScaledInstance(CASH_WIDTH, CASH_HEIGHT, Image.SCALE_DEFAULT);
             JLabel label = new JLabel(new ImageIcon(newImage));
+            JLabel cashAmount = new JLabel("$" + model.getBankMoney());
             cashPanel.removeAll();
-            cashPanel.add(label);
+            cashPanel.add(label, BorderLayout.WEST);
+            cashPanel.add(cashAmount, BorderLayout.EAST);
+            layeredPane.add(cashPanel,1);
+            layeredPane.moveToFront(cashPanel);
+
         }  catch(Exception e){
             System.out.println("build cash display failed");
         }
@@ -676,25 +704,26 @@ public class BoardFrame extends JFrame implements BoardView  {
         int col_step = -1;
         int direction = GridBagConstraints.WEST;
 
-        for (BoardCell cell: cells) {
+        for (int i = 0; i < cells.size(); i++) {
+            BoardCell cell = cells.get(i);
             try{
                 // Changes the row and col if it hits corners.
-                switch (cell.getName()) {
-                    case "JAIL" -> {
+                switch (i) {
+                    case JAIL_LOCATION -> {
                         row = SIZE - 1;
                         col = 0;
                         row_step = -1;
                         col_step = 0;
                         direction = GridBagConstraints.NORTH;
                     }
-                    case "FREE PARKING" -> {
+                    case FREE_PARKING_LOCATION -> {
                         row = 0;
                         col = 0;
                         row_step = 0;
                         col_step = 1;
                         direction = GridBagConstraints.EAST;
                     }
-                    case "GO TO JAIL" -> {
+                    case GOTOJAIL_LOCATION -> {
                         row = 0;
                         col = SIZE - 1;
                         row_step = 1;
@@ -870,6 +899,15 @@ public class BoardFrame extends JFrame implements BoardView  {
         if (result){
             feesMessage = "You have successfully paid $" + fees + " to " +
                     boardCell.getOwner().getIconName().toUpperCase();
+
+            Player owner = boardCell.getOwner();
+
+            // Updating the status of panel of the owner that gets the money.
+            if (!owner.getIconName().equals(BoardModel.Icon.BANK.getName())){
+                updatePlayerStatusPanel(owner);
+            } else {
+                buildCashDisplay();
+            }
         }
         else{
             feesMessage = "You cannot currently pay fees to " + boardCell.getOwner().getIconName()
@@ -940,6 +978,17 @@ public class BoardFrame extends JFrame implements BoardView  {
             }
         }
         JOptionPane.showMessageDialog(null, gameOverMessage, "GAME OVER!", JOptionPane.PLAIN_MESSAGE);
+    }
+
+    /**
+     * Handles landing on free parking.
+     * @param player landed on parking, Player
+     */
+    private void handleFreeParking(Player player){
+        String message = "Player " + player.getIconName().toUpperCase() + " landed on free parking and collected " +
+                "central money!";
+        JOptionPane.showMessageDialog(null, message, "FREE PARKING!", JOptionPane.PLAIN_MESSAGE);
+        buildCashDisplay();
     }
 
     /**
