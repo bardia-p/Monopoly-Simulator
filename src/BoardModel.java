@@ -354,8 +354,11 @@ public class BoardModel {
         }
 
         if (checkPlayerFeeStatus(player)){
-            player.setFeesStatus(Player.StatusEnum.UNPAID_FEES);
             commands.add(Command.PAY_FEES);
+
+            if (player.getFeesStatus() != Player.StatusEnum.UNPAID_FEES){
+                commands.add(BoardModel.Command.PASS);
+            }
         } else {
             // If the player has paid their fees they can pass or roll again.
             if (player.hasAnotherRoll() && !player.getResortInJail()) {
@@ -382,12 +385,16 @@ public class BoardModel {
         if (currentCell.getType() == BoardCell.CellType.JAIL){
             Jail jail = (Jail) currentCell;
             if (jail.isPlayersLastRound(player)){
+                player.setFeesStatus(Player.StatusEnum.UNPAID_FEES);
                 sendBoardUpdate(new BoardEvent(this, Status.FORCE_PAY_JAIL, player));
+                return true;
+            } else if (player.getFeesStatus() != Player.StatusEnum.PAID_FEES){
                 return true;
             }
         } // Checks to see if the cell has an owner and if you have paid the fees for it.
         else if (currentCell.getOwner() != player && currentCell.getOwner() != null &&
                 player.getFeesStatus() != Player.StatusEnum.PAID_FEES) {
+            player.setFeesStatus(Player.StatusEnum.UNPAID_FEES);
             return true;
         }
 
@@ -479,7 +486,7 @@ public class BoardModel {
         int newPlayerPosition = BoardFrame.JAIL_LOCATION;
         player.setPosition(newPlayerPosition);
         player.setCurrentCell(cells.get(newPlayerPosition));
-        player.toggleResortInJail(); // Set to True
+        player.setResortInJail(true); // Set to True
         ((Jail)player.getCurrentCell()).incrementJailRound(player);
     }
 
@@ -492,6 +499,7 @@ public class BoardModel {
         Jail jail = (Jail) player.getCurrentCell();
         jail.endJail(player);
         sendBoardUpdate(new BoardEvent(this, Status.EXIT_JAIL, player));
+        player.setResortInJail(false); // Set to True
 
         if (!rolledDouble){
             player.setRollAgain(true);

@@ -756,7 +756,6 @@ public class BoardFrame extends JFrame implements BoardView  {
         if (ans == JOptionPane.YES_OPTION || player.getNumDoubles() > 0){
             JOptionPane.showMessageDialog(null,
                     String.format("Player %s left JAIL!", player.getIconName().toUpperCase()));
-            player.toggleResortInJail();
         }
     }
 

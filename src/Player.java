@@ -117,8 +117,8 @@ public class Player {
      * Method to toggle resort in jail boolean value.
      * @author Sarah Chow 101143033
      */
-    public void toggleResortInJail() {
-        this.resortInJail = !this.resortInJail;
+    public void setResortInJail(boolean jailStatus) {
+        this.resortInJail = jailStatus;
     }
 
     /**
