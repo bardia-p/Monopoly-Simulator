@@ -68,7 +68,6 @@ public class BoardModel {
     public enum Command{
         BUY ("buy"),
         SELL ("sell"),
-        PAY_RENT ("pay rent"),
         PLAYER_STATUS ("player status"),
         BOARD_STATUS ("board status"),
         PASS ("pass"),
@@ -166,9 +165,6 @@ public class BoardModel {
         }
         else if(command.equals((Command.SELL.getStringCommand()))){
             sellPropertyPrompt(turn); //must prompt user for what to sell
-        }
-        else if(command.equals((Command.PAY_RENT.getStringCommand()))){
-            payFees(turn.getCurrentCell(), turn);
         }
         else if(command.equals((Command.PAY_FEES.getStringCommand()))){
             payFees(turn.getCurrentCell(), turn);
@@ -352,43 +348,19 @@ public class BoardModel {
             }
         }
 
-        if ((currentCell.getType() == BoardCell.CellType.JAIL) && (player.getLastRoundJail())){
-            player.setFeesStatus(Player.StatusEnum.UNPAID_FEES);
-            commands.add(BoardModel.Command.PAY_FEES);
-        }
-
-        // Checks to see if the sell has an owner and if you have paid the fees for it.
-        if (currentCell.getOwner() != player && currentCell.getOwner() != null &&
-                player.getFeesStatus() != Player.StatusEnum.PAID_FEES &&
-                currentCell.getType() != BoardCell.CellType.JAIL ) {
-
-
-            if (currentCell.getType() == BoardCell.CellType.PROPERTY){
-                commands.add(BoardModel.Command.PAY_RENT);
-            } else if (currentCell.getType() == BoardCell.CellType.TAX){
-                commands.add(BoardModel.Command.PAY_FEES);
-            }
-
-        }
-
-
-
         // Handles selling the property
         if (player.getProperties(true).size() > 0){
             commands.add(BoardModel.Command.SELL);
         }
 
-        // If the player has paid their rent they can pass or roll again.
-        if (player.getFeesStatus() != Player.StatusEnum.UNPAID_FEES) {
-            if (player.hasAnotherRoll() ||
-                    (player.getResortInJail() && player.getFeesStatus() == Player.StatusEnum.PAID_FEES)) {
-
-                if (player.getResortInJail()){
-                    player.toggleResortInJail(); // Leave jail officially
-                }
-
+        if (checkPlayerFeeStatus(player)){
+            player.setFeesStatus(Player.StatusEnum.UNPAID_FEES);
+            commands.add(Command.PAY_FEES);
+        } else {
+            // If the player has paid their fees they can pass or roll again.
+            if (player.hasAnotherRoll() && !player.getResortInJail()) {
                 commands.add(Command.ROLL_AGAIN);
-            } else if (!player.getLastRoundJail()){
+            } else {
                 commands.add(BoardModel.Command.PASS);
             }
         }
@@ -402,6 +374,24 @@ public class BoardModel {
 
 
         sendBoardUpdate(new BoardEvent(this, BoardModel.Status.GET_COMMAND, commands, player));
+    }
+
+    private boolean checkPlayerFeeStatus(Player player){
+        BoardCell currentCell = player.getCurrentCell();
+
+        if (currentCell.getType() == BoardCell.CellType.JAIL){
+            Jail jail = (Jail) currentCell;
+            if (jail.isPlayersLastRound(player)){
+                sendBoardUpdate(new BoardEvent(this, Status.FORCE_PAY_JAIL, player));
+                return true;
+            }
+        } // Checks to see if the cell has an owner and if you have paid the fees for it.
+        else if (currentCell.getOwner() != player && currentCell.getOwner() != null &&
+                player.getFeesStatus() != Player.StatusEnum.PAID_FEES) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -437,7 +427,7 @@ public class BoardModel {
         if (dice[0] == dice[1]){
             if (player.getResortInJail()){
                 player.addNumDoubles();
-                sendBoardUpdate(new BoardEvent(this, Status.EXIT_JAIL, player));
+                exitJail(player, true);
             }
             else{
                 setDoubleRoll(player);
@@ -447,8 +437,6 @@ public class BoardModel {
         if (!player.getResortInJail()){
             move(player, dice[0] + dice[1]);
         }
-
-
     }
 
     /**
@@ -473,7 +461,7 @@ public class BoardModel {
 
         // Player lands on go to Jail, do not have other options.
         if (newPlayerPosition == BoardFrame.GOTOJAIL_LOCATION) {
-            inJail(player);
+            sendToJail(player);
         } else {
             getCommand(player);
         }
@@ -481,43 +469,32 @@ public class BoardModel {
     }
 
     /**
-     * Method for players in jail. Different functionalities depending on how many rounds they have spent in jail.
+     * Sends the player to jail
      * @author Sarah Chow 101143033
      * @param player player in jail, Player
      */
-    public void inJail(Player player){
+    private void sendToJail(Player player){
+        sendBoardUpdate(new BoardEvent(this, Status.GO_TO_JAIL, player));
 
-        if (player.getResortInJail()){ // Player in jail
+        int newPlayerPosition = BoardFrame.JAIL_LOCATION;
+        player.setPosition(newPlayerPosition);
+        player.setCurrentCell(cells.get(newPlayerPosition));
+        player.toggleResortInJail(); // Set to True
+        ((Jail)player.getCurrentCell()).incrementJailRound(player);
+    }
 
-            Jail jail = (Jail)player.getCurrentCell();
+    /**
+     * The player exits jail.
+     * @author Bardia Parmoun 101143006
+     * @param player player in jail, Player
+     */
+    private void exitJail(Player player, boolean rolledDouble){
+        Jail jail = (Jail) player.getCurrentCell();
+        jail.endJail(player);
+        sendBoardUpdate(new BoardEvent(this, Status.EXIT_JAIL, player));
 
-            sendBoardUpdate(new BoardEvent(this, Status.EXIT_JAIL, player));
-
-            if (!player.getResortInJail()){
-                player.pay(Jail.FEE);
-                jail.endJail(player);
-            }
-            else if (jail.getRoundCountJail(player) > 3){ // Exceeded three rounds in jail
-                player.toggleLastRoundJail(); // Set to True
-                player.setFeesStatus(Player.StatusEnum.UNPAID_FEES);
-                sendBoardUpdate(new BoardEvent(this, Status.FORCE_PAY_JAIL, player));
-
-                getCommand(player);
-            }
-            else{
-                jail.incrementJailRound(player); // Pass their turn in jail
-            }
-
-        }
-        else { // Entering jail
-            sendBoardUpdate(new BoardEvent(this, Status.GO_TO_JAIL, player));
-
-            int newPlayerPosition = BoardFrame.JAIL_LOCATION;
-            player.setPosition(newPlayerPosition);
-            player.setCurrentCell(cells.get(newPlayerPosition));
-            player.toggleResortInJail(); // Set to True
-
-            ((Jail)player.getCurrentCell()).startJail(player);
+        if (!rolledDouble){
+            player.setRollAgain(true);
         }
     }
 
@@ -615,10 +592,9 @@ public class BoardModel {
             player.setFeesStatus(Player.StatusEnum.PAID_FEES);
             result = true;
 
-            if (player.getLastRoundJail()){
-                player.toggleLastRoundJail(); // No longer in last round jeopardy
+            if (boardCell.getType() == BoardCell.CellType.JAIL){
+                exitJail(player, false);
             }
-
         }
 
         //Inform player they have paid rent
@@ -717,17 +693,14 @@ public class BoardModel {
                 turn = player;
                 if (!player.isBankrupt()){
 
+                    // Checks to see if the player is in jail.
                     if (player.getResortInJail()){
-                        inJail(player);
-                    }
-                    System.out.println("from main: " + turn.getLastRoundJail());
-
-
-                    if (!player.getLastRoundJail()){
-                        roll(player);
-                        getCommand(player);
+                        Jail jail = (Jail) player.getCurrentCell();
+                        jail.incrementJailRound(player); // Pass their turn in jail
                     }
 
+                    roll(player);
+                    getCommand(player);
 
                     // Keeps prompting the player for commands until their turn is over.
                     while (turn != null){
@@ -736,8 +709,6 @@ public class BoardModel {
                             checkDoubleRoll = false;
                         }
                     }
-
-
                 }
 
                 // Checks to see if the game is over

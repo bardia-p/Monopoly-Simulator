@@ -34,15 +34,6 @@ public class Jail extends BoardCell{
     }
 
     /**
-     * Put player in jail, start counting their rounds.
-     * @author Sarah Chow 101143033
-     * @param player player in jail, Player
-     */
-    public void startJail(Player player){
-        inJail.put(player, 1);
-    }
-
-    /**
      * Remove player from jail.
      * @author Sarah Chow 101143033
      * @param player
@@ -57,7 +48,11 @@ public class Jail extends BoardCell{
      * @param player player in jail
      */
     public void incrementJailRound(Player player){
-        inJail.put(player, inJail.get(player) + 1);
+        if (inJail.containsKey(player)){
+            inJail.put(player, inJail.get(player) + 1);
+        } else {
+            inJail.put(player, 0);
+        }
     }
 
     /**
@@ -67,7 +62,21 @@ public class Jail extends BoardCell{
      * @return the amount of rounds the player has been in jail.
      */
     public int getRoundCountJail(Player player){
-        return (inJail.get(player));
+        if (inJail.containsKey(player)){
+            return (inJail.get(player));
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * Checks to see if this is the player's last round in jail.
+     * @author Bardia Parmoun, 101143006
+     * @param player the player to check.
+     * @return true if it is the player's last round.
+     */
+    public boolean isPlayersLastRound(Player player){
+        return getRoundCountJail(player) == 3;
     }
 
     /**

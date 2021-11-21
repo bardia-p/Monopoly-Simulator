@@ -87,11 +87,6 @@ public class Player {
     private boolean resortInJail;
 
     /**
-     * Keeps track if this is the player's final round in jail.
-     */
-    private boolean lastRoundJail;
-
-    /**
      * Constructor for Player, sets all values.
      * @author Sarah Chow 101143033
      * @author Kyra Lothrop 101145872
@@ -115,25 +110,8 @@ public class Player {
         this.propertyToSell = null;
         this.confirmSell = false;
         this.resortInJail = false;
-        this.lastRoundJail = false;
     }
 
-    /**
-     * Method to toggle last round jail boolean value.
-     * @author Sarah Chow 101143033
-     */
-    public void toggleLastRoundJail(){
-        this.lastRoundJail = !this.lastRoundJail;
-    }
-
-    /**
-     * Accessor to get the last round jail value.
-     * @author Sarah Chow 101143033
-     * @return if the player is in jail, boolean
-     */
-    public boolean getLastRoundJail(){
-        return this.lastRoundJail;
-    }
 
     /**
      * Method to toggle resort in jail boolean value.

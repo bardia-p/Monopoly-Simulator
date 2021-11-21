@@ -543,7 +543,7 @@ public class BoardFrame extends JFrame implements BoardView  {
         commandsPanel.setBounds(COMMAND_PANEL_GAP, COMMAND_SHIFT_Y,BOARD_WIDTH - 2 * COMMAND_PANEL_GAP,
                 COMMAND_HEIGHT + COMMAND_PANEL_GAP);
 
-        String[] buttonsText = {"Roll", "Pass", "Forfeit", "Buy", "Sell", "Pay Rent", "Pay Fees", "Player Status",
+        String[] buttonsText = {"Roll", "Pass", "Forfeit", "Buy", "Sell", "Pay Fees", "Player Status",
                 "Cell Status"};
 
         commandsPanel.setBackground(Color.decode(BACKGROUND_COLOR));
@@ -560,7 +560,6 @@ public class BoardFrame extends JFrame implements BoardView  {
                 case "Forfeit" -> commandButton.setActionCommand(BoardModel.Command.FORFEIT.getStringCommand());
                 case "Buy" -> commandButton.setActionCommand(BoardModel.Command.BUY.getStringCommand());
                 case "Sell" -> commandButton.setActionCommand(BoardModel.Command.SELL.getStringCommand());
-                case "Pay Rent" -> commandButton.setActionCommand(BoardModel.Command.PAY_RENT.getStringCommand());
                 case "Pay Fees" -> commandButton.setActionCommand(BoardModel.Command.PAY_FEES.getStringCommand());
                 case "Player Status" -> commandButton.setActionCommand(BoardModel.Command.PLAYER_STATUS.getStringCommand());
                 case "Cell Status" -> commandButton.setActionCommand(BoardModel.Command.CELL_STATUS.getStringCommand());
