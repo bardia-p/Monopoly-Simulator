@@ -1,9 +1,6 @@
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 /**
  * Group 3
- * SYSC 3110 - Milestone 2 Tax Class
+ * SYSC 3110 - Milestone 3 Tax Class
  *
  * This document is the Tax. This class extends BoardCell and has a tax property.
  *
@@ -11,7 +8,7 @@ import java.util.Map;
  * @author Kyra Lothrop 101145872
  * @author Bardia Parmoun 101143006
  * @author Owen VanDusen 101152022
- * @version 1.0
+ * @version 3.0
  *
  */
 public class Tax extends BoardCell{

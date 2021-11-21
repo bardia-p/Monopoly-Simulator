@@ -3,7 +3,7 @@ import static org.junit.Assert.*;
 
 /**
  * Group 3
- * SYSC 3110 - Milestone 2 BoardModelTest Class
+ * SYSC 3110 - Milestone 3 BoardModelTest Class
  *
  * This test class ensures the backing data used to display the Monopoly game is properly
  * stored in the BoardModel class and that various BoardModel methods are working as expected

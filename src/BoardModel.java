@@ -2,7 +2,7 @@ import java.util.*;
 
 /**
  * Group 3
- * SYSC 3110 - Milestone 2 BoardModel Class
+ * SYSC 3110 - Milestone 3 BoardModel Class
  *
  * This document is the BoardModel. This class has a list of properties, a list of players, an array of dice,
  * the number of players, the size of the board, the board views, if the game has finished, the current turn,
@@ -12,7 +12,7 @@ import java.util.*;
  * @author Kyra Lothrop 101145872
  * @author Bardia Parmoun 101143006
  * @author Owen VanDusen 101152022
- * @version 1.0
+ * @version 3.0
  */
 public class BoardModel {
     /**
@@ -60,7 +60,7 @@ public class BoardModel {
      */
     public enum Status {GET_NUM_PLAYERS, CREATE_PLAYER_ICONS, INITIALIZE_BOARD, INITIALIZE_MONOPOLY, INITIALIZE_PLAYERS,
         GET_COMMAND, PLAYER_ROLL, PLAYER_MOVE, BUY, SELL, PAY_FEES, PLAYER_STATUS, CELL_STATUS, GO_TO_JAIL,
-        EXIT_JAIL, FORCE_PAY_JAIL, PLAYER_REQUEST_FORFEIT, PASS_TURN, REPAINT_BOARD, GAME_OVER, PASS_GO}
+        EXIT_JAIL, FORCE_PAY_JAIL, PLAYER_REQUEST_FORFEIT, PASS_TURN, REPAINT_BOARD, GAME_OVER, PASS_GO, FREE_PARKING}
 
     /**
      * Keeps track of the possible player commands.
@@ -136,7 +136,7 @@ public class BoardModel {
         cells = new ArrayList<>();
         players = new ArrayList<>();
         dice =  new int[2];
-        bank = new Player("Bank", Icon.BANK);
+        bank = new Player("Bank", Icon.BANK, 0);
         gameFinish = false;
         turn = null;
         numPlayers = 0;
@@ -214,7 +214,7 @@ public class BoardModel {
                 new EmptyCell("Community Chest", BoardCell.CellType.CHANCE_AND_CHEST, "images/board/chest_2.jpg"),
                 new Property("Tennessee Avenue",180,14, "images/board/tennessee.jpg"),
                 new Property("New York Avenue",200,16, "images/board/new_york.jpg"),
-                new EmptyCell("FREE PARKING", BoardCell.CellType.FREE_PARKING, "images/board/free_parking.jpg"),
+                new FreeParking("images/board/free_parking.jpg"),
                 new Property("Kentucky Avenue",220,18, "images/board/kentucky.jpg"),
                 new EmptyCell("Chance Card", BoardCell.CellType.CHANCE_AND_CHEST, "images/board/chance_2.jpg"),
                 new Property("Indiana Avenue",220,18, "images/board/indiana.jpg"),
@@ -236,7 +236,7 @@ public class BoardModel {
                 new Property("Boardwalk",500,50, "images/board/boardwalk.jpg")
         ));
 
-        sendBoardUpdate(new BoardEvent(this,Status.INITIALIZE_BOARD, cells));
+        sendBoardUpdate(new BoardEvent(this,Status.INITIALIZE_BOARD));
     }
 
     /**
@@ -279,21 +279,12 @@ public class BoardModel {
     /**
      * Updates the views with a generated board event.
      * @author Sarah Chow 101143033
-     * @param boardEvent the event occurring on the board, BoardEvent
+     * @param monopolyEvent the event occurring on the board, MonopolyEvent
      */
-    private void sendBoardUpdate(BoardEvent boardEvent){
+    private void sendBoardUpdate(MonopolyEvent monopolyEvent){
         for (BoardView view : views) {
-            view.handleBoardUpdate(boardEvent);
+            view.handleMonopolyUpdate(monopolyEvent);
         }
-    }
-
-    /**
-     * Accessor method for the dice rolled using roll(). ONLY USED FOR TEST CASES
-     * @return Two element array representing each individual die rolled
-     * @author Owen VanDusen 101152022
-     */
-    public int[] getDice() {
-        return dice;
     }
 
     /**
@@ -301,8 +292,8 @@ public class BoardModel {
      * @author Kyra Lothrop 101145872
      */
     private void initiatePlayers(){
-        sendBoardUpdate(new BoardEvent(this, Status.INITIALIZE_PLAYERS, numPlayers));
-        sendBoardUpdate(new BoardEvent(this, players, Status.CREATE_PLAYER_ICONS));
+        sendBoardUpdate(new BoardEvent(this, Status.INITIALIZE_PLAYERS));
+        sendBoardUpdate(new BoardEvent(this, Status.CREATE_PLAYER_ICONS));
 
         for (Player p : players){
             move(p, 0);
@@ -329,13 +320,12 @@ public class BoardModel {
         if (currentCell.getType() == BoardCell.CellType.PROPERTY ||
                 currentCell.getType() == BoardCell.CellType.RAILROAD ||
                 currentCell.getType() == BoardCell.CellType.UTILITY){
-            BoardCell currentLocation = currentCell;
 
             // Handles the buying command by checking to see if you can afford it
             // and the property has not been sold by you recently (you cannot buy back the property you just sold).
-            if (currentLocation.getOwner() == null &&
-                    player.getCash() >= ((Buyable) currentLocation).getPrice() &&
-                    !((Buyable)currentLocation).getRecentlyChanged()) {
+            if (currentCell.getOwner() == null &&
+                    player.getCash() >= ((Buyable) currentCell).getPrice() &&
+                    !((Buyable)currentCell).getRecentlyChanged()) {
                 commands.add(BoardModel.Command.BUY);
             }
         }
@@ -368,7 +358,7 @@ public class BoardModel {
         commands.add(Command.FORFEIT);
 
 
-        sendBoardUpdate(new BoardEvent(this, BoardModel.Status.GET_COMMAND, commands, player));
+        sendBoardUpdate(new BoardEvent(this, BoardModel.Status.GET_COMMAND, player, commands));
     }
 
     /**
@@ -384,11 +374,9 @@ public class BoardModel {
             Jail jail = (Jail) currentCell;
             if (jail.isPlayersLastRound(player)){
                 player.setFeesStatus(Player.StatusEnum.UNPAID_FEES);
-                sendBoardUpdate(new BoardEvent(this, Status.FORCE_PAY_JAIL, player));
+                sendBoardUpdate(new PlayerEvent(this, Status.FORCE_PAY_JAIL, player));
                 return true;
-            } else if (jail.getRoundCountJail(player) !=0 && player.getFeesStatus() != Player.StatusEnum.PAID_FEES){
-                return true;
-            }
+            } else return jail.getRoundCountJail(player) != 0 && player.getFeesStatus() != Player.StatusEnum.PAID_FEES;
         } // Checks to see if the cell has an owner and if you have paid the fees for it.
         else if (currentCell.getOwner() != player && currentCell.getOwner() != null &&
                 player.getFeesStatus() != Player.StatusEnum.PAID_FEES) {
@@ -427,7 +415,7 @@ public class BoardModel {
         dice[0] = rand.nextInt((6 - 1) + 1) + 1;
         dice[1] = rand.nextInt((6 - 1) + 1) + 1;
 
-        sendBoardUpdate(new BoardEvent(this, Status.PLAYER_ROLL, player, dice));
+        sendBoardUpdate(new BoardEvent(this, Status.PLAYER_ROLL));
 
         if (dice[0] == dice[1]){
             if (player.getResortInJail()){
@@ -438,6 +426,7 @@ public class BoardModel {
                 setDoubleRoll(player);
             }
         }
+
 
         if (!player.getResortInJail()){
             move(player, dice[0] + dice[1]);
@@ -451,11 +440,9 @@ public class BoardModel {
      * @param amountToMove distance the player should move, int
      */
     public void move(Player player, int amountToMove){
+        sendBoardUpdate(new PlayerEvent(this, Status.PLAYER_MOVE, player, amountToMove, true));
 
         int originalPosition = player.getPosition();
-
-        sendBoardUpdate(new BoardEvent(this, Status.PLAYER_MOVE, player, amountToMove, player.getPosition()));
-
         int newPlayerPosition = (player.getPosition() + amountToMove) % SIZE_OF_BOARD;
 
         player.setPosition(newPlayerPosition);
@@ -470,13 +457,16 @@ public class BoardModel {
 
         for(int i = 1; i<=amountToMove; i++){
             if(cells.get((originalPosition + i)% SIZE_OF_BOARD).getType() == BoardCell.CellType.GO) {
-                sendBoardUpdate(new BoardEvent(this, Status.PASS_GO, player));  //here
+                sendBoardUpdate(new PlayerEvent(this, Status.PASS_GO, player));  //here
                 player.setCash(player.getCash() + ((Go) cells.get(0)).getReward());
             }
         }
 
         getCommand(player);
 
+        if (player.getCurrentCell().getType() == BoardCell.CellType.FREE_PARKING) {
+            handleFreeParking(player);
+        }
     }
 
     /**
@@ -485,7 +475,7 @@ public class BoardModel {
      * @param player player in jail, Player
      */
     private void sendToJail(Player player){
-        sendBoardUpdate(new BoardEvent(this, Status.GO_TO_JAIL, player));
+        sendBoardUpdate(new PlayerEvent(this, Status.GO_TO_JAIL, player));
 
         int newPlayerPosition = BoardFrame.JAIL_LOCATION;
         player.setPosition(newPlayerPosition);
@@ -502,7 +492,7 @@ public class BoardModel {
     private void exitJail(Player player, boolean rolledDouble){
         Jail jail = (Jail) player.getCurrentCell();
         jail.endJail(player);
-        sendBoardUpdate(new BoardEvent(this, Status.EXIT_JAIL, player));
+        sendBoardUpdate(new PlayerEvent(this, Status.EXIT_JAIL, player));
         player.setResortInJail(false); // Set to True
 
         if (!rolledDouble){
@@ -535,7 +525,7 @@ public class BoardModel {
             result = true;
         }
 
-        sendBoardUpdate(new BoardEvent(this, Status.BUY, player, cellToBuy, result));
+        sendBoardUpdate(new PlayerEvent(this, Status.BUY, player, result));
 
     }
 
@@ -545,7 +535,7 @@ public class BoardModel {
      * @param player player selling the property, Player
      */
     public void sellLocationPrompt(Player player){
-        sendBoardUpdate(new BoardEvent(this, Status.SELL, player));
+        sendBoardUpdate(new PlayerEvent(this, Status.SELL, player));
     }
 
     /**
@@ -574,7 +564,7 @@ public class BoardModel {
      * @param player active player, Player
      */
     public void getPlayerStatus(Player player){
-        sendBoardUpdate(new BoardEvent(this, Status.PLAYER_STATUS, player));
+        sendBoardUpdate(new PlayerEvent(this, Status.PLAYER_STATUS, player));
     }
 
 
@@ -583,7 +573,7 @@ public class BoardModel {
      * @author Kyra Lothrop 101145872
      */
     public void getCellStatus(){
-        sendBoardUpdate(new BoardEvent(this, Status.CELL_STATUS, turn));
+        sendBoardUpdate(new PlayerEvent(this, Status.CELL_STATUS, turn));
     }
 
     /**
@@ -603,7 +593,7 @@ public class BoardModel {
         } else if (boardCell.getType() == BoardCell.CellType.TAX){
             fees = ((Tax) boardCell).getTax();
         } else if (boardCell.getType() == BoardCell.CellType.JAIL){
-            fees = ((Jail) boardCell).FEE;
+            fees = Jail.FEE;
         } else if (boardCell.getType() == BoardCell.CellType.RAILROAD){
             fees = ((Railroad) boardCell).getRent(boardCell.getOwner().getNumRailroadsOwned());
         } else if (boardCell.getType() == BoardCell.CellType.UTILITY){
@@ -626,7 +616,7 @@ public class BoardModel {
         }
 
         //Inform player they have paid rent
-        sendBoardUpdate(new BoardEvent(this, Status.PAY_FEES, player, fees, result));
+        sendBoardUpdate(new PlayerEvent(this, Status.PAY_FEES, player, fees, result));
     }
 
     /**
@@ -655,7 +645,7 @@ public class BoardModel {
         turn = null;
 
         if (numPlayers > 1) {
-            sendBoardUpdate(new BoardEvent(this, Status.PASS_TURN, player));
+            sendBoardUpdate(new PlayerEvent(this, Status.PASS_TURN, player));
         }
     }
 
@@ -669,8 +659,9 @@ public class BoardModel {
         player.addNumDoubles();
 
         // Roll 3 doubles in a row
-        if (player.getNumDoubles() >= 3){
-            sendBoardUpdate(new BoardEvent(this, Status.GO_TO_JAIL, player));
+        if (player.getNumDoubles() >= Jail.JAIL_ROLL_LIMIT){
+            sendToJail(player);
+            player.resetNumDoubles();
         }
         else{
             player.setRollAgain(true);
@@ -683,7 +674,7 @@ public class BoardModel {
      * @param player player who requested to forfeit.
      */
     public void request_forfeit(Player player){
-        sendBoardUpdate(new BoardEvent(this, Status.PLAYER_REQUEST_FORFEIT, player));
+        sendBoardUpdate(new PlayerEvent(this, Status.PLAYER_REQUEST_FORFEIT, player));
     }
 
     /**
@@ -703,7 +694,18 @@ public class BoardModel {
      * @author Owen VanDusen 101152022
      */
     public void gameOver(){
-        sendBoardUpdate(new BoardEvent(this, players, Status.GAME_OVER));
+        sendBoardUpdate(new BoardEvent(this, Status.GAME_OVER));
+    }
+
+    /**
+     * A method for handling free parking.
+     * @param player Player
+     * @author Bardia Parmoun, 101143006
+     */
+    public void handleFreeParking(Player player){
+        player.getMoney(bank.getCash());
+        bank.setCash(0);
+        sendBoardUpdate(new PlayerEvent(this, Status.FREE_PARKING, player));
     }
 
     /**
@@ -750,5 +752,59 @@ public class BoardModel {
         }
 
         gameOver();
+    }
+
+    /**
+     * Returns the list of the cells on the board.
+     * @return the list of all the cells on the board.
+     * @author Bardia Parmoun, 101143006
+     */
+    public List<BoardCell> getCells (){
+        return cells;
+    }
+
+    /**
+     * Returns the list of the players for the board.
+     * @return the list of all the players on the board.
+     * @author Bardia Parmoun, 101143006
+     */
+    public List<Player> getPlayers (){
+        return players;
+    }
+
+    /**
+     * Returns the number of players for the board.
+     * @return the number of players.
+     * @author Bardia Parmoun, 101143006
+     */
+    public int getPlayerCount(){
+        return numPlayers;
+    }
+
+    /**
+     * Accessor method for the dice rolled using roll().
+     * @return Two element array representing each individual die rolled
+     * @author Owen VanDusen 101152022
+     */
+    public int[] getDice() {
+        return dice;
+    }
+
+    /**
+     * Accessor method to get the current turn.
+     * @return the current turn, Player
+     * @author Owen VanDusen 101152022
+     */
+    public Player getCurrentTurn() {
+        return turn;
+    }
+
+    /**
+     * Returns the total money in the bank.
+     * @return the money inside the bank, int
+     * @author Owen VanDusen 101152022
+     */
+    public int getBankMoney(){
+        return bank.getCash();
     }
 }

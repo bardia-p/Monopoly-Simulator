@@ -10,7 +10,6 @@
  * @author Owen VanDusen 101152022
  * @version 1.0
  */
-
 public class Utility extends BoardCell implements Buyable{
     /**
      * Keeps track of the utility buying price.

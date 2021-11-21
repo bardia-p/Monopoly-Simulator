@@ -13,24 +13,27 @@ import java.util.HashMap;
  * @version 1.0
  *
  */
-
 public class Jail extends BoardCell{
 
     /**
      * Keeps track of players in jail and number of rounds spent in jail.
      */
-    private HashMap<Player, Integer> inJail;
+    private final HashMap<Player, Integer> inJail;
 
     /**
      * Fee required to pay to leave jail.
      */
     public static final int FEE = 50;
+    /**
+     * Keeps track of the number of doubles a player rolls before going to jail.
+     */
+    public static final int JAIL_ROLL_LIMIT = 3;
 
     /**
      * The constructor for jail cell.
      *
-     * @param name    keeps track of the name of the cell, String
-     * @param imgName
+     * @param name keeps track of the name of the cell, String
+     * @param imgName the image path of the cell, String.
      * @author Sarah Chow 101143033
      */
     public Jail(String name, Player owner, String imgName) {
@@ -43,7 +46,7 @@ public class Jail extends BoardCell{
     /**
      * Remove player from jail.
      * @author Sarah Chow 101143033
-     * @param player
+     * @param player the player in jail, Player
      */
     public void endJail(Player player){
         inJail.remove(player);

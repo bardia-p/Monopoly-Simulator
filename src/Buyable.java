@@ -13,7 +13,7 @@
  */
 
 public interface Buyable {
-    public int getPrice();
-    public void toggleRecentlyChanged();
-    public boolean getRecentlyChanged();
+    int getPrice();
+    void toggleRecentlyChanged();
+    boolean getRecentlyChanged();
 }

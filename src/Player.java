@@ -3,7 +3,7 @@ import java.util.List;
 
 /**
  * Group 3
- * SYSC 3110 - Milestone 2 Player Class
+ * SYSC 3110 - Milestone 3 Player Class
  *
  * This document is the Player. This class has the name, icon, cash value,
  * position on board, list of ownedLocations, the current property they are on, their rent status (paid rent, unpaid rent,
@@ -13,7 +13,7 @@ import java.util.List;
  * @author Kyra Lothrop 101145872
  * @author Bardia Parmoun 101143006
  * @author Owen VanDusen 101152022
- * @version 1.0
+ * @version 3.0
  */
 public class Player {
     /**
@@ -80,6 +80,11 @@ public class Player {
      * Possible values of player debt status.
      */
     private boolean resortInJail;
+
+    Player(String name, BoardModel.Icon icon, int cash){
+        this(name, icon);
+        this.cash = cash;
+    }
 
     /**
      * Constructor for Player, sets all values.
@@ -404,22 +409,22 @@ public class Player {
      */
     @Override
     public String toString() {
-        String playerInfo;
+        StringBuilder playerInfo;
 
-        playerInfo = "\tname='" + name + '\'' +
+        playerInfo = new StringBuilder("\tname='" + name + '\'' +
                 "\n\ticon='" + icon + '\'' +
                 "\n\tcash='" + cash + '\'' +
-                "\n\tposition='" + position + '\'' +
+                "\n\tposition='" + currentCell.getName() + '\'' +
                 "\n\tbankrupt=" + bankrupt +
-                "\n\townedLocations= { \n\t\t";
+                "\n\townedLocations= { \n\t\t");
 
         for (BoardCell location: ownedLocations)
         {
-            playerInfo += location.getName() + "\n\t\t";
+            playerInfo.append(location.getName()).append("\n\t\t");
         }
 
-        playerInfo += "}";
+        playerInfo.append("}");
 
-        return playerInfo;
+        return playerInfo.toString();
     }
 }
