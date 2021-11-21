@@ -62,11 +62,6 @@ public class Player {
     private int rank;
 
     /**
-     * Keeps track of whether the player would like to forfeit.
-     */
-    private boolean request_forfeit;
-
-    /**
      * Property the player would like to sell
      */
     private Property propertyToSell;
@@ -106,7 +101,6 @@ public class Player {
         this.rollAgain = false;
         this.feesStatus = StatusEnum.NO_FEES;
         this.rank = 0;
-        this.request_forfeit = false;
         this.propertyToSell = null;
         this.confirmSell = false;
         this.resortInJail = false;
@@ -386,24 +380,6 @@ public class Player {
     public int getRank(){
         return rank;
     }
-
-    /**
-     * Accessor to toggle the request forfeit boolean variable.
-     * @author Sarah Chow 101143033
-     */
-    public void toggleRequest_forfeit() {
-        this.request_forfeit = !this.request_forfeit;
-    }
-
-    /**
-     * Accessor to get whether the player has requested to forfeit.
-     * @author Sarah Chow 101143033
-     * @return whether the player would like to forfeit, boolean
-     */
-    public boolean getRequest_forfeit(){
-        return request_forfeit;
-    }
-
 
     /**
      * Accessor method to package relevant information into a string.

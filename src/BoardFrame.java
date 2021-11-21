@@ -231,7 +231,6 @@ public class BoardFrame extends JFrame implements BoardView  {
             case GET_COMMAND -> updateAvailableCommands(e.getPlayer(), (ArrayList<BoardModel.Command>) e.getCommands());
             case PLAYER_MOVE -> handlePlayerGUIMove(e.getPlayer(), e.getValue(), e.getValue2());
             case REPAINT_BOARD -> handleRepaintBoard();
-            case PLAYER_FORFEIT -> handleForfeitedPlayer(e.getPlayer());
             case PLAYER_REQUEST_FORFEIT -> handleRequestForfeit(e.getPlayer());
             case GO_TO_JAIL -> handleGoToJail(e.getPlayer());
             case EXIT_JAIL -> handleExitJail(e.getPlayer());
@@ -745,18 +744,8 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @param player the player in jail, Player
      */
     public void handleExitJail(Player player){
-
-        int ans = 0;
-
-        if (player.getNumDoubles() < 1) {
-            ans = JOptionPane.showConfirmDialog(null,
-                    "Would you like to pay $50 to leave JAIL?");
-        }
-
-        if (ans == JOptionPane.YES_OPTION || player.getNumDoubles() > 0){
-            JOptionPane.showMessageDialog(null,
+         JOptionPane.showMessageDialog(null,
                     String.format("Player %s left JAIL!", player.getIconName().toUpperCase()));
-        }
     }
 
     /**
@@ -839,7 +828,8 @@ public class BoardFrame extends JFrame implements BoardView  {
         int ans = JOptionPane.showConfirmDialog(null,
                 "Are you sure you would like to forfeit the game?");
         if (ans == JOptionPane.YES_OPTION){
-            player.toggleRequest_forfeit();
+            model.forfeit(player);
+            handleForfeitedPlayer(player);
         }
         else{
             JOptionPane.showMessageDialog(null, "Forfeit request cancelled!");

@@ -60,7 +60,7 @@ public class BoardModel {
      */
     public enum Status {GET_NUM_PLAYERS, CREATE_PLAYER_ICONS, INITIALIZE_BOARD, INITIALIZE_MONOPOLY, INITIALIZE_PLAYERS,
         GET_COMMAND, PLAYER_ROLL, PLAYER_MOVE, BUY, SELL, PAY_FEES, PLAYER_STATUS, CELL_STATUS, GO_TO_JAIL,
-        EXIT_JAIL, FORCE_PAY_JAIL, PLAYER_FORFEIT, PLAYER_REQUEST_FORFEIT, PASS_TURN, REPAINT_BOARD, GAME_OVER}
+        EXIT_JAIL, FORCE_PAY_JAIL, PLAYER_REQUEST_FORFEIT, PASS_TURN, REPAINT_BOARD, GAME_OVER}
 
     /**
      * Keeps track of the possible player commands.
@@ -69,12 +69,10 @@ public class BoardModel {
         BUY ("buy"),
         SELL ("sell"),
         PLAYER_STATUS ("player status"),
-        BOARD_STATUS ("board status"),
         PASS ("pass"),
         ROLL_AGAIN ("roll"),
         CELL_STATUS ("cell status"),
         FORFEIT ("forfeit"),
-        CONFIRM_FORFEIT("confirm_forfeit"),
         PAY_FEES ("pay fees"),
         REPAINT("repaint");
 
@@ -177,9 +175,6 @@ public class BoardModel {
         }
         else if(command.equals((Command.FORFEIT.getStringCommand()))){
             request_forfeit(turn);
-        }
-        else if(command.equals((Command.CONFIRM_FORFEIT.getStringCommand()))){
-            forfeit(turn);
         }
 
         // Avoids race conditions.
@@ -388,7 +383,7 @@ public class BoardModel {
                 player.setFeesStatus(Player.StatusEnum.UNPAID_FEES);
                 sendBoardUpdate(new BoardEvent(this, Status.FORCE_PAY_JAIL, player));
                 return true;
-            } else if (player.getFeesStatus() != Player.StatusEnum.PAID_FEES){
+            } else if (jail.getRoundCountJail(player) !=0 && player.getFeesStatus() != Player.StatusEnum.PAID_FEES){
                 return true;
             }
         } // Checks to see if the cell has an owner and if you have paid the fees for it.
@@ -467,7 +462,7 @@ public class BoardModel {
         player.setCurrentCell(cells.get(newPlayerPosition));
 
         // Player lands on go to Jail, do not have other options.
-        if (newPlayerPosition == BoardFrame.GOTOJAIL_LOCATION) {
+        if (player.getCurrentCell().getType() == BoardCell.CellType.GO_TO_JAIL) {
             sendToJail(player);
         } else {
             getCommand(player);
@@ -658,9 +653,6 @@ public class BoardModel {
 
     public void request_forfeit(Player player){
         sendBoardUpdate(new BoardEvent(this, Status.PLAYER_REQUEST_FORFEIT, player));
-        if (player.getRequest_forfeit()){
-            forfeit(player);
-        }
     }
 
     /**
@@ -672,7 +664,6 @@ public class BoardModel {
     public void forfeit(Player player) {
         player.setBankrupt();
         player.setRank(numPlayers--);
-        sendBoardUpdate(new BoardEvent(this, Status.PLAYER_FORFEIT, player));
         passTurn(player);
     }
 

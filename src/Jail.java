@@ -62,11 +62,7 @@ public class Jail extends BoardCell{
      * @return the amount of rounds the player has been in jail.
      */
     public int getRoundCountJail(Player player){
-        if (inJail.containsKey(player)){
-            return (inJail.get(player));
-        } else {
-            return 0;
-        }
+        return (inJail.getOrDefault(player, 0));
     }
 
     /**
