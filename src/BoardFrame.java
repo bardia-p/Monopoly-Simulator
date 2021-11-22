@@ -1064,7 +1064,7 @@ public class BoardFrame extends JFrame implements BoardView  {
         buildCashDisplay();
     }
 
-    /*
+    /**
      * Display that the user has passed GO
      * @author Kyra Lothrop 101145872
      * @param player the player that passed GO
