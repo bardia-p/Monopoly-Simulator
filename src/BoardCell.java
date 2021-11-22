@@ -1,4 +1,5 @@
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Group 3
@@ -93,6 +94,19 @@ public abstract class BoardCell {
      */
     public String getImgPath(){
         return imgPath;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BoardCell boardCell = (BoardCell) o;
+        return Objects.equals(name, boardCell.name) && type == boardCell.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, type);
     }
 
     /**

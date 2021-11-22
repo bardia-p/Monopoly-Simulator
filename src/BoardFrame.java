@@ -43,7 +43,7 @@ public class BoardFrame extends JFrame implements BoardView  {
     /**
      * Keeps track of all the house labels
      */
-    private final List<JLabel> houseLabels;
+    private final Map<BoardCell,List<JLabel>> houseLabels;
     /**
      * Keeps track of all the player JLabels.
      */
@@ -97,6 +97,10 @@ public class BoardFrame extends JFrame implements BoardView  {
      */
     private static final int ICON_SIZE = 40;
     /**
+     * The size of the house and hotels.
+     */
+    private static final int HOUSE_SIZE = 20;
+    /**
      * The size of the die.
      */
     private static final int DIE_SIZE = 50;
@@ -120,6 +124,10 @@ public class BoardFrame extends JFrame implements BoardView  {
      * Figures out how much to offset the players on the cell.
      */
     private static final int ICON_SHIFT_ON_CELL = 30;
+    /**
+     * Figures out how much to offset the houses on the cell.
+     */
+    private static final int HOUSE_SHIFT_ON_CELL = 10;
     /**
      * Figures out how much to offset the players on the cell based on each player.
      */
@@ -163,7 +171,7 @@ public class BoardFrame extends JFrame implements BoardView  {
 
         // Keeps track of the player labels and cell panels.
         playerLabels = new HashMap<>();
-        houseLabels = new ArrayList<>();
+        houseLabels = new HashMap<>();
         playerStatusPanels = new HashMap<>();
         boardCells = new ArrayList<>();
 
@@ -862,11 +870,10 @@ public class BoardFrame extends JFrame implements BoardView  {
 
         Dimension d = group.getNumProperties() == 3 ? new Dimension(300,200) : new Dimension(200,200);
 
-        panel.setPreferredSize(d);
         frame.add(panel);
         frame.setPreferredSize(d);
-        frame.setVisible(true);
         pack();
+        frame.setVisible(true);
     }
 
     private void addHouseSuccess(Player player){
@@ -878,45 +885,60 @@ public class BoardFrame extends JFrame implements BoardView  {
         JOptionPane.showMessageDialog(null,"A house could not be purchased.");
     }
 
-    private void paintHouse(Property property){
-        int x = 0, y = 0;
-        int i = boardCells.indexOf(property);
+    private void paintHouse(BoardCell cell){
+        int x , y;
+        boolean isHotel = false;
+        int i = model.findCellIndex(cell);
 
         JPanel currentCell = boardCells.get(i);
 
         Rectangle cellPosition = currentCell.getBounds();
 
-
-        if(property.getNumHouses() == 4){
+        Property property = (Property) cell;
+        if(property.getNumHouses() == 5){
             //need to remove all houses and put a hotel
+            for (JLabel h: houseLabels.get(cell)){
+                layeredPane.setLayer(h, -1);
+            }
+
+            isHotel = true;
         }
+
+        int offsetCount = isHotel? 1 : property.getNumHouses();
         //Bottom row of the board
-        else if(i < 10){
-            x = cellPosition.x + ICON_SHIFT_ON_CELL + 25 * property.getNumHouses();
-            y = cellPosition.y + ICON_SHIFT_ON_CELL + BOARD_SHIFT_Y;
+        if(i < 10){
+            x = cellPosition.x + HOUSE_SHIFT_ON_CELL * offsetCount;
+            y = cellPosition.y + HOUSE_SHIFT_ON_CELL + BOARD_SHIFT_Y;
         }
         //Left column of the board
         else if(i < 20){
-            x = cellPosition.width - ICON_SHIFT_ON_CELL;
-            y = cellPosition.y + ICON_SHIFT_ON_CELL + 25 * property.getNumHouses() + BOARD_SHIFT_Y;
+            x = cellPosition.width - HOUSE_SHIFT_ON_CELL;
+            y = cellPosition.y + HOUSE_SHIFT_ON_CELL * offsetCount + BOARD_SHIFT_Y;
         }
         //Top row of the board
         else if(i < 30){
-            x = cellPosition.x + ICON_SHIFT_ON_CELL + 25 * property.getNumHouses();
-            y = cellPosition.height - ICON_SHIFT_ON_CELL + BOARD_SHIFT_Y;
+            x = cellPosition.x + HOUSE_SHIFT_ON_CELL *  offsetCount;
+            y = cellPosition.height - HOUSE_SHIFT_ON_CELL + BOARD_SHIFT_Y;
         }
         //Right column of the board
         else {
-            x = cellPosition.x + ICON_SHIFT_ON_CELL;
-            y = cellPosition.y + ICON_SHIFT_ON_CELL + 25 * property.getNumHouses() + BOARD_SHIFT_Y;
+            x = cellPosition.x + HOUSE_SHIFT_ON_CELL;
+            y = cellPosition.y + HOUSE_SHIFT_ON_CELL * offsetCount + BOARD_SHIFT_Y;
         }
 
         try {
-            BufferedImage houseImg = ImageIO.read(Objects.requireNonNull(getClass().getResource
-                    ("images/houses/monopoly house.png")));
-            JLabel house = new JLabel(new ImageIcon(houseImg));
-            house.setBounds(x,y,25,25);
-            houseLabels.add(house);
+            String imgPath = isHotel? "images/houses/Hotel.png" : "images/houses/monopoly house.png";
+            BufferedImage houseImg = ImageIO.read(Objects.requireNonNull(getClass().getResource(imgPath)));
+            Image dimg = houseImg.getScaledInstance(HOUSE_SIZE,HOUSE_SIZE, Image.SCALE_SMOOTH);
+
+            JLabel house = new JLabel(new ImageIcon(dimg));
+            house.setBounds(x,y,HOUSE_SIZE,HOUSE_SIZE);
+
+            if (!houseLabels.containsKey(cell)){
+                houseLabels.put(cell, new ArrayList<>());
+            }
+
+            houseLabels.get(cell).add(house);
             layeredPane.add(house,1);
             pack();
 

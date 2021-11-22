@@ -531,7 +531,7 @@ public class BoardModel {
 
         sendBoardUpdate(new BoardEvent(this, Status.PLAYER_ROLL, player, dice));
 
-        move(player, dice[0] + dice[1]);
+        move(player, 1);
     }
 
     /**
@@ -777,5 +777,9 @@ public class BoardModel {
         }
 
         gameOver();
+    }
+
+    public int findCellIndex(BoardCell cell){
+        return cells.indexOf(cell);
     }
 }
