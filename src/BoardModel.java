@@ -68,8 +68,7 @@ public class BoardModel {
      * Keeps track of the possible board statuses.
      */
     public enum Status {GET_NUM_PLAYERS, CREATE_PLAYER_ICONS, INITIALIZE_BOARD, INITIALIZE_MONOPOLY, INITIALIZE_PLAYERS,
-        GET_COMMAND, PLAYER_ROLL, PLAYER_MOVE, BUY, SELL, PAY_FEES, PLAYER_STATUS, CELL_STATUS, GO_TO_JAIL,
-        EXIT_JAIL, FORCE_PAY_JAIL, PLAYER_REQUEST_FORFEIT, PASS_TURN, REPAINT_BOARD, GAME_OVER, PASS_GO, FREE_PARKING}
+        GET_COMMAND, GO_TO_JAIL, EXIT_JAIL, FORCE_PAY_JAIL, GAME_OVER, PASS_GO, FREE_PARKING, PLAYER_INPUT}
 
     /**
      * Keeps track of the possible player commands.
@@ -77,13 +76,15 @@ public class BoardModel {
     public enum Command{
         BUY ("buy"),
         SELL ("sell"),
-        PLAYER_STATUS ("player status"),
         PASS ("pass"),
         ROLL_AGAIN ("roll"),
         CELL_STATUS ("cell status"),
         FORFEIT ("forfeit"),
         PAY_FEES ("pay fees"),
-        REPAINT("repaint");
+        MOVE("move"),
+        REQUEST_SELL("request sell"),
+        REQUEST_FORFEIT("request forfeit"),
+        CHANGE_WINDOW("change window");
 
         private final String stringCommand;
 
@@ -159,7 +160,7 @@ public class BoardModel {
      * @param command the type of command to run, Strng
      */
     public void sendCommand(String command) {
-        if(command.equals(Command.REPAINT.getStringCommand())){
+        if(command.equals(Command.CHANGE_WINDOW.getStringCommand())){
             repaint();
         }
         else if(command.equals(Command.ROLL_AGAIN.getStringCommand())){
@@ -176,9 +177,6 @@ public class BoardModel {
         }
         else if(command.equals((Command.PAY_FEES.getStringCommand()))){
             payFees(turn.getCurrentCell(), turn);
-        }
-        else if (command.equals((Command.PLAYER_STATUS.getStringCommand()))){
-            getPlayerStatus(turn);
         }
         else if (command.equals((Command.CELL_STATUS.getStringCommand()))){
             getCellStatus();
@@ -378,7 +376,6 @@ public class BoardModel {
         }
 
         // Handles the status commands.
-        commands.add(BoardModel.Command.PLAYER_STATUS);
         commands.add(BoardModel.Command.CELL_STATUS);
 
         // Handling forfeiting the game and declaring bankruptcy.
@@ -403,7 +400,7 @@ public class BoardModel {
             Jail jail = (Jail) currentCell;
             if (jail.isPlayersLastRound(player)){
                 player.setFeesStatus(Player.StatusEnum.UNPAID_FEES);
-                sendBoardUpdate(new PlayerEvent(this, Status.FORCE_PAY_JAIL, player));
+                sendBoardUpdate(new BoardEvent(this, Status.FORCE_PAY_JAIL, player));
                 return true;
             } else return jail.getRoundCountJail(player) != 0 && player.getFeesStatus() != Player.StatusEnum.PAID_FEES;
         } // Checks to see if the cell has an owner and if you have paid the fees for it.
@@ -429,7 +426,7 @@ public class BoardModel {
      * @author Bardia Parmoun 101143006
      */
     private void repaint() {
-        sendBoardUpdate(new BoardEvent(this, Status.REPAINT_BOARD));
+        sendBoardUpdate(new PlayerEvent(this, Command.CHANGE_WINDOW, turn));
     }
 
     /**
@@ -445,7 +442,7 @@ public class BoardModel {
         dice[0] = rand.nextInt((6 - 1) + 1) + 1;
         dice[1] = rand.nextInt((6 - 1) + 1) + 1;
 
-        sendBoardUpdate(new BoardEvent(this, Status.PLAYER_ROLL));
+        sendBoardUpdate(new PlayerEvent(this, Command.ROLL_AGAIN, player));
 
         if (dice[0] == dice[1]){
             if (player.getResortInJail()){
@@ -473,7 +470,7 @@ public class BoardModel {
      */
     public void move(Player player, int amountToMove){
         animationRunning = true;
-        sendBoardUpdate(new PlayerEvent(this, Status.PLAYER_MOVE, player, amountToMove, true));
+        sendBoardUpdate(new PlayerEvent(this, Command.MOVE, player, amountToMove, true));
 
         int originalPosition = player.getPosition();
         int newPlayerPosition = (player.getPosition() + amountToMove) % SIZE_OF_BOARD;
@@ -491,7 +488,7 @@ public class BoardModel {
 
         for(int i = 1; i<=amountToMove; i++){
             if(cells.get((originalPosition + i)% SIZE_OF_BOARD).getType() == BoardCell.CellType.GO) {
-                sendBoardUpdate(new PlayerEvent(this, Status.PASS_GO, player));  //here
+                sendBoardUpdate(new BoardEvent(this, Status.PASS_GO, player));  //here
                 player.setCash(player.getCash() + ((Go) cells.get(0)).getReward());
             }
         }
@@ -509,7 +506,7 @@ public class BoardModel {
      * @param player player in jail, Player
      */
     private void sendToJail(Player player){
-        sendBoardUpdate(new PlayerEvent(this, Status.GO_TO_JAIL, player));
+        sendBoardUpdate(new BoardEvent(this, Status.GO_TO_JAIL, player));
 
         int newPlayerPosition = BoardFrame.JAIL_LOCATION;
         player.setPosition(newPlayerPosition);
@@ -526,7 +523,7 @@ public class BoardModel {
     private void exitJail(Player player, boolean rolledDouble){
         Jail jail = (Jail) player.getCurrentCell();
         jail.endJail(player);
-        sendBoardUpdate(new PlayerEvent(this, Status.EXIT_JAIL, player));
+        sendBoardUpdate(new BoardEvent(this, Status.EXIT_JAIL, player));
         player.setResortInJail(false); // Set to True
 
         if (!rolledDouble){
@@ -559,7 +556,7 @@ public class BoardModel {
             result = true;
         }
 
-        sendBoardUpdate(new PlayerEvent(this, Status.BUY, player, result));
+        sendBoardUpdate(new PlayerEvent(this, Command.BUY, player, result));
 
     }
 
@@ -569,7 +566,7 @@ public class BoardModel {
      * @param player player selling the property, Player
      */
     public void sellLocationPrompt(Player player){
-        sendBoardUpdate(new PlayerEvent(this, Status.SELL, player));
+        sendBoardUpdate(new PlayerEvent(this, Command.REQUEST_SELL, player));
     }
 
     /**
@@ -590,24 +587,16 @@ public class BoardModel {
         else if(locationToSell.getType() == BoardCell.CellType.UTILITY){
             player.setNumUtilitiesOwned(player.getNumUtilitiesOwned() - 1);
         }
-    }
 
-    /**
-     * Accessor to display the information of the current player.
-     * @author Sarah Chow 101143033
-     * @param player active player, Player
-     */
-    public void getPlayerStatus(Player player){
-        sendBoardUpdate(new PlayerEvent(this, Status.PLAYER_STATUS, player));
+        sendBoardUpdate(new PlayerEvent(this, Command.SELL, player, locationToSell));
     }
-
 
     /**
      * Accessor to display the information of a specific cell on the board.
      * @author Kyra Lothrop 101145872
      */
     public void getCellStatus(){
-        sendBoardUpdate(new PlayerEvent(this, Status.CELL_STATUS, turn));
+        sendBoardUpdate(new PlayerEvent(this, Command.CELL_STATUS, turn));
     }
 
     /**
@@ -651,7 +640,7 @@ public class BoardModel {
         }
 
         //Inform player they have paid rent
-        sendBoardUpdate(new PlayerEvent(this, Status.PAY_FEES, player, fees, result));
+        sendBoardUpdate(new PlayerEvent(this, Command.PAY_FEES, player, fees, result));
 
         return result;
     }
@@ -682,7 +671,7 @@ public class BoardModel {
         turn = null;
 
         if (numPlayers > 1) {
-            sendBoardUpdate(new PlayerEvent(this, Status.PASS_TURN, player));
+            sendBoardUpdate(new PlayerEvent(this, Command.PASS, player));
         }
     }
 
@@ -712,7 +701,7 @@ public class BoardModel {
      * @param player player who requested to forfeit.
      */
     public void request_forfeit(Player player){
-        sendBoardUpdate(new PlayerEvent(this, Status.PLAYER_REQUEST_FORFEIT, player));
+        sendBoardUpdate(new PlayerEvent(this, Command.REQUEST_FORFEIT, player));
     }
 
     /**
@@ -724,6 +713,7 @@ public class BoardModel {
     public void forfeit(Player player) {
         player.setBankrupt();
         player.setRank(numPlayers--);
+        sendBoardUpdate(new PlayerEvent(this, Command.FORFEIT, player));
         passTurn(player);
     }
 
@@ -743,7 +733,7 @@ public class BoardModel {
     public void handleFreeParking(Player player){
         player.getMoney(bank.getCash());
         bank.setCash(0);
-        sendBoardUpdate(new PlayerEvent(this, Status.FREE_PARKING, player));
+        sendBoardUpdate(new BoardEvent(this, Status.FREE_PARKING, player));
     }
 
     /**

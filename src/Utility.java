@@ -87,7 +87,7 @@ public class Utility extends BoardCell implements Buyable{
                 "\n\t\tdice roll * " + rentValues[1] + ", if the owner owns two utilities." + '\'';
 
         if (super.getOwner() != null){
-            utilityInfo += "\n\tproperty owner='" + super.getOwner().getIconName() + '\'';
+            utilityInfo += "\n\tproperty owner='" + super.getOwner().getIconName().toUpperCase() + '\'';
 
         } else {
             utilityInfo += "\n\tproperty owner='no owner'";

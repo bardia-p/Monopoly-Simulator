@@ -8,8 +8,6 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static java.lang.Math.abs;
-
 /**
  * Group 3
  * SYSC 3110 - Milestone 3 BoardFrame Class
@@ -254,37 +252,46 @@ public class BoardFrame extends JFrame implements BoardView  {
     public void handleMonopolyUpdate(MonopolyEvent e) {
         BoardModel source = (BoardModel) e.getSource();
 
-        if (e.getEventType() == MonopolyEvent.EventType.BOARD_EVENT){
-            BoardEvent be = (BoardEvent) e;
-            switch (e.getStatus()) {
-                case PLAYER_ROLL -> handleRoll(source.getDice());
-                case INITIALIZE_MONOPOLY -> handleWelcomeMonopoly();
-                case GAME_OVER -> handleWinner(source.getPlayers());
-                case INITIALIZE_BOARD -> constructBoard(source.getCells());
-                case CREATE_PLAYER_ICONS -> createPlayers(source.getPlayers());
-                case GET_NUM_PLAYERS -> getNumPlayers();
-                case INITIALIZE_PLAYERS -> initializePlayers(source.getPlayerCount());
-                case GET_COMMAND -> updateAvailableCommands(be.getPlayer(), be.getCommands());
-                case REPAINT_BOARD -> handleRepaintBoard();
-            }
-        } else {
-            PlayerEvent pe = (PlayerEvent) e;
-            Player player = pe.getPlayer();
-            switch (e.getStatus()) {
-                case BUY -> handleBuyLocation(player, player.getCurrentCell(), pe.getResult());
-                case SELL -> handleSellProperty(player);
-                case PLAYER_STATUS -> handleGetPlayerStatus(player);
-                case CELL_STATUS -> handleGetCellStatus(player.getCurrentCell());
-                case PAY_FEES -> handlePayFees(player.getCurrentCell(), player, pe.getValue(), pe.getResult());
-                case PASS_TURN -> disableButtons();
-                case PLAYER_MOVE -> handlePlayerGUIMove(pe.getPlayer(), pe.getValue(), player.getPosition());
-                case PLAYER_REQUEST_FORFEIT -> handleRequestForfeit(player);
-                case FREE_PARKING -> handleFreeParking(player);
-                case GO_TO_JAIL -> handleGoToJail(player);
-                case EXIT_JAIL -> handleExitJail(player);
-                case FORCE_PAY_JAIL -> handleForceExitJail();
-                case PASS_GO -> handlePassGo(player);
-            }
+        // If the event is a player input event. 
+        if (e.getStatus() == BoardModel.Status.PLAYER_INPUT){
+            handlePlayerInput((PlayerEvent) e);
+            return;
+        }
+
+        BoardEvent be = (BoardEvent) e;
+        Player player = be.getPlayer();
+        switch (e.getStatus()) {
+            case INITIALIZE_MONOPOLY -> handleWelcomeMonopoly();
+            case GAME_OVER -> handleWinner(source.getPlayers());
+            case INITIALIZE_BOARD -> constructBoard(source.getCells());
+            case CREATE_PLAYER_ICONS -> createPlayers(source.getPlayers());
+            case GET_NUM_PLAYERS -> getNumPlayers();
+            case INITIALIZE_PLAYERS -> initializePlayers(source.getPlayerCount());
+            case GET_COMMAND -> updateAvailableCommands(player, be.getCommands());
+            case PASS_GO -> handlePassGo(player);
+            case FREE_PARKING -> handleFreeParking(player);
+            case GO_TO_JAIL -> handleGoToJail(player);
+            case EXIT_JAIL -> handleExitJail(player);
+            case FORCE_PAY_JAIL -> handleForceExitJail();
+        }
+    }
+
+    private void handlePlayerInput (PlayerEvent pe){
+        BoardModel source = (BoardModel) pe.getSource();
+        Player player = pe.getPlayer();
+        BoardModel.Command command = pe.getCommand();
+        switch (command) {
+            case BUY -> handleBuyLocation(player, pe.getCell(), pe.getResult());
+            case REQUEST_SELL -> handleRequestSell(player);
+            case SELL -> handleSell(player, pe.getCell());
+            case CELL_STATUS -> handleGetCellStatus(pe.getCell());
+            case PAY_FEES -> handlePayFees(pe.getCell(), player, pe.getValue(), pe.getResult());
+            case PASS -> disableButtons();
+            case MOVE -> handlePlayerGUIMove(pe.getPlayer(), pe.getValue(), player.getPosition());
+            case REQUEST_FORFEIT -> handleRequestForfeit(player);
+            case FORFEIT -> handleForfeitedPlayer(player);
+            case CHANGE_WINDOW -> handleRepaintBoard();
+            case ROLL_AGAIN -> handleRoll(source.getDice());
         }
     }
 
@@ -693,8 +700,7 @@ public class BoardFrame extends JFrame implements BoardView  {
         commandsPanel.setBounds(PANEL_GAP, COMMAND_SHIFT_Y,BOARD_WIDTH - 2 * PANEL_GAP,
                 COMMAND_HEIGHT + PANEL_GAP);
 
-        String[] buttonsText = {"Roll", "Pass", "Forfeit", "Buy", "Sell", "Pay Fees", "Player Status",
-                "Cell Status"};
+        String[] buttonsText = {"Roll", "Pass", "Forfeit", "Buy", "Sell", "Pay Fees", "Cell Status"};
 
         commandsPanel.setBackground(Color.decode(BACKGROUND_COLOR));
 
@@ -711,7 +717,6 @@ public class BoardFrame extends JFrame implements BoardView  {
                 case "Buy" -> commandButton.setActionCommand(BoardModel.Command.BUY.getStringCommand());
                 case "Sell" -> commandButton.setActionCommand(BoardModel.Command.SELL.getStringCommand());
                 case "Pay Fees" -> commandButton.setActionCommand(BoardModel.Command.PAY_FEES.getStringCommand());
-                case "Player Status" -> commandButton.setActionCommand(BoardModel.Command.PLAYER_STATUS.getStringCommand());
                 case "Cell Status" -> commandButton.setActionCommand(BoardModel.Command.CELL_STATUS.getStringCommand());
             }
 
@@ -839,7 +844,7 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @author Sarah Chow 101143033
      * @param player player performing actions, Player
      */
-    private void handleSellProperty(Player player) {
+    private void handleRequestSell(Player player) {
         JPanel panel = new JPanel(new GridLayout(player.getOwnedLocations(true).size(), 2));
         ButtonGroup group = new ButtonGroup();
 
@@ -869,8 +874,6 @@ public class BoardFrame extends JFrame implements BoardView  {
                 for (BoardCell l : player.getOwnedLocations(true)){
                     if (group.getSelection().getActionCommand().equals(l.getName())){
                         model.sellProperty(player, l);
-                        JOptionPane.showMessageDialog(null, "Player " +
-                                player.getIconName().toUpperCase() + " sold " + l.getName().toUpperCase());
                     }
                 }
             }
@@ -881,11 +884,21 @@ public class BoardFrame extends JFrame implements BoardView  {
     }
 
     /**
+     * Handles the message for selling a cell
+     * @param player the player to sell a cell, Player
+     * @param cell the cell being sold, BoardCell
+     */
+    private void handleSell(Player player, BoardCell cell){
+        JOptionPane.showMessageDialog(null, "Player " +
+                player.getIconName().toUpperCase() + " sold " + cell.getName().toUpperCase());
+    }
+
+    /**
      * Displays the player going to Jail.
      * @author Sarah Chow 101143033
      * @param player player to go to jail, Player
      */
-    public void handleGoToJail(Player player){
+    private void handleGoToJail(Player player){
         JOptionPane.showMessageDialog(null,
                 String.format("Player %s has been sent to JAIL!", player.getIconName().toUpperCase()));
         handlePlayerGUIMove(player, GOTOJAIL_LOCATION - JAIL_LOCATION, GOTOJAIL_LOCATION);
@@ -896,7 +909,7 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @author Sarah Chow 101143033
      * @param player the player in jail, Player
      */
-    public void handleExitJail(Player player){
+    private void handleExitJail(Player player){
          JOptionPane.showMessageDialog(null,
                     String.format("Player %s left JAIL!", player.getIconName().toUpperCase()));
     }
@@ -905,19 +918,10 @@ public class BoardFrame extends JFrame implements BoardView  {
      * Displays prompts if the player has been in jail for 3 rounds, they must pay or forfeit the game.
      * @author Sarah Chow 101143033
      */
-    public void handleForceExitJail(){
+    private void handleForceExitJail(){
         JOptionPane.showMessageDialog(null,
                 "You've exceeded three turns in JAIL. Please pay $50 to the bank!");
 
-    }
-
-    /**
-     * Displays the status of the current player.
-     * @author Sarah Chow 101143033
-     * @param player player performing actions, Player
-     */
-    private void handleGetPlayerStatus(Player player) {
-        JOptionPane.showMessageDialog(null, player, "PLAYER STATUS", JOptionPane.PLAIN_MESSAGE);
     }
 
     /**
@@ -990,7 +994,6 @@ public class BoardFrame extends JFrame implements BoardView  {
                 "Are you sure you would like to forfeit the game?");
         if (ans == JOptionPane.YES_OPTION){
             model.forfeit(player);
-            handleForfeitedPlayer(player);
         }
         else{
             JOptionPane.showMessageDialog(null, "Forfeit request cancelled!");

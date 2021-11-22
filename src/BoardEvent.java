@@ -34,9 +34,14 @@ public class BoardEvent extends MonopolyEvent {
      * @param status the status of the board, BoardModel.Status
      */
     public BoardEvent(BoardModel model, BoardModel.Status status){
-        super(model, status, MonopolyEvent.EventType.BOARD_EVENT);
+        super(model, status);
         this.commands = new ArrayList<>();
         this.player = model.getCurrentTurn();
+    }
+
+    public BoardEvent(BoardModel model, BoardModel.Status status, Player player){
+        this(model, status);
+        this.player = player;
     }
 
     /**
@@ -47,9 +52,8 @@ public class BoardEvent extends MonopolyEvent {
      * @param commands keeps track of the list of the commands.
      */
     public BoardEvent(BoardModel model, BoardModel.Status status, Player player, List<BoardModel.Command> commands){
-        this(model, status);
+        this(model, status, player);
         this.commands = commands;
-        this.player = player;
     }
 
     /**

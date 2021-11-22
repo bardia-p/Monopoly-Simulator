@@ -86,6 +86,7 @@ public class Player {
      */
     private boolean isAI;
 
+    private static final int PLAYER_INITIAL_CASH = 100;
     /**
      * The constructor of the player with cash.
      * @param name the name of the player, String
@@ -124,7 +125,7 @@ public class Player {
         this.bankrupt = false;
         this.name = name;
         this.icon = icon;
-        this.cash = 1500;
+        this.cash = PLAYER_INITIAL_CASH;
         this.position = 0;
         this.ownedLocations = new ArrayList<>();
         this.numDoubles = 0;

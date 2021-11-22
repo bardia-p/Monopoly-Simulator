@@ -52,6 +52,6 @@ public class BoardController extends WindowAdapter implements ActionListener {
      */
     @Override
     public void windowDeiconified(WindowEvent we) {
-        boardModel.sendCommand(BoardModel.Command.REPAINT.getStringCommand());
+        boardModel.sendCommand(BoardModel.Command.CHANGE_WINDOW.getStringCommand());
     }
 }
