@@ -135,7 +135,7 @@ public class BoardModel {
         views = new ArrayList<>();
         cells = new ArrayList<>();
         players = new ArrayList<>();
-        dice =  new int[2];
+        dice =  new int[]{0, 0};
         bank = new Player("Bank", Icon.BANK, 0);
         gameFinish = false;
         turn = null;
@@ -296,7 +296,7 @@ public class BoardModel {
         sendBoardUpdate(new BoardEvent(this, Status.CREATE_PLAYER_ICONS));
 
         for (Player p : players){
-            move(p, 0);
+            move(p);
         }
     }
 
@@ -429,7 +429,7 @@ public class BoardModel {
 
 
         if (!player.getResortInJail()){
-            move(player, dice[0] + dice[1]);
+            move(player);
         }
     }
 
@@ -437,9 +437,10 @@ public class BoardModel {
      * Moves the player a number of spaces equal to the value of the dice rolled.
      * @author Bardia Parmoun 101143006
      * @param player the active player, Player
-     * @param amountToMove distance the player should move, int
      */
-    public void move(Player player, int amountToMove){
+    public void move(Player player){
+        int amountToMove = dice[0] + dice[1];
+
         sendBoardUpdate(new PlayerEvent(this, Status.PLAYER_MOVE, player, amountToMove, true));
 
         int originalPosition = player.getPosition();
@@ -788,6 +789,17 @@ public class BoardModel {
      */
     public int[] getDice() {
         return dice;
+    }
+
+    /**
+     * Accessor method to set the dice values.
+     * @author Sarah Chow 101143033
+     * @param dice1 first dice value, int
+     * @param dice2 second dice value, int
+     */
+    public void setDice(int dice1, int dice2){
+        dice[0] = dice1;
+        dice[1] = dice2;
     }
 
     /**
