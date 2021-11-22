@@ -313,7 +313,7 @@ public class BoardModel {
      * @author Bardia Parmoun 101143006
      * @param player the active player, Player
      */
-    public void getCommand(Player player){
+    public List<Command> getCommand(Player player){
         BoardCell currentCell = player.getCurrentCell();
         ArrayList<BoardModel.Command> commands = new ArrayList<>();
 
@@ -359,6 +359,8 @@ public class BoardModel {
 
 
         sendBoardUpdate(new BoardEvent(this, BoardModel.Status.GET_COMMAND, player, commands));
+
+        return commands;
     }
 
     /**
@@ -582,8 +584,9 @@ public class BoardModel {
      * @author Owen VanDusen 101152022
      * @param boardCell board cell with the fees, BoardCell
      * @param player player paying rent, Player
+     * @return if the player successfully paid fees.
      */
-    public void payFees(BoardCell boardCell, Player player){
+    public boolean payFees(BoardCell boardCell, Player player){
         boolean result = false;
 
         int fees = 0;
@@ -617,6 +620,8 @@ public class BoardModel {
 
         //Inform player they have paid rent
         sendBoardUpdate(new PlayerEvent(this, Status.PAY_FEES, player, fees, result));
+
+        return result;
     }
 
     /**
@@ -662,6 +667,7 @@ public class BoardModel {
         if (player.getNumDoubles() >= Jail.JAIL_ROLL_LIMIT){
             sendToJail(player);
             player.resetNumDoubles();
+            getCommand(player);
         }
         else{
             player.setRollAgain(true);
@@ -736,6 +742,10 @@ public class BoardModel {
 
                     // Keeps prompting the player for commands until their turn is over.
                     while (turn != null){
+                        if (turn.isPlayerAI()){
+                            ((AIPlayer) turn).nextMove();
+                        }
+
                         if (checkDoubleRoll){
                             roll(player);
                             checkDoubleRoll = false;

@@ -14,8 +14,17 @@
  * @version 1.0
  */
 public class PlayerEvent extends MonopolyEvent {
+    /**
+     * Keeps track of the value passed through the event.
+     */
     private int value;
+    /**
+     * Keeps track of the player in the event.
+     */
     private final Player player;
+    /**
+     * Keeps track of the result of the event.
+     */
     private boolean result;
 
     /**
