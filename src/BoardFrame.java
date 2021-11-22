@@ -827,7 +827,7 @@ public class BoardFrame extends JFrame implements BoardView  {
                 int y = cellPosition.y + cellPosition.height/2 - ICON_SHIFT_ON_CELL -
                         ICON_SHIFT_ON_CELL_PER_PLAYER * index + BOARD_SHIFT_Y;
 
-                playerLabels.get(player).setBounds(x, y, 50, 50);
+                playerLabels.get(player).setBounds(x, y, ICON_SIZE, ICON_SIZE);
                 layeredPane.moveToFront(playerLabels.get(player));
 
                 this.pack();
