@@ -84,6 +84,7 @@ public class BoardModel {
         MOVE("Move"),
         REQUEST_SELL("Request Sell"),
         REQUEST_FORFEIT("Request Forfeit"),
+        BUILD("Build"),
         CHANGE_WINDOW("Change Window");
 
         private final String stringCommand;

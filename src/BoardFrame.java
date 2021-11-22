@@ -723,7 +723,7 @@ public class BoardFrame extends JFrame implements BoardView  {
 
         BoardModel.Command[] buttons = {BoardModel.Command.ROLL_AGAIN, BoardModel.Command.PASS,
                 BoardModel.Command.FORFEIT, BoardModel.Command.BUY, BoardModel.Command.SELL,
-                BoardModel.Command.PAY_FEES, BoardModel.Command.CELL_STATUS};
+                BoardModel.Command.PAY_FEES, BoardModel.Command.BUILD, BoardModel.Command.CELL_STATUS};
 
         commandsPanel.setBackground(Color.decode(BACKGROUND_COLOR));
 
