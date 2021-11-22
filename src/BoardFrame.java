@@ -39,6 +39,11 @@ public class BoardFrame extends JFrame implements BoardView  {
      * List of command buttons.
      */
     private final List<JButton> commandButtons;
+
+    /**
+     * Keeps track of all the house labels
+     */
+    private final List<JLabel> houseLabels;
     /**
      * Keeps track of all the player JLabels.
      */
@@ -158,6 +163,7 @@ public class BoardFrame extends JFrame implements BoardView  {
 
         // Keeps track of the player labels and cell panels.
         playerLabels = new HashMap<>();
+        houseLabels = new ArrayList<>();
         playerStatusPanels = new HashMap<>();
         boardCells = new ArrayList<>();
 
@@ -225,6 +231,9 @@ public class BoardFrame extends JFrame implements BoardView  {
             case PLAYER_FORFEIT -> handleForfeitedPlayer(e.getPlayer());
             case PLAYER_REQUEST_FORFEIT -> handleRequestForfeit(e.getPlayer());
             case BUILD -> handleNeighborhoodsToBuild(e.getPlayer(), e.getNeighborhoods());
+            case BUILD_SUCCESS -> addHouseSuccess(e.getPlayer());
+            case BUILD_FAIL -> addHouseFail();
+            case PAINT_HOUSE -> paintHouse(e.getProperty());
         }
     }
 
@@ -656,6 +665,7 @@ public class BoardFrame extends JFrame implements BoardView  {
         }
     }
 
+
     /**
      * Displays whether the current player can afford the property they attempted to buy or not.
      * @author Owen VanDusen 101152022
@@ -837,11 +847,7 @@ public class BoardFrame extends JFrame implements BoardView  {
 
                 JButton addButton = new JButton("+");
                 addButton.addActionListener(controller);
-                addButton.setActionCommand(BoardModel.Command.ROLL_AGAIN.getStringCommand());
-
-                    //    e -> {
-                    //addHouse(player, p, group.getHouseCost());
-                    //paintHouse(p);
+                addButton.setActionCommand(p.getName());
 
                 JLabel propertyName = new JLabel(p.getName());
                 JLabel houseCost = new JLabel(String.valueOf(group.getHouseCost()));
@@ -863,19 +869,60 @@ public class BoardFrame extends JFrame implements BoardView  {
         pack();
     }
 
-    private void addHouse(Player player, Property property, int houseCost){
-        player.pay(houseCost);
-         boolean result = property.addHouse();
-         if(result){
-             System.out.println("The house was successfully purchased");
-             System.out.printf("a house has been added to %s\n",property.getName());
-         } else {
-             System.out.println("You cannot buy any more houses");
-         }
+    private void addHouseSuccess(Player player){
+        String message = player.getIconName() + "has purchased a house";
+        JOptionPane.showMessageDialog(null, message);
+    }
+
+    private void addHouseFail(){
+        JOptionPane.showMessageDialog(null,"A house could not be purchased.");
     }
 
     private void paintHouse(Property property){
+        int x = 0, y = 0;
+        int i = boardCells.indexOf(property);
 
+        JPanel currentCell = boardCells.get(i);
+
+        Rectangle cellPosition = currentCell.getBounds();
+
+
+        if(property.getNumHouses() == 4){
+            //need to remove all houses and put a hotel
+        }
+        //Bottom row of the board
+        else if(i < 10){
+            x = cellPosition.x + ICON_SHIFT_ON_CELL + 25 * property.getNumHouses();
+            y = cellPosition.y + ICON_SHIFT_ON_CELL + BOARD_SHIFT_Y;
+        }
+        //Left column of the board
+        else if(i < 20){
+            x = cellPosition.width - ICON_SHIFT_ON_CELL;
+            y = cellPosition.y + ICON_SHIFT_ON_CELL + 25 * property.getNumHouses() + BOARD_SHIFT_Y;
+        }
+        //Top row of the board
+        else if(i < 30){
+            x = cellPosition.x + ICON_SHIFT_ON_CELL + 25 * property.getNumHouses();
+            y = cellPosition.height - ICON_SHIFT_ON_CELL + BOARD_SHIFT_Y;
+        }
+        //Right column of the board
+        else {
+            x = cellPosition.x + ICON_SHIFT_ON_CELL;
+            y = cellPosition.y + ICON_SHIFT_ON_CELL + 25 * property.getNumHouses() + BOARD_SHIFT_Y;
+        }
+
+        try {
+            BufferedImage houseImg = ImageIO.read(Objects.requireNonNull(getClass().getResource
+                    ("images/houses/monopoly house.png")));
+            JLabel house = new JLabel(new ImageIcon(houseImg));
+            house.setBounds(x,y,25,25);
+            houseLabels.add(house);
+            layeredPane.add(house,1);
+            pack();
+
+        } catch(IOException e) {
+            System.out.println("Could not load the house image");
+        }
     }
 
     /**

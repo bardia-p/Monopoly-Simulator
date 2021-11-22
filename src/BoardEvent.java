@@ -68,6 +68,8 @@ public class BoardEvent extends EventObject {
      */
     private List<BoardCell> cells;
 
+    private Property property;
+
     /**
      * Constructor for the Board event, instantiates the board model, the type of event, the relevant player, and the
      * command chosen by the player. Mainly used for getting the player's command
@@ -173,6 +175,12 @@ public class BoardEvent extends EventObject {
         this.player = player;
         this.value = value;
         this.value2 = value2;
+    }
+
+
+    public BoardEvent(BoardModel model, BoardModel.Status type, Property property){
+        this(model, type);
+        this.property = property;
     }
 
     /**
@@ -313,5 +321,9 @@ public class BoardEvent extends EventObject {
 
     public List<Property.NeighborhoodEnum> getNeighborhoods(){
         return neighborhoods;
+    }
+
+    public Property getProperty() {
+        return property;
     }
 }

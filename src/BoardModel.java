@@ -62,8 +62,8 @@ public class BoardModel {
      * Keeps track of the possible board statuses.
      */
     public enum Status {GET_NUM_PLAYERS, CREATE_PLAYER_ICONS, INITIALIZE_BOARD, INITIALIZE_MONOPOLY, INITIALIZE_PLAYERS,
-        GET_COMMAND, PLAYER_ROLL, PLAYER_MOVE, BUY, SELL, PAY_FEES, BUILD, PLAYER_STATUS, CELL_STATUS, PLAYER_FORFEIT,
-        PLAYER_REQUEST_FORFEIT, PASS_TURN, REPAINT_BOARD, GAME_OVER}
+        GET_COMMAND, PLAYER_ROLL, PLAYER_MOVE, BUY, SELL, PAY_FEES, BUILD, BUILD_SUCCESS, BUILD_FAIL, PAINT_HOUSE,
+        PLAYER_STATUS, CELL_STATUS, PLAYER_FORFEIT, PLAYER_REQUEST_FORFEIT, PASS_TURN, REPAINT_BOARD, GAME_OVER}
 
     /**
      * Keeps track of the possible player commands.
@@ -188,14 +188,15 @@ public class BoardModel {
         else if(command.equals((Command.BUILD.getStringCommand()))){
             getBuildStatus();
         }
-        else if(command.equals((Command.PAINT_BOARD.getStringCommand()))){
-            buildHouse();
-        }
         else if(command.equals((Command.FORFEIT.getStringCommand()))){
             request_forfeit(turn);
         }
         else if(command.equals((Command.CONFIRM_FORFEIT.getStringCommand()))){
             forfeit(turn);
+        }
+        //handling building houses on a given property
+        else {
+            buildHouse(command, turn);
         }
 
         // Avoids race conditions.
@@ -613,8 +614,26 @@ public class BoardModel {
         sendBoardUpdate(new BoardEvent(this, Status.BUILD, turn, buildableProperties));
     }
 
-    public void buildHouse(){
-        //needs to paint a house on the board. Gives the position of the cell
+    public void buildHouse(String propertyName, Player player){
+        Property realEstate = null;
+
+        for(Property p: player.getProperties(false)){
+            if(propertyName.equals(p.getName())){
+                realEstate = p;
+                break;
+            }
+        }
+        //player can afford house on the property
+        if(player.getCash() >= realEstate.getNeighborhood().getHouseCost() &&
+                realEstate.getNumHouses() < 5){
+            player.pay(realEstate.getNeighborhood().getHouseCost());
+            realEstate.addHouse();
+            sendBoardUpdate(new BoardEvent(this, Status.BUILD_SUCCESS, player));
+            sendBoardUpdate(new BoardEvent(this, Status.PAINT_HOUSE, realEstate));
+        }
+        else {
+            sendBoardUpdate(new BoardEvent(this, Status.BUILD_FAIL));
+        }
     }
 
     /**
