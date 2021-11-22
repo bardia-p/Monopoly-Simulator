@@ -291,13 +291,22 @@ public class BoardFrame extends JFrame implements BoardView  {
             case SELL -> handleSell(player, pe.getCell());
             case CELL_STATUS -> handleGetCellStatus(pe.getCell());
             case PAY_FEES -> handlePayFees(pe.getCell(), player, pe.getValue(), pe.getResult());
-            case PASS -> disableButtons();
+            case PASS -> handlePassingTurn();
             case MOVE -> handlePlayerGUIMove(pe.getPlayer(), pe.getValue(), player.getPosition());
             case REQUEST_FORFEIT -> handleRequestForfeit(player);
             case FORFEIT -> handleForfeitedPlayer(player);
             case CHANGE_WINDOW -> handleRepaintBoard();
             case ROLL_AGAIN -> handleRoll(source.getDice());
         }
+    }
+
+    /**
+     * Handles passing the turn update.
+     * @author Bardia Parmoun, 101143006
+     */
+    private void handlePassingTurn() {
+        disableButtons();
+        turnLabel.setText("Passing the turn!");
     }
 
     /**
@@ -572,7 +581,7 @@ public class BoardFrame extends JFrame implements BoardView  {
         availableCommands = new StringBuilder(availableCommands.substring(0, availableCommands.length() - 2));
 
         for(JButton b: commandButtons){
-            b.setEnabled(availableCommands.toString().contains(b.getText().toLowerCase()));
+            b.setEnabled(availableCommands.toString().contains(b.getText()));
         }
 
         turnLabel.setText("Turn: " + player.getIconName().toUpperCase());
@@ -602,11 +611,11 @@ public class BoardFrame extends JFrame implements BoardView  {
                     JOptionPane.QUESTION_MESSAGE, null, numPlayerOptions, numPlayerOptions[0]);
 
             ArrayList<Integer> numAIOptions = new ArrayList<>();
-            for(int i = 1; i<= numPlayers; i++){
+            for(int i = 0; i<= numPlayers; i++){
                 numAIOptions.add(i);
             }
             int numAIPlayers = (Integer)JOptionPane.showInputDialog(null,
-                    "How many AI will be playing?", "INITIALIZE GAME DATA",
+                    "How many AI players will be playing?", "INITIALIZE GAME DATA",
                     JOptionPane.QUESTION_MESSAGE, null, numAIOptions.toArray(), numAIOptions.get(0));
 
             model.setNumAIPlayer(numAIPlayers);
@@ -712,25 +721,19 @@ public class BoardFrame extends JFrame implements BoardView  {
         commandsPanel.setBounds(PANEL_GAP, COMMAND_SHIFT_Y,BOARD_WIDTH - 2 * PANEL_GAP,
                 COMMAND_HEIGHT + PANEL_GAP);
 
-        String[] buttonsText = {"Roll", "Pass", "Forfeit", "Buy", "Sell", "Pay Fees", "Cell Status"};
+        BoardModel.Command[] buttons = {BoardModel.Command.ROLL_AGAIN, BoardModel.Command.PASS,
+                BoardModel.Command.FORFEIT, BoardModel.Command.BUY, BoardModel.Command.SELL,
+                BoardModel.Command.PAY_FEES, BoardModel.Command.CELL_STATUS};
 
         commandsPanel.setBackground(Color.decode(BACKGROUND_COLOR));
 
-        for (String s : buttonsText) {
+        for (BoardModel.Command c : buttons) {
+            String s = c.getStringCommand();
             JButton commandButton = new JButton(s);
+            commandButton.setActionCommand(s);
             commandButton.addActionListener(controller);
             commandButtons.add(commandButton);
             commandsPanel.add(commandButton);
-
-            switch (s) {
-                case "Roll" -> commandButton.setActionCommand(BoardModel.Command.ROLL_AGAIN.getStringCommand());
-                case "Pass" -> commandButton.setActionCommand(BoardModel.Command.PASS.getStringCommand());
-                case "Forfeit" -> commandButton.setActionCommand(BoardModel.Command.FORFEIT.getStringCommand());
-                case "Buy" -> commandButton.setActionCommand(BoardModel.Command.BUY.getStringCommand());
-                case "Sell" -> commandButton.setActionCommand(BoardModel.Command.SELL.getStringCommand());
-                case "Pay Fees" -> commandButton.setActionCommand(BoardModel.Command.PAY_FEES.getStringCommand());
-                case "Cell Status" -> commandButton.setActionCommand(BoardModel.Command.CELL_STATUS.getStringCommand());
-            }
 
             commandButton.setEnabled(false);
         }
@@ -818,7 +821,7 @@ public class BoardFrame extends JFrame implements BoardView  {
 
                 Rectangle cellPosition = currentCell.getBounds();
 
-                int index =  new ArrayList(playerLabels.keySet()).indexOf(player);
+                int index =  new ArrayList<>(playerLabels.keySet()).indexOf(player);
                 int x = cellPosition.x + 3*cellPosition.width/4 - ICON_SHIFT_ON_CELL -
                         ICON_SHIFT_ON_CELL_PER_PLAYER * index;
                 int y = cellPosition.y + cellPosition.height/2 - ICON_SHIFT_ON_CELL -
@@ -885,7 +888,7 @@ public class BoardFrame extends JFrame implements BoardView  {
             if (group.getSelection() != null) {
                 for (BoardCell l : player.getOwnedLocations(true)){
                     if (group.getSelection().getActionCommand().equals(l.getName())){
-                        model.sellProperty(player, l);
+                        model.sellLocation(player, l);
                     }
                 }
             }

@@ -74,17 +74,17 @@ public class BoardModel {
      * Keeps track of the possible player commands.
      */
     public enum Command{
-        BUY ("buy"),
-        SELL ("sell"),
-        PASS ("pass"),
-        ROLL_AGAIN ("roll"),
-        CELL_STATUS ("cell status"),
-        FORFEIT ("forfeit"),
-        PAY_FEES ("pay fees"),
-        MOVE("move"),
-        REQUEST_SELL("request sell"),
-        REQUEST_FORFEIT("request forfeit"),
-        CHANGE_WINDOW("change window");
+        BUY ("Buy"),
+        SELL ("Sell"),
+        PASS ("Pass"),
+        ROLL_AGAIN ("Roll Again"),
+        CELL_STATUS ("Cell Status"),
+        FORFEIT ("Forfeit"),
+        PAY_FEES ("Pay Fees"),
+        MOVE("Move"),
+        REQUEST_SELL("Request Sell"),
+        REQUEST_FORFEIT("Request Forfeit"),
+        CHANGE_WINDOW("Change Window");
 
         private final String stringCommand;
 
@@ -203,41 +203,53 @@ public class BoardModel {
         cells.addAll(Arrays.asList(
                 new Go(200, "images/board/go.jpg"),
                 new Property("Mediterranean Avenue",60,2, "images/board/mediterranean.jpg"),
-                new EmptyCell("Community Chest", BoardCell.CellType.CHANCE_AND_CHEST, "images/board/chest_1.jpg"),
+                new EmptyCell("Community Chest", BoardCell.CellType.CHANCE_AND_CHEST,
+                        "images/board/chest_1.jpg"),
                 new Property("Baltic Avenue",60,4, "images/board/baltic.jpg"),
                 new Tax( "Income Tax", 200, bank, "images/board/income_tax.jpg"),
-                new Railroad("Reading Railroad", 200, new Integer[]{25, 50, 100, 200}, "images/board/railroad_1.jpg"),
+                new Railroad("Reading Railroad", 200, new Integer[]{25, 50, 100, 200},
+                        "images/board/railroad_1.jpg"),
                 new Property("Oriental Avenue",100,6, "images/board/oriental.jpg"),
-                new EmptyCell("Chance Card", BoardCell.CellType.CHANCE_AND_CHEST, "images/board/chance_1.jpg"),
+                new EmptyCell("Chance Card", BoardCell.CellType.CHANCE_AND_CHEST,
+                        "images/board/chance_1.jpg"),
                 new Property("Vermont Avenue",100,6, "images/board/vermont.jpg"),
                 new Property("Connecticut Avenue",120,8, "images/board/connecticut.jpg"),
                 new Jail("JAIL", bank,"images/board/jail.jpg"),
                 new Property("St. Charles Place",140,10, "images/board/st_charles.jpg"),
-                new Utility("Electric Company", 150,  new Integer[]{4, 10}, "images/board/electric.jpg"),
+                new Utility("Electric Company", 150,  new Integer[]{4, 10},
+                        "images/board/electric.jpg"),
                 new Property("States Avenue",140,10, "images/board/states_avenue.jpg"),
                 new Property("Virginia Avenue",160,12, "images/board/virginia.jpg"),
-                new Railroad("Pennsylvania Railroad", 200, new Integer[]{25, 50, 100, 200},  "images/board/railroad_2.jpg"),
+                new Railroad("Pennsylvania Railroad", 200, new Integer[]{25, 50, 100, 200},
+                        "images/board/railroad_2.jpg"),
                 new Property("St. James Place",180,14, "images/board/st_james.jpg"),
-                new EmptyCell("Community Chest", BoardCell.CellType.CHANCE_AND_CHEST, "images/board/chest_2.jpg"),
+                new EmptyCell("Community Chest", BoardCell.CellType.CHANCE_AND_CHEST,
+                        "images/board/chest_2.jpg"),
                 new Property("Tennessee Avenue",180,14, "images/board/tennessee.jpg"),
                 new Property("New York Avenue",200,16, "images/board/new_york.jpg"),
                 new FreeParking("images/board/free_parking.jpg"),
                 new Property("Kentucky Avenue",220,18, "images/board/kentucky.jpg"),
-                new EmptyCell("Chance Card", BoardCell.CellType.CHANCE_AND_CHEST, "images/board/chance_2.jpg"),
+                new EmptyCell("Chance Card", BoardCell.CellType.CHANCE_AND_CHEST,
+                        "images/board/chance_2.jpg"),
                 new Property("Indiana Avenue",220,18, "images/board/indiana.jpg"),
                 new Property("Illinois Avenue",240,20, "images/board/illinois.jpg"),
-                new Railroad("B. & O. Railroad", 200, new Integer[]{25, 50, 100, 200}, "images/board/railroad_3.jpg"),
+                new Railroad("B. & O. Railroad", 200, new Integer[]{25, 50, 100, 200},
+                        "images/board/railroad_3.jpg"),
                 new Property("Atlantic Avenue",260,22, "images/board/atlantic.jpg"),
                 new Property("Ventnor Avenue",260,22, "images/board/ventnor.jpg"),
-                new Utility("Water Works", 150,  new Integer[]{4, 10}, "images/board/water_works.jpg"),
+                new Utility("Water Works", 150,  new Integer[]{4, 10},
+                        "images/board/water_works.jpg"),
                 new Property("Marvin Garden",280,24, "images/board/marvin.jpg"),
                 new GoToJail("GO TO JAIL", "images/board/go_to_jail.jpg"),
                 new Property("Pacific Avenue",300,26, "images/board/pacific.jpg"),
                 new Property("North Carolina Avenue",300,26, "images/board/north_carolina.jpg"),
-                new EmptyCell("Community Chest", BoardCell.CellType.CHANCE_AND_CHEST, "images/board/chest_3.jpg"),
+                new EmptyCell("Community Chest", BoardCell.CellType.CHANCE_AND_CHEST,
+                        "images/board/chest_3.jpg"),
                 new Property("Pennsylvania Avenue",320,28, "images/board/pennsylvania.jpg"),
-                new Railroad("Shortline Railroad", 200, new Integer[]{25, 50, 100, 200}, "images/board/railroad_4.jpg"),
-                new EmptyCell("Chance Card", BoardCell.CellType.CHANCE_AND_CHEST, "images/board/chance_3.jpg"),
+                new Railroad("Shortline Railroad", 200, new Integer[]{25, 50, 100, 200},
+                        "images/board/railroad_4.jpg"),
+                new EmptyCell("Chance Card", BoardCell.CellType.CHANCE_AND_CHEST,
+                        "images/board/chance_3.jpg"),
                 new Property("Park Place",350,35, "images/board/park_place.jpg"),
                 new Tax( "Luxury Tax", 100, bank, "images/board/luxury_tax.jpg"),
                 new Property("Boardwalk",500,50, "images/board/boardwalk.jpg")
@@ -576,8 +588,8 @@ public class BoardModel {
      * @param player player selling the property, Player
      * @param locationToSell the property to sell, Property
      */
-    public void sellProperty(Player player, BoardCell locationToSell){
-        player.sellProperty(locationToSell);
+    public void sellLocation(Player player, BoardCell locationToSell){
+        player.sellLocation(locationToSell);
         ((Buyable) locationToSell).toggleRecentlyChanged();
         locationToSell.setOwner(null);
 

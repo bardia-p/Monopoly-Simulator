@@ -184,7 +184,7 @@ public class Player {
      * @author Sarah Chow 101143033
      * @param location property object to be sold, Property
      */
-    public void sellProperty(BoardCell location){
+    public void sellLocation(BoardCell location){
         this.ownedLocations.remove(location);
         this.cash += ((Buyable) location).getPrice();
     }

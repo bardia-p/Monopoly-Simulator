@@ -17,7 +17,7 @@ public class AIPlayer extends Player {
     /**
      * Keeps track of the model.
      */
-    BoardModel model;
+    private final BoardModel model;
 
     /**
      * The constructor for the AI player.
@@ -51,7 +51,7 @@ public class AIPlayer extends Player {
                 // Tries to sell properties.
                 if (availableCommands.contains(BoardModel.Command.SELL)) {
                     BoardCell sellableCell = this.getOwnedLocations(true).get(0);
-                    model.sellProperty(this, sellableCell);
+                    model.sellLocation(this, sellableCell);
                 } else { // If cannot sell it must forfeit.
                     model.forfeit(this);
                 }
