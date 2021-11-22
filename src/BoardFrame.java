@@ -643,7 +643,7 @@ public class BoardFrame extends JFrame implements BoardView  {
                         "What's player "+ (i+1) + "'s name?", playerName,
                 };
 
-                int ans = JOptionPane.showConfirmDialog(null, message, "Initialize player "+ (i+1),
+                int ans = JOptionPane.showConfirmDialog(null, message, "Initialize Player"+ (i+1),
                         JOptionPane.OK_CANCEL_OPTION);
 
                 if (ans != JOptionPane.OK_OPTION){
@@ -654,7 +654,7 @@ public class BoardFrame extends JFrame implements BoardView  {
             } else {
 
                 JOptionPane.showMessageDialog(null, "AI player " + namesAI[i] +" initialized",
-                        "A plain message", JOptionPane.PLAIN_MESSAGE);
+                        "Initialize AI player", JOptionPane.PLAIN_MESSAGE);
                 playerName.setText(namesAI[i]);
 
                 playerIconMessage = "Select " + namesAI[i] + "'s icon";
