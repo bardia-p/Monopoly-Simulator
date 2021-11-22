@@ -60,6 +60,11 @@ public class BoardModel {
      */
     private boolean checkDoubleRoll;
     /**
+     * Checks to see if the animation is running.
+     */
+    private boolean animationRunning;
+
+    /**
      * Keeps track of the possible board statuses.
      */
     public enum Status {GET_NUM_PLAYERS, CREATE_PLAYER_ICONS, INITIALIZE_BOARD, INITIALIZE_MONOPOLY, INITIALIZE_PLAYERS,
@@ -145,6 +150,7 @@ public class BoardModel {
         turn = null;
         numPlayers = 0;
         checkDoubleRoll = false;
+        animationRunning = false;
     }
 
     /**
@@ -187,7 +193,6 @@ public class BoardModel {
             getCommand(turn);
         }
     }
-
 
     /**
      * Constructor for BoardModel, sets all values
@@ -346,7 +351,7 @@ public class BoardModel {
             // Handles the buying command by checking to see if you can afford it
             // and the property has not been sold by you recently (you cannot buy back the property you just sold).
             if (currentCell.getOwner() == null &&
-                    player.getCash() >= ((Buyable) currentCell).getPrice() &&
+                    player.getCash() > ((Buyable) currentCell).getPrice() &&
                     !((Buyable)currentCell).getRecentlyChanged()) {
                 commands.add(BoardModel.Command.BUY);
             }
@@ -434,6 +439,7 @@ public class BoardModel {
      * @param player active player, Player
      */
     public void roll(Player player){
+        animationRunning = true;
         player.setRollAgain(false);
         Random rand = new Random();
         dice[0] = rand.nextInt((6 - 1) + 1) + 1;
@@ -454,6 +460,8 @@ public class BoardModel {
 
         if (!player.getResortInJail()){
             move(player, dice[0] + dice[1]);
+        } else {
+            animationRunning = false;
         }
     }
 
@@ -464,6 +472,7 @@ public class BoardModel {
      * @param amountToMove distance the player should move, int
      */
     public void move(Player player, int amountToMove){
+        animationRunning = true;
         sendBoardUpdate(new PlayerEvent(this, Status.PLAYER_MOVE, player, amountToMove, true));
 
         int originalPosition = player.getPosition();
@@ -471,6 +480,7 @@ public class BoardModel {
 
         player.setPosition(newPlayerPosition);
         player.setCurrentCell(cells.get(newPlayerPosition));
+        animationRunning = false;
 
         // Player lands on go to Jail, do not have other options.
         if (player.getCurrentCell().getType() == BoardCell.CellType.GO_TO_JAIL) {
@@ -765,7 +775,9 @@ public class BoardModel {
                     // Keeps prompting the player for commands until their turn is over.
                     while (turn != null){
                         if (turn.isPlayerAI()){
-                            ((AIPlayer) turn).nextMove();
+                            if (!animationRunning){
+                                ((AIPlayer) turn).nextMove();
+                            }
                         }
 
                         if (checkDoubleRoll){

@@ -8,6 +8,8 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static java.lang.Math.abs;
+
 /**
  * Group 3
  * SYSC 3110 - Milestone 3 BoardFrame Class
@@ -163,10 +165,6 @@ public class BoardFrame extends JFrame implements BoardView  {
      * Keeps track of location of Jail square.
      */
     public static final int GOTOJAIL_LOCATION = 30;
-    /**
-     * The jail offset for just visiting jail.
-     */
-    public static final int JAIL_VISITING_OFFSET = 50;
 
     /**
      * Constructor for the Board listener, creates the board model, adds the board listener to the board model,
@@ -306,7 +304,6 @@ public class BoardFrame extends JFrame implements BoardView  {
      * Handles moving players cell by cell.
      * @author Sarah Chow 101143033
      * @param player the player that is moving, Player
-     * @param amountToMove the amount that a player should move, int
      * @param originalPos the original position of the player, int
      */
     private void handlePlayerGUIMove(Player player, int amountToMove, int originalPos){
@@ -809,12 +806,6 @@ public class BoardFrame extends JFrame implements BoardView  {
                         ICON_SHIFT_ON_CELL_PER_PLAYER * index;
                 int y = cellPosition.y + cellPosition.height/2 - ICON_SHIFT_ON_CELL -
                         ICON_SHIFT_ON_CELL_PER_PLAYER * index + BOARD_SHIFT_Y;
-
-                // Add an offset if the player is just visiting jail.
-                if (cellIndex + 1 == JAIL_LOCATION && !player.getResortInJail()){
-                    x -= JAIL_VISITING_OFFSET;
-                    y -= JAIL_VISITING_OFFSET;
-                }
 
                 playerLabels.get(player).setBounds(x, y, 50, 50);
                 layeredPane.moveToFront(playerLabels.get(player));
