@@ -224,7 +224,7 @@ public class BoardFrame extends JFrame implements BoardView  {
             case REPAINT_BOARD -> handleRepaintBoard();
             case PLAYER_FORFEIT -> handleForfeitedPlayer(e.getPlayer());
             case PLAYER_REQUEST_FORFEIT -> handleRequestForfeit(e.getPlayer());
-            case BUILD -> handleBuildHouses(e.getPlayer(), e.getNeighborhoods());
+            case BUILD -> handleNeighborhoodsToBuild(e.getPlayer(), e.getNeighborhoods());
         }
     }
 
@@ -519,7 +519,6 @@ public class BoardFrame extends JFrame implements BoardView  {
         return null;
     }
 
-
     /**
      * Constructs the board from the list of the board cells.
      * @author Bardia Parmoun 101143006
@@ -795,7 +794,7 @@ public class BoardFrame extends JFrame implements BoardView  {
         }
     }
 
-    private void handleBuildHouses(Player player, List<Property.NeighborhoodEnum> buildable){
+    private void handleNeighborhoodsToBuild(Player player, List<Property.NeighborhoodEnum> buildable){
         int neighborhoods = buildable.size();
         JPanel panel = new JPanel(new GridLayout(neighborhoods,1));
         ButtonGroup group = new ButtonGroup();
@@ -815,8 +814,6 @@ public class BoardFrame extends JFrame implements BoardView  {
         } else {
             JOptionPane.showMessageDialog(null,"Building Cancelled");
         }
-
-
     }
 
     private void handleAddHouses(Player player, String neighborhood){
@@ -837,8 +834,15 @@ public class BoardFrame extends JFrame implements BoardView  {
         for(Property p: player.getProperties(false)){
             if(p.getNeighborhood() == group){
                 JPanel subPanel = new JPanel(new GridLayout(3, 1));
+
                 JButton addButton = new JButton("+");
-                addButton.addActionListener(e -> addHouse(p, group.getHouseCost()));
+                addButton.addActionListener(controller);
+                addButton.setActionCommand(BoardModel.Command.ROLL_AGAIN.getStringCommand());
+
+                    //    e -> {
+                    //addHouse(player, p, group.getHouseCost());
+                    //paintHouse(p);
+
                 JLabel propertyName = new JLabel(p.getName());
                 JLabel houseCost = new JLabel(String.valueOf(group.getHouseCost()));
 
@@ -850,20 +854,28 @@ public class BoardFrame extends JFrame implements BoardView  {
             }
         }
 
-
         Dimension d = group.getNumProperties() == 3 ? new Dimension(300,200) : new Dimension(200,200);
+
         panel.setPreferredSize(d);
-        frame.add(frame);
-
-        this.pack();
+        frame.add(panel);
+        frame.setPreferredSize(d);
         frame.setVisible(true);
-        this.pack();
-
+        pack();
     }
 
-    private void addHouse(Property property, int houseCost){
-        System.out.println(property.getName());
-        System.out.println(houseCost);
+    private void addHouse(Player player, Property property, int houseCost){
+        player.pay(houseCost);
+         boolean result = property.addHouse();
+         if(result){
+             System.out.println("The house was successfully purchased");
+             System.out.printf("a house has been added to %s\n",property.getName());
+         } else {
+             System.out.println("You cannot buy any more houses");
+         }
+    }
+
+    private void paintHouse(Property property){
+
     }
 
     /**

@@ -25,6 +25,26 @@ public class Property extends BoardCell {
      */
     private final int rent;
     /**
+     * Rent if the player has one house on the property
+     */
+    private final int oneHouseRent;
+    /**
+     * Rent if the player has two houses on the property
+     */
+    private final int twoHouseRent;
+    /**
+     * Rent if the player has three houses on the property
+     */
+    private final int threeHouseRent;
+    /**
+     * Rent if the player has four houses on the property
+     */
+    private final int fourHouseRent;
+    /**
+     * Rent if the player has 5 houses(a hotel) on the property
+     */
+    private final int hotel;
+    /**
      * Keeps track of whether a property attribute has been recently changed (Excluding self).
      */
     private boolean recentlyChanged;
@@ -74,10 +94,16 @@ public class Property extends BoardCell {
      * @param price Property price, int
      * @param rent Property rent, int
      */
-    Property(String name, int price, int rent, NeighborhoodEnum neighborhood, String imgName){
+    Property(String name, int price, int rent, int oneHouseRent, int twoHouseRent, int threeHouseRent,
+             int fourHouseRent, int hotel, NeighborhoodEnum neighborhood, String imgName){
         super(name, null, CellType.PROPERTY, imgName);
-        this.price = 50;
+        this.price = price;
         this.rent = rent;
+        this.oneHouseRent = oneHouseRent;
+        this.twoHouseRent = twoHouseRent;
+        this.threeHouseRent = threeHouseRent;
+        this.fourHouseRent = fourHouseRent;
+        this.hotel = hotel;
         this.recentlyChanged = false;
         this.neighborhood = neighborhood;
         this.numHouses = 0;
@@ -98,7 +124,14 @@ public class Property extends BoardCell {
      * @return value of the rent, int
      */
     public int getRent(){
-        return this.rent;
+        return switch(numHouses){
+            case 1 -> oneHouseRent;
+            case 2 -> twoHouseRent;
+            case 3 -> threeHouseRent;
+            case 4 -> fourHouseRent;
+            case 5 -> hotel;
+            default -> rent;
+        };
     }
 
     /**
@@ -127,12 +160,12 @@ public class Property extends BoardCell {
         return this.neighborhood;
     };
 
-    /**
-     * Accessor to set the neighborhood of a property
-     * @param neighborhood
-     */
-    public void setNeighborhood(NeighborhoodEnum neighborhood){
-        this.neighborhood = neighborhood;
+    public boolean addHouse(){
+        if(numHouses == 5){
+            return false;
+        }
+        this.numHouses += 1;
+        return true;
     }
 
     /**
@@ -144,7 +177,7 @@ public class Property extends BoardCell {
     public String toString() {
         String propertyInfo = "\n\tname='" + super.getName() + '\'' +
                 "\n\tprice='" + price + '\'' +
-                "\n\trent='" + rent + '\'';
+                "\n\trent='" + getRent() + '\'';
 
         if (super.getOwner() != null){
             propertyInfo += "\n\tproperty owner='" + super.getOwner().getIconName() + '\'';
