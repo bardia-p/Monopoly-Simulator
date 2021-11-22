@@ -55,16 +55,16 @@ public class BoardModel {
      * Checks to see if the roll button was pressed.
      */
     private boolean checkDoubleRoll;
-
+    /**
+     * List of the properties that the player can currently build houses on.
+     */
     private List<Property.NeighborhoodEnum> buildableProperties;
-
     /**
      * Keeps track of the possible board statuses.
      */
     public enum Status {GET_NUM_PLAYERS, CREATE_PLAYER_ICONS, INITIALIZE_BOARD, INITIALIZE_MONOPOLY, INITIALIZE_PLAYERS,
         GET_COMMAND, PLAYER_ROLL, PLAYER_MOVE, BUY, SELL, PAY_FEES, BUILD, PAINT_HOUSE,
         PLAYER_STATUS, CELL_STATUS, PLAYER_FORFEIT, PLAYER_REQUEST_FORFEIT, PASS_TURN, REPAINT_BOARD, GAME_OVER}
-
     /**
      * Keeps track of the possible player commands.
      */
@@ -78,7 +78,6 @@ public class BoardModel {
         ROLL_AGAIN ("roll"),
         CELL_STATUS ("cell status"),
         BUILD("build house"),
-        PAINT_BOARD("paint board"),
         FORFEIT ("forfeit"),
         CONFIRM_FORFEIT("confirm_forfeit"),
         PAY_TAX ("pay tax"),
@@ -144,7 +143,7 @@ public class BoardModel {
         cells = new ArrayList<>();
         players = new ArrayList<>();
         dice =  new int[2];
-        buildableProperties = new ArrayList<Property.NeighborhoodEnum>(8);
+        buildableProperties = new ArrayList<>(8);
         bank = new Player("Bank", Icon.BANK);
         gameFinish = false;
         turn = null;
@@ -438,7 +437,12 @@ public class BoardModel {
         sendBoardUpdate(new BoardEvent(this, Status.REPAINT_BOARD));
     }
 
-
+    /**
+     * Checks if the player owns any sets of properties and updates the buildableProperties arraylist to reflect
+     * the current player's options
+     * @author Owen VanDusen 101152022
+     * @return whether or not the player can build houses on any of the properties.
+     */
     private boolean setBuildableProperties(){
         boolean buildable = false;
         buildableProperties.clear();
@@ -605,10 +609,20 @@ public class BoardModel {
         sendBoardUpdate(new BoardEvent(this, Status.CELL_STATUS, turn));
     }
 
+    /**
+     * Accessor to open the build house UI for the current player.
+     * @author Owen VanDusen 1011522022
+     */
     public void getBuildStatus(){
         sendBoardUpdate(new BoardEvent(this, Status.BUILD, turn, buildableProperties));
     }
 
+    /**
+     * Action taken when the player attempts to build a house on one of their properties .
+     * @author Owen VanDusen 101152022
+     * @param property the property that is having a house built on it
+     * @param player the player building the house
+     */
     public void buildHouse(Property property, Player player){
         if(player.getCash() >= property.getNeighborhood().getHouseCost() &&
                 property.getNumHouses() < 5){
@@ -747,8 +761,6 @@ public class BoardModel {
                             checkDoubleRoll = false;
                         }
                     }
-
-
                 }
 
                 // Checks to see if the game is over

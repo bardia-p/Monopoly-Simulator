@@ -97,7 +97,7 @@ public class Property extends BoardCell {
     Property(String name, int price, int rent, int oneHouseRent, int twoHouseRent, int threeHouseRent,
              int fourHouseRent, int hotel, NeighborhoodEnum neighborhood, String imgName){
         super(name, null, CellType.PROPERTY, imgName);
-        this.price = 10;
+        this.price = price;
         this.rent = rent;
         this.oneHouseRent = oneHouseRent;
         this.twoHouseRent = twoHouseRent;

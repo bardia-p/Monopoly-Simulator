@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.IntStream;
 
 /**
  * Group 3
@@ -238,7 +237,7 @@ public class BoardFrame extends JFrame implements BoardView  {
             case REPAINT_BOARD -> handleRepaintBoard();
             case PLAYER_FORFEIT -> handleForfeitedPlayer(e.getPlayer());
             case PLAYER_REQUEST_FORFEIT -> handleRequestForfeit(e.getPlayer());
-            case BUILD -> handleNeighborhoodsToBuild(e.getPlayer(), e.getNeighborhoods());
+            case BUILD -> handlePropertyToBuildOn(e.getPlayer(), e.getNeighborhoods());
             case PAINT_HOUSE -> paintHouse(e.getProperty());
         }
     }
@@ -810,7 +809,13 @@ public class BoardFrame extends JFrame implements BoardView  {
         }
     }
 
-    private void handleNeighborhoodsToBuild(Player player, List<Property.NeighborhoodEnum> buildable){
+    /**
+     * Generates a pop-up GUI for the player to select which property to build a house on.
+     * @author Owen VanDusen 101152022
+     * @param player the player who is paying for the house.
+     * @param buildable List of the colours of neighborhoods the player can build houses on
+     */
+    private void handlePropertyToBuildOn(Player player, List<Property.NeighborhoodEnum> buildable){
         int buildableHouses = 0;
         for(Property.NeighborhoodEnum e: buildable){
             buildableHouses += e.getNumProperties();
@@ -828,7 +833,7 @@ public class BoardFrame extends JFrame implements BoardView  {
                 group.add(addButton);
 
                 JLabel propertyName = new JLabel(p.getName());
-                JLabel houseCost = new JLabel(String.valueOf(p.getNeighborhood().getHouseCost()));
+                JLabel houseCost = new JLabel("Cost of a House: " + p.getNeighborhood().getHouseCost());
 
                 subPanel.add(propertyName);
                 subPanel.add(addButton);
@@ -838,7 +843,7 @@ public class BoardFrame extends JFrame implements BoardView  {
             }
         }
 
-        panel.setPreferredSize(new Dimension(400,200));
+        panel.setPreferredSize(new Dimension(100*buildableHouses,200));
 
         int ans = JOptionPane.showConfirmDialog(null,panel,"BUILD ON PROPERTY",JOptionPane.OK_CANCEL_OPTION);
         if(ans == JOptionPane.OK_OPTION) {
@@ -854,15 +859,13 @@ public class BoardFrame extends JFrame implements BoardView  {
         }
     }
 
-    private void addHouseSuccess(Player player){
-        String message = player.getIconName() + "has purchased a house";
-        JOptionPane.showMessageDialog(null, message);
-    }
-
-    private void addHouseFail(){
-        JOptionPane.showMessageDialog(null,"A house could not be purchased.");
-    }
-
+    /**
+     * Generates a house image and places it on the property where the house has been built.
+     * Offsets in the case where multiple houses have been built.
+     * Replaces 4 houses with a hotel when building the 5th house.
+     * @author Owen VanDusen 101152022
+     * @param cell the board cell where the house needs to be placed.
+     */
     private void paintHouse(BoardCell cell){
         int x , y;
         boolean isHotel = false;
