@@ -276,6 +276,11 @@ public class BoardFrame extends JFrame implements BoardView  {
         }
     }
 
+    /**
+     * Selects which method to use based on playerEvent
+     * @author Bardia Parmoun 101143006
+     * @param pe, playerEvent
+     */
     private void handlePlayerInput (PlayerEvent pe){
         BoardModel source = (BoardModel) pe.getSource();
         Player player = pe.getPlayer();
@@ -590,17 +595,19 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @author Kyra Lothrop 101145872
      */
     private void getNumPlayers(){
-        Integer[] numPlayerOptions = {2,3,4,5,6,7,8};
-        Integer[] numAIOptions = {1,2,3,4,5,6,7,8};
-
         try{
+            Integer[] numPlayerOptions = {2,3,4,5,6,7,8};
             int numPlayers = (Integer)JOptionPane.showInputDialog(null,
-                    "How many players?", "INITIALIZE GAME DATA",
+                    "How many players in total (AI + users)?", "INITIALIZE GAME DATA",
                     JOptionPane.QUESTION_MESSAGE, null, numPlayerOptions, numPlayerOptions[0]);
 
+            ArrayList<Integer> numAIOptions = new ArrayList<>();
+            for(int i = 1; i<= numPlayers; i++){
+                numAIOptions.add(i);
+            }
             int numAIPlayers = (Integer)JOptionPane.showInputDialog(null,
                     "How many AI will be playing?", "INITIALIZE GAME DATA",
-                    JOptionPane.QUESTION_MESSAGE, null, numAIOptions, numAIOptions[0]);
+                    JOptionPane.QUESTION_MESSAGE, null, numAIOptions.toArray(), numAIOptions.get(0));
 
             model.setNumAIPlayer(numAIPlayers);
             model.setNumPlayers(numPlayers);
@@ -620,6 +627,7 @@ public class BoardFrame extends JFrame implements BoardView  {
 
         for (int i = 0; i < numPlayers; i++){
             JTextField playerName = new JTextField();
+            String playerIconMessage;
 
             if(i+1 <= (numPlayers-model.getNumAIPlayer())){
                 Object[] message = {
@@ -632,17 +640,21 @@ public class BoardFrame extends JFrame implements BoardView  {
                 if (ans != JOptionPane.OK_OPTION){
                     initializationCancel();
                 }
+
+                playerIconMessage = "Select player " + (i+1) + "'s icon";
             } else {
 
                 JOptionPane.showMessageDialog(null, "AI player " + namesAI[i] +" initialized",
                         "A plain message", JOptionPane.PLAIN_MESSAGE);
                 playerName.setText(namesAI[i]);
+
+                playerIconMessage = "Select " + namesAI[i] + "'s icon";
             }
 
             Object[] iconOptions = getListOfIconsUpper();
-            String playerIcon = (String) JOptionPane.showInputDialog(null, "Select player " +
-                                (i+1) + " icon" , "Select Icon", JOptionPane.QUESTION_MESSAGE, null,
-                                iconOptions, iconOptions[0]);
+
+            String playerIcon = (String) JOptionPane.showInputDialog(null, playerIconMessage ,
+                    "Select Icon", JOptionPane.QUESTION_MESSAGE, null, iconOptions, iconOptions[0]);
 
             if (playerIcon == null){
                 initializationCancel();

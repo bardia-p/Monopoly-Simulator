@@ -86,7 +86,7 @@ public class Player {
      */
     private boolean isAI;
 
-    private static final int PLAYER_INITIAL_CASH = 100;
+    private static final int PLAYER_INITIAL_CASH = 1500;
     /**
      * The constructor of the player with cash.
      * @param name the name of the player, String
