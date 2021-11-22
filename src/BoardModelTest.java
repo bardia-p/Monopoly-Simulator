@@ -386,6 +386,41 @@ public class BoardModelTest {
         assertEquals(1500 - 50, p1.getCash());
     }
 
+    /**
+     * Test for player to leave jail once they roll a double.
+     * @author Sarah Chow 101143033
+     */
+    @Test
+    public void testRollDoublesJail(){
+        boardModel.setDice(30, 0);
+        boardModel.move(p1);
+        ((Jail)p1.getCurrentCell()).incrementJailRound(p1); // Increment rounds to 1
+
+        boardModel.roll(p1);
+        while(boardModel.getDice()[0] != boardModel.getDice()[1]){
+            boardModel.roll(p1);
+        }
+
+        assertEquals(false, p1.getResortInJail());
+    }
+
+    /**
+     * Test for player to go to jail if they roll three doubles in a row.
+     * @author Sarah Chow 101143033
+     */
+    @Test
+    public void testRollThreeDoublesJail(){
+        for (int i = 0; i < 3; i++){
+            boardModel.roll(p1);
+            while(boardModel.getDice()[0] != boardModel.getDice()[1]){
+                boardModel.roll(p1);
+            }
+        }
+
+        assertEquals(BoardCell.CellType.JAIL, p1.getCurrentCell().getType());
+
+    }
+
 
     /**
      * Tests when the player passes GO. Confirms they collected $200.
