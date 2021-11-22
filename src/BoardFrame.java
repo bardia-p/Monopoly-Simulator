@@ -587,12 +587,18 @@ public class BoardFrame extends JFrame implements BoardView  {
      */
     private void getNumPlayers(){
         Integer[] numPlayerOptions = {2,3,4,5,6,7,8};
+        Integer[] numAIOptions = {1,2,3,4,5,6,7,8};
 
         try{
             int numPlayers = (Integer)JOptionPane.showInputDialog(null,
-                    "How many people will be playing?", "INITIALIZE GAME DATA",
+                    "How many players?", "INITIALIZE GAME DATA",
                     JOptionPane.QUESTION_MESSAGE, null, numPlayerOptions, numPlayerOptions[0]);
 
+            int numAIPlayers = (Integer)JOptionPane.showInputDialog(null,
+                    "How many AI will be playing?", "INITIALIZE GAME DATA",
+                    JOptionPane.QUESTION_MESSAGE, null, numAIOptions, numAIOptions[0]);
+
+            model.setNumAIPlayer(numAIPlayers);
             model.setNumPlayers(numPlayers);
         }
         catch(Exception e){
@@ -606,17 +612,27 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @param numPlayers keeps track of the number of player, int
      */
     private void initializePlayers(int numPlayers){
+        String[] namesAI = {"GOOGLE", "SIRI", "ALEXA", "BIXBY", "BAYMAX", "WALL-E", "EVA", "TOBIO"};
+
         for (int i = 0; i < numPlayers; i++){
             JTextField playerName = new JTextField();
-            Object[] message = {
-                    "What's player "+ (i+1) + "'s name?", playerName,
-            };
 
-            int ans = JOptionPane.showConfirmDialog(null, message, "Initialize player "+ (i+1),
+            if(i+1 <= (numPlayers-model.getNumAIPlayer())){
+                Object[] message = {
+                        "What's player "+ (i+1) + "'s name?", playerName,
+                };
+
+                int ans = JOptionPane.showConfirmDialog(null, message, "Initialize player "+ (i+1),
                         JOptionPane.OK_CANCEL_OPTION);
 
-            if (ans != JOptionPane.OK_OPTION){
-                initializationCancel();
+                if (ans != JOptionPane.OK_OPTION){
+                    initializationCancel();
+                }
+            } else {
+
+                JOptionPane.showMessageDialog(null, "AI player " + namesAI[i] +" initialized",
+                        "A plain message", JOptionPane.PLAIN_MESSAGE);
+                playerName.setText(namesAI[i]);
             }
 
             Object[] iconOptions = getListOfIconsUpper();
@@ -626,8 +642,11 @@ public class BoardFrame extends JFrame implements BoardView  {
 
             if (playerIcon == null){
                 initializationCancel();
-            } else {
+            } else if (i+1 <= (numPlayers-model.getNumAIPlayer())){
                 model.addPlayer(new Player(playerName.getText(), findPlayerIcon(playerIcon.toLowerCase())));
+            }
+            else {
+                model.addPlayer(new AIPlayer(model, playerName.getText(), findPlayerIcon(playerIcon.toLowerCase())));
             }
         }
     }

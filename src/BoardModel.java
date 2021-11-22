@@ -30,7 +30,11 @@ public class BoardModel {
     /**
      * Keeps track of the number of players.
      */
-    private  int numPlayers;
+    private int numPlayers;
+    /**
+     * Keeps track of the number of AI players.
+     */
+    private int numAIPlayer;
     /**
      * Keeps track of the size of the board.
      */
@@ -274,6 +278,24 @@ public class BoardModel {
     public void addPlayer(Player player){
         player.setCurrentCell(this.cells.get(0));
         this.players.add(player);
+    }
+
+    /**
+     * Getter for the number of AI players
+     * @author Kyra Lothrop 101145872
+     * @return the number of AI players, int
+     */
+    public int getNumAIPlayer() {
+        return numAIPlayer;
+    }
+
+    /**
+     * Setter for the number of AI players
+     * @author Kyra Lothrop 101145872
+     * @param numAIPlayer, number of AI players, int
+     */
+    public void setNumAIPlayer(int numAIPlayer) {
+        this.numAIPlayer = numAIPlayer;
     }
 
     /**

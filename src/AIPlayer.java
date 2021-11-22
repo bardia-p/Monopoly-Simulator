@@ -9,11 +9,12 @@ public class AIPlayer extends Player {
 
     public void nextMove(){
         BoardCell currentCell = getCurrentCell();
-        List<BoardModel.Command> availableCommands =  model.getCommand(this);
 
         boolean turnOver = false;
 
         while (!turnOver){
+            List<BoardModel.Command> availableCommands =  model.getCommand(this);
+
             if (availableCommands.contains(BoardModel.Command.BUY)){
                 model.buyLocation(currentCell, this);
             } else if (availableCommands.contains(BoardModel.Command.PAY_FEES)){
