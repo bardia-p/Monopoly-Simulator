@@ -8,7 +8,8 @@ import static org.junit.Assert.*;
  * This test class ensures the backing data used to display the Monopoly game is properly
  * stored in the BoardModel class and that various BoardModel methods are working as expected
  * @author Owen VanDusen 101152022
- * @version 1.0
+ * @author Sarah Chow 101143033
+ * @version 2.0
  */
 public class BoardModelTest {
 
@@ -130,7 +131,7 @@ public class BoardModelTest {
      * Has the player buy properties, ensuring that the properties are correctly added to the
      * player information. Then, has the player sell some of their properties, checking that
      * the number of properties owned by the players has decreased accordingly.
-     * @author Owen VanDusen
+     * @author Owen VanDusen 101152022
      */
     @Test
     public void testPlayerSellProperty(){
@@ -215,4 +216,180 @@ public class BoardModelTest {
         }
         assertEquals(1, p1.getNumDoubles());
     }
+
+
+    /**
+     * Test to ensure player 1 has successfully bought a utility.
+     * Checks if their cash has decreased and their total owned properties has increased.
+     * @author Sarah Chow 101143033
+     */
+    @Test
+    public void testBuyUtility(){
+        assertEquals(1500, p1.getCash());
+
+        boardModel.move(p1, 12); // Electric Company
+        boardModel.buyLocation(p1.getCurrentCell(), p1);
+
+        assertEquals(1500 - 150, p1.getCash());
+        assertEquals(1, p1.getOwnedLocations(false).size());
+    }
+
+    /**
+     * Test to ensure player 1 has successfully bought a Railroad.
+     * Checks if their cash has decreased and their total owned properties has increased.
+     * @author Sarah Chow 101143033
+     */
+    @Test
+    public void testBuyRailroad(){
+        assertEquals(1500, p1.getCash());
+
+        boardModel.move(p1, 5); // Electric Company
+        boardModel.buyLocation(p1.getCurrentCell(), p1);
+
+        assertEquals(1500 - 200, p1.getCash());
+        assertEquals(1, p1.getOwnedLocations(false).size());
+    }
+
+    /**
+     * To test when a player buys one and multiple Utilities. Checks and confirms
+     * the total fees the player pays depending on the number of Utilities in possession.
+     * @author Sarah Chow 101143033
+     */
+    @Test
+    public void testLandOnBoughtUtility(){
+        assertEquals(1500, p2.getCash());
+
+        boardModel.move(p1,12); // Electric Company
+        boardModel.buyLocation(p1.getCurrentCell(), p1);
+
+        // P1 owns one utility
+        boardModel.move(p2, 12); // To make way to Electric Company
+        boardModel.setDice(2, 3);
+        boardModel.payFees(p2.getCurrentCell(), p2);
+        assertEquals(1500 - (5 * 4), p2.getCash()); // One utility fee = rolled number * 4
+        assertEquals(1500 - 150 + (5 * 4), p1.getCash());
+
+        // P1 owns two utilities
+        boardModel.move(p1, 16); // Water Works
+        boardModel.buyLocation(p1.getCurrentCell(), p1);
+
+        boardModel.move(p2, 16);
+        boardModel.setDice(5, 3);
+        boardModel.payFees(p2.getCurrentCell(), p2);
+        assertEquals(1500 - (5 * 4) - (8 * 10), p2.getCash()); // Two utilities fee = rolled number * 10
+        assertEquals(1500 - 300 + (5 * 4) + (8 * 10), p1.getCash());
+    }
+
+    /**
+     * To test when a player buys one and multiple Railroads. Checks and confirms the total fees
+     * the player pays depending on the number of Railroads in possession.
+     * @author Sarah Chow 101143033
+     */
+    @Test
+    public void testLandOnBoughtRailroad(){
+        assertEquals(1500, p1.getCash());
+        assertEquals(1500, p2.getCash());
+
+        // P1 owns one railroad
+        boardModel.move(p1,5); // Reading Railroad
+        boardModel.buyLocation(p1.getCurrentCell(), p1);
+
+        boardModel.move(p2, 5);
+        boardModel.payFees(p2.getCurrentCell(), p2);
+        assertEquals(1500 - 25, p2.getCash());
+        assertEquals(1500 - 200 + 25, p1.getCash());
+
+
+        // P1 owns two railroads
+        boardModel.move(p1,10); // Reading Railroad
+        boardModel.buyLocation(p1.getCurrentCell(), p1);
+
+        boardModel.move(p2, 10);
+        boardModel.payFees(p2.getCurrentCell(), p2);
+        assertEquals(1500 - 75, p2.getCash());
+        assertEquals(1500 - 400 + 75, p1.getCash());
+
+
+        // P1 owns three railroads
+        boardModel.move(p1,10); // Reading Railroad
+        boardModel.buyLocation(p1.getCurrentCell(), p1);
+
+        boardModel.move(p2, 10);
+        boardModel.payFees(p2.getCurrentCell(), p2);
+        assertEquals(1500 - 175, p2.getCash());
+        assertEquals(1500 - 600 + 175, p1.getCash());
+
+
+        // P1 owns four railroads
+        boardModel.move(p1,10); // Reading Railroad
+        boardModel.buyLocation(p1.getCurrentCell(), p1);
+
+        boardModel.move(p2, 10);
+        boardModel.payFees(p2.getCurrentCell(), p2);
+        assertEquals(1500 - 375, p2.getCash());
+        assertEquals(1500 - 800 + 375, p1.getCash());
+    }
+
+    /**
+     * Test that the player is sent to Jail if they land on Go To Jail.
+     * Checks their position on the baord after they are sent to jail.
+     * @author Sarah Chow 101143033
+     */
+    @Test
+    public void testLandOnGoToJail(){
+        boardModel.move(p1,30);
+
+        assertEquals(10, p1.getPosition()); // Sent to jail
+    }
+
+    /**
+     * Test when a player buys their way out of jail. Checks when the player is in jail and pays the fee.
+     * @author Sarah Chow 101143033
+     */
+    @Test
+    public void testBuyOutOfJail(){
+        assertEquals(1500, p1.getCash());
+        boardModel.move(p1, 30);
+        ((Jail)p1.getCurrentCell()).incrementJailRound(p1); // Increment rounds to 1
+
+        boardModel.payFees(p1.getCurrentCell(), p1);
+        assertEquals(1500 - 50, p1.getCash());
+    }
+
+
+    /**
+     * Tests when the player passes GO. Confirms they collected $200.
+     */
+    @Test
+    public void testGO(){
+        assertEquals(1500, p1.getCash());
+
+        boardModel.move(p1, 45);
+
+        assertEquals(1500 + 200, p1.getCash());
+    }
+
+    /**
+     * Test when a player lands on free parking.
+     * Confirms that player collects all the taxes and jail payments on the board.
+     * @author Sarah Chow 101143033
+     */
+    @Test
+    public void testFreeParking(){
+        boardModel.move(p1, 4); // Income Tax - $200
+        boardModel.payFees(p1.getCurrentCell(), p1);
+
+        boardModel.move(p1, 26); // To jail
+        ((Jail)p1.getCurrentCell()).incrementJailRound(p1); // Increment rounds to 1
+        boardModel.payFees(p1.getCurrentCell(), p1); // Pay out of jail - $50
+
+        boardModel.move(p1, 28); // Luxury Tax - $100
+        boardModel.payFees(p1.getCurrentCell(), p1);
+
+        boardModel.move(p2, 20);
+        assertEquals(1500 + 350, p2.getCash());
+
+
+    }
 }
+

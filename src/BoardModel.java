@@ -791,6 +791,17 @@ public class BoardModel {
     }
 
     /**
+     * Accessor method to set the dice values. This is for testing.
+     * @author Sarah Chow 101143033
+     * @param dice1 first dice value, int
+     * @param dice2 second dice value, int
+     */
+    public void setDice(int dice1, int dice2){
+        dice[0] = dice1;
+        dice[1] = dice2;
+    }
+
+    /**
      * Accessor method to get the current turn.
      * @return the current turn, Player
      * @author Owen VanDusen 101152022
