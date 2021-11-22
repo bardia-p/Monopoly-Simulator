@@ -81,6 +81,32 @@ public class Player {
      */
     private boolean resortInJail;
 
+    /**
+     * Checks to see if the player is an AI.
+     */
+    private boolean isAI;
+
+    private static final int PLAYER_INITIAL_CASH = 1500;
+    /**
+     * The constructor of the player with cash.
+     * @param name the name of the player, String
+     * @param icon the icon of the player, BoardModel.Icon
+     * @param isAI checks to see if the player is AI, boolean
+     * @author Kyra Lothrop 101145872
+     */
+    Player(String name, BoardModel.Icon icon, boolean isAI){
+        this(name, icon);
+        this.isAI = isAI;
+    }
+
+
+    /**
+     * The constructor of the player with cash.
+     * @param name the name of the player, String
+     * @param icon the icon of the player, BoardModel.Icon
+     * @param cash the cash amount of the player, int
+     * @author Kyra Lothrop 101145872
+     */
     Player(String name, BoardModel.Icon icon, int cash){
         this(name, icon);
         this.cash = cash;
@@ -93,13 +119,13 @@ public class Player {
      * @author Bardia Parmoun 101143006
      * @author Owen VanDusen 101152022
      * @param name Player name, String
-     * @param icon Player icon, String
+     * @param icon Player icon, BoardModel.Icon
      */
     Player(String name, BoardModel.Icon icon) {
         this.bankrupt = false;
         this.name = name;
         this.icon = icon;
-        this.cash = 1500;
+        this.cash = PLAYER_INITIAL_CASH;
         this.position = 0;
         this.ownedLocations = new ArrayList<>();
         this.numDoubles = 0;
@@ -107,8 +133,15 @@ public class Player {
         this.feesStatus = StatusEnum.NO_FEES;
         this.rank = 0;
         this.resortInJail = false;
+        this.isAI = false;
     }
 
+    /**
+     * Checks to see if the player is AI.
+     */
+    public boolean isPlayerAI(){
+        return isAI;
+    }
 
     /**
      * Method to toggle resort in jail boolean value.
@@ -126,7 +159,6 @@ public class Player {
     public boolean getResortInJail(){
         return this.resortInJail;
     }
-
 
     /**
      * Method to deduct the amount the player must pay.
@@ -152,7 +184,7 @@ public class Player {
      * @author Sarah Chow 101143033
      * @param location property object to be sold, Property
      */
-    public void sellProperty(BoardCell location){
+    public void sellLocation(BoardCell location){
         this.ownedLocations.remove(location);
         this.cash += ((Buyable) location).getPrice();
     }

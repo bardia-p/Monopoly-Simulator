@@ -91,7 +91,7 @@ public class Railroad extends BoardCell implements Buyable{
                 "\n\t\t'" + rentValues[3] + ", if the owner owns four railroads." + '\'';
 
         if (super.getOwner() != null){
-            railroadInfo += "\n\tproperty owner='" + super.getOwner().getIconName() + '\'';
+            railroadInfo += "\n\tproperty owner='" + super.getOwner().getIconName().toUpperCase() + '\'';
 
         } else {
             railroadInfo += "\n\tproperty owner='no owner'";

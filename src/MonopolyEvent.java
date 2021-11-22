@@ -20,25 +20,15 @@ public abstract class MonopolyEvent extends EventObject {
      * Keeps track of the status in the event.
      */
     private final BoardModel.Status status;
-    /**
-     * Keeps track of the type of the event.
-     */
-    private final EventType eventType;
-
-    /**
-     * An enum for the different event types.
-     */
-    public enum EventType {BOARD_EVENT, PLAYER_EVENT}
 
     /**
      * The main constructor for MonopolyEvent
      * @param model the source of the event, BoardModel
      * @author Bardia Parmoun, 101143006
      */
-    public MonopolyEvent(BoardModel model, BoardModel.Status status, EventType eventType) {
+    public MonopolyEvent(BoardModel model, BoardModel.Status status) {
         super(model);
         this.status = status;
-        this.eventType = eventType;
     }
 
     /**
@@ -48,14 +38,5 @@ public abstract class MonopolyEvent extends EventObject {
      */
     public BoardModel.Status getStatus(){
         return status;
-    }
-
-    /**
-     * Returns the event type.
-     * @return type, BoardEvent.
-     * @author Bardia Parmoun, 101143006
-     */
-    public EventType getEventType(){
-        return eventType;
     }
 }

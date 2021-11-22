@@ -45,7 +45,7 @@ public class Tax extends BoardCell{
      */
     @Override
     public String toString() {
-        return "\n\tname='" + super.getName() + '\'' +
+        return "\n\tname='" + super.getName().toUpperCase() + '\'' +
                 "\n\ttax='" + tax + '\'';
     }
 }

@@ -90,7 +90,7 @@ public class Property extends BoardCell implements Buyable{
                 "\n\trent='" + rent + '\'';
 
         if (super.getOwner() != null){
-            propertyInfo += "\n\tproperty owner='" + super.getOwner().getIconName() + '\'';
+            propertyInfo += "\n\tproperty owner='" + super.getOwner().getIconName().toUpperCase() + '\'';
 
         } else {
             propertyInfo += "\n\tproperty owner='no owner'";

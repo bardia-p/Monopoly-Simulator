@@ -12,7 +12,6 @@ import static org.junit.Assert.*;
  * @version 2.0
  */
 public class BoardModelTest {
-
     /**
      * A board model used to test methods
      */
@@ -163,8 +162,8 @@ public class BoardModelTest {
         boardModel.buyLocation(p1.getCurrentCell(), p1);
         assertEquals(3,p1.getOwnedLocations(false).size());
 
-        boardModel.sellProperty(p1, p1.getOwnedLocations(false).get(0));
-        boardModel.sellProperty(p1, p1.getOwnedLocations(false).get(0));
+        boardModel.sellLocation(p1, p1.getOwnedLocations(false).get(0));
+        boardModel.sellLocation(p1, p1.getOwnedLocations(false).get(0));
         assertEquals(1,p1.getOwnedLocations(false).size());
     }
 
@@ -401,7 +400,7 @@ public class BoardModelTest {
             boardModel.roll(p1);
         }
 
-        assertEquals(false, p1.getResortInJail());
+        assertFalse(p1.getResortInJail());
     }
 
     /**

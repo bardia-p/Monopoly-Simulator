@@ -11,7 +11,6 @@
  * @author Owen VanDusen 101152022
  * @version 1.0
  */
-
 public interface Buyable {
     int getPrice();
     void toggleRecentlyChanged();
