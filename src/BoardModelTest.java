@@ -47,8 +47,11 @@ public class BoardModelTest {
      */
     @Test
     public void testMovePlayer(){
-        boardModel.move(p1,8);
-        boardModel.move(p2,2);
+        boardModel.setDice(8, 0);
+        boardModel.move(p1);
+
+        boardModel.setDice(2, 0);
+        boardModel.move(p2);
 
         assertEquals(8, p1.getPosition());
         assertEquals(2,p2.getPosition());
@@ -61,8 +64,11 @@ public class BoardModelTest {
      */
     @Test
     public void testPlayerCurrentCell(){
-        boardModel.move(p1,16);
-        boardModel.move(p2,4);
+        boardModel.setDice(16, 0);
+        boardModel.move(p1);
+
+        boardModel.setDice(4, 0);
+        boardModel.move(p2);
         assertEquals("St. James Place", p1.getCurrentCell().getName());
         assertEquals(BoardCell.CellType.PROPERTY, p1.getCurrentCell().getType());
         assertEquals("Income Tax", p2.getCurrentCell().getName());
@@ -76,12 +82,16 @@ public class BoardModelTest {
      */
     @Test
     public void testPlayerBuyProperty(){
-        boardModel.move(p1,8);
-        boardModel.buyLocation((Property) p1.getCurrentCell(), p1);
-        boardModel.move(p2, 3);
-        boardModel.buyLocation((Property) p2.getCurrentCell(), p2);
-        boardModel.move(p2, 3);
-        boardModel.buyLocation((Property) p2.getCurrentCell(), p2);
+        boardModel.setDice(8, 0);
+        boardModel.move(p1);
+        boardModel.buyLocation(p1.getCurrentCell(), p1);
+
+        boardModel.setDice(3, 0);
+        boardModel.move(p2);
+        boardModel.buyLocation(p2.getCurrentCell(), p2);
+
+        boardModel.move(p2);
+        boardModel.buyLocation(p2.getCurrentCell(), p2);
         assertEquals(1,p1.getOwnedLocations(false).size());
         assertEquals(2, p2.getOwnedLocations(false).size());
     }
@@ -96,13 +106,14 @@ public class BoardModelTest {
     public void testPlayerPayTax(){
         assertEquals(1500, p1.getCash());
 
-        boardModel.move(p1, 4);
+        boardModel.setDice(4, 0);
+        boardModel.move(p1);
         boardModel.payFees(p1.getCurrentCell(), p1);
         assertEquals(1300, p1.getCash());
         assertEquals(BoardCell.CellType.TAX, p1.getCurrentCell().getType());
 
-
-        boardModel.move(p1,34);
+        boardModel.setDice(34, 0);
+        boardModel.move(p1);
         boardModel.payFees(p1.getCurrentCell(), p1);
         assertEquals(1200, p1.getCash());
         assertEquals(BoardCell.CellType.TAX, p1.getCurrentCell().getType());
@@ -118,12 +129,13 @@ public class BoardModelTest {
     public void testPlayerPayRent(){
         assertEquals(1500, p1.getCash());
 
-        boardModel.move(p2, 9);
-        boardModel.buyLocation((Property) p2.getCurrentCell(), p2);
+        boardModel.setDice(9, 0);
+        boardModel.move(p2);
+        boardModel.buyLocation(p2.getCurrentCell(), p2);
 
-        boardModel.move(p1, 9);
+        boardModel.move(p1);
         boardModel.payFees(p1.getCurrentCell(),p1);
-        assertEquals(1492,p1.getCash());
+        assertEquals(1492, p1.getCash());
         assertEquals(Player.StatusEnum.PAID_FEES, p1.getFeesStatus());
     }
 
@@ -137,14 +149,18 @@ public class BoardModelTest {
     public void testPlayerSellProperty(){
         assertEquals(0,p1.getOwnedLocations(false).size());
 
-        boardModel.move(p1,3);
-        boardModel.buyLocation((Property)p1.getCurrentCell(), p1);
+        boardModel.setDice(3, 0);
+        boardModel.move(p1);
+        boardModel.buyLocation(p1.getCurrentCell(), p1);
         assertEquals(1,p1.getOwnedLocations(false).size());
 
-        boardModel.move(p1, 10);
-        boardModel.buyLocation((Property)p1.getCurrentCell(), p1);
-        boardModel.move(p1,5);
-        boardModel.buyLocation((Property)p1.getCurrentCell(), p1);
+        boardModel.setDice(10, 0);
+        boardModel.move(p1);
+        boardModel.buyLocation(p1.getCurrentCell(), p1);
+
+        boardModel.setDice(5, 0);
+        boardModel.move(p1);
+        boardModel.buyLocation(p1.getCurrentCell(), p1);
         assertEquals(3,p1.getOwnedLocations(false).size());
 
         boardModel.sellProperty(p1, p1.getOwnedLocations(false).get(0));
@@ -159,14 +175,18 @@ public class BoardModelTest {
      */
     @Test
     public void testPropertyNotImmediatelySellable(){
-        boardModel.move(p2,1);
-        boardModel.buyLocation((Property) p2.getCurrentCell(), p2);
+        boardModel.setDice(1, 0);
+        boardModel.move(p2);
+        boardModel.buyLocation(p2.getCurrentCell(), p2);
         assertEquals(0,p2.getOwnedLocations(true).size());
 
-        boardModel.move(p1,3);
-        boardModel.buyLocation((Property) p1.getCurrentCell(), p1);
-        boardModel.move(p1, 5);
-        boardModel.buyLocation((Property)p1.getCurrentCell(), p1);
+        boardModel.setDice(3, 0);
+        boardModel.move(p1);
+        boardModel.buyLocation(p1.getCurrentCell(), p1);
+
+        boardModel.setDice(5, 0);
+        boardModel.move(p1);
+        boardModel.buyLocation(p1.getCurrentCell(), p1);
         assertEquals(0,p1.getOwnedLocations(true).size());
     }
 
@@ -178,7 +198,8 @@ public class BoardModelTest {
     @Test
     public void testPlayerCannotAffordFees(){
         p1.setCash(100);
-        boardModel.move(p1,4);
+        boardModel.setDice(4, 0);
+        boardModel.move(p1);
         boardModel.payFees(p1.getCurrentCell(), p1);
 
         assertEquals(Player.StatusEnum.UNPAID_FEES, p1.getFeesStatus());
@@ -191,8 +212,9 @@ public class BoardModelTest {
      */
     @Test
     public void testPropertiesBecomeSellableAfterTurnPass(){
-        boardModel.move(p1,3);
-        boardModel.buyLocation((Property) p1.getCurrentCell(), p1);
+        boardModel.setDice(3, 0);
+        boardModel.move(p1);
+        boardModel.buyLocation(p1.getCurrentCell(), p1);
         assertTrue(((Property) p1.getCurrentCell()).getRecentlyChanged());
         assertEquals(0, p1.getOwnedLocations(true).size());
         assertEquals(1, p1.getOwnedLocations(false).size());
@@ -227,7 +249,8 @@ public class BoardModelTest {
     public void testBuyUtility(){
         assertEquals(1500, p1.getCash());
 
-        boardModel.move(p1, 12); // Electric Company
+        boardModel.setDice(12, 0);
+        boardModel.move(p1); // Electric Company
         boardModel.buyLocation(p1.getCurrentCell(), p1);
 
         assertEquals(1500 - 150, p1.getCash());
@@ -243,7 +266,8 @@ public class BoardModelTest {
     public void testBuyRailroad(){
         assertEquals(1500, p1.getCash());
 
-        boardModel.move(p1, 5); // Electric Company
+        boardModel.setDice(5, 0);
+        boardModel.move(p1); // Electric Company
         boardModel.buyLocation(p1.getCurrentCell(), p1);
 
         assertEquals(1500 - 200, p1.getCash());
@@ -259,21 +283,23 @@ public class BoardModelTest {
     public void testLandOnBoughtUtility(){
         assertEquals(1500, p2.getCash());
 
-        boardModel.move(p1,12); // Electric Company
+        boardModel.setDice(12, 0);
+        boardModel.move(p1); // Electric Company
         boardModel.buyLocation(p1.getCurrentCell(), p1);
 
         // P1 owns one utility
-        boardModel.move(p2, 12); // To make way to Electric Company
-        boardModel.setDice(2, 3);
+        boardModel.move(p2); // To make way to Electric Company
+        boardModel.setDice(5, 0);
         boardModel.payFees(p2.getCurrentCell(), p2);
         assertEquals(1500 - (5 * 4), p2.getCash()); // One utility fee = rolled number * 4
         assertEquals(1500 - 150 + (5 * 4), p1.getCash());
 
         // P1 owns two utilities
-        boardModel.move(p1, 16); // Water Works
+        boardModel.setDice(16, 0);
+        boardModel.move(p1); // Water Works
         boardModel.buyLocation(p1.getCurrentCell(), p1);
 
-        boardModel.move(p2, 16);
+        boardModel.move(p2);
         boardModel.setDice(5, 3);
         boardModel.payFees(p2.getCurrentCell(), p2);
         assertEquals(1500 - (5 * 4) - (8 * 10), p2.getCash()); // Two utilities fee = rolled number * 10
@@ -291,40 +317,42 @@ public class BoardModelTest {
         assertEquals(1500, p2.getCash());
 
         // P1 owns one railroad
-        boardModel.move(p1,5); // Reading Railroad
+        boardModel.setDice(5, 0);
+        boardModel.move(p1); // Reading Railroad
         boardModel.buyLocation(p1.getCurrentCell(), p1);
 
-        boardModel.move(p2, 5);
+        boardModel.move(p2);
         boardModel.payFees(p2.getCurrentCell(), p2);
         assertEquals(1500 - 25, p2.getCash());
         assertEquals(1500 - 200 + 25, p1.getCash());
 
 
         // P1 owns two railroads
-        boardModel.move(p1,10); // Reading Railroad
+        boardModel.setDice(10, 0);
+        boardModel.move(p1); // Reading Railroad
         boardModel.buyLocation(p1.getCurrentCell(), p1);
 
-        boardModel.move(p2, 10);
+        boardModel.move(p2);
         boardModel.payFees(p2.getCurrentCell(), p2);
         assertEquals(1500 - 75, p2.getCash());
         assertEquals(1500 - 400 + 75, p1.getCash());
 
 
         // P1 owns three railroads
-        boardModel.move(p1,10); // Reading Railroad
+        boardModel.move(p1); // Reading Railroad
         boardModel.buyLocation(p1.getCurrentCell(), p1);
 
-        boardModel.move(p2, 10);
+        boardModel.move(p2);
         boardModel.payFees(p2.getCurrentCell(), p2);
         assertEquals(1500 - 175, p2.getCash());
         assertEquals(1500 - 600 + 175, p1.getCash());
 
 
         // P1 owns four railroads
-        boardModel.move(p1,10); // Reading Railroad
+        boardModel.move(p1); // Reading Railroad
         boardModel.buyLocation(p1.getCurrentCell(), p1);
 
-        boardModel.move(p2, 10);
+        boardModel.move(p2);
         boardModel.payFees(p2.getCurrentCell(), p2);
         assertEquals(1500 - 375, p2.getCash());
         assertEquals(1500 - 800 + 375, p1.getCash());
@@ -337,7 +365,8 @@ public class BoardModelTest {
      */
     @Test
     public void testLandOnGoToJail(){
-        boardModel.move(p1,30);
+        boardModel.setDice(30, 0);
+        boardModel.move(p1);
 
         assertEquals(10, p1.getPosition()); // Sent to jail
     }
@@ -349,7 +378,8 @@ public class BoardModelTest {
     @Test
     public void testBuyOutOfJail(){
         assertEquals(1500, p1.getCash());
-        boardModel.move(p1, 30);
+        boardModel.setDice(30, 0);
+        boardModel.move(p1);
         ((Jail)p1.getCurrentCell()).incrementJailRound(p1); // Increment rounds to 1
 
         boardModel.payFees(p1.getCurrentCell(), p1);
@@ -364,7 +394,8 @@ public class BoardModelTest {
     public void testGO(){
         assertEquals(1500, p1.getCash());
 
-        boardModel.move(p1, 45);
+        boardModel.setDice(45, 0);
+        boardModel.move(p1);
 
         assertEquals(1500 + 200, p1.getCash());
     }
@@ -376,17 +407,21 @@ public class BoardModelTest {
      */
     @Test
     public void testFreeParking(){
-        boardModel.move(p1, 4); // Income Tax - $200
+        boardModel.setDice(4, 0);
+        boardModel.move(p1); // Income Tax - $200
         boardModel.payFees(p1.getCurrentCell(), p1);
 
-        boardModel.move(p1, 26); // To jail
+        boardModel.setDice(26, 0);
+        boardModel.move(p1); // To jail
         ((Jail)p1.getCurrentCell()).incrementJailRound(p1); // Increment rounds to 1
         boardModel.payFees(p1.getCurrentCell(), p1); // Pay out of jail - $50
 
-        boardModel.move(p1, 28); // Luxury Tax - $100
+        boardModel.setDice(28, 0);
+        boardModel.move(p1); // Luxury Tax - $100
         boardModel.payFees(p1.getCurrentCell(), p1);
 
-        boardModel.move(p2, 20);
+        boardModel.setDice(20, 0);
+        boardModel.move(p2);
         assertEquals(1500 + 350, p2.getCash());
 
 
