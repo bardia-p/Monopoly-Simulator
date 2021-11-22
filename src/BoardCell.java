@@ -1,9 +1,7 @@
-import java.util.Map;
 import java.util.Objects;
-
 /**
  * Group 3
- * SYSC 3110 - Milestone 2 BoardCell Class
+ * SYSC 3110 - Milestone 3 BoardCell Class
  *
  * This document is the BoardCell. This class extends BoardCell and has a name, owner, and CellType.
  *
@@ -11,7 +9,7 @@ import java.util.Objects;
  * @author Kyra Lothrop 101145872
  * @author Bardia Parmoun 101143006
  * @author Owen VanDusen 101152022
- * @version 1.0
+ * @version 2.0
  *
  */
 public abstract class BoardCell {
@@ -35,7 +33,7 @@ public abstract class BoardCell {
     /**
      * Keeps track of all the possible cell types.
      */
-    public enum CellType {PROPERTY, GO, FREE_PARKING, JAIL, TAX, UTILITY, RAILROAD, GO_TO_JAIL}
+    public enum CellType {PROPERTY, GO, FREE_PARKING, JAIL, TAX, UTILITY, RAILROAD, GO_TO_JAIL, CHANCE_AND_CHEST}
 
     /**
      * The constructor for board cell.

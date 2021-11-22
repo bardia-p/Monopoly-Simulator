@@ -5,7 +5,7 @@ import java.awt.event.WindowEvent;
 
 /**
  * Group 3
- * SYSC 3110 - Milestone 2 BoardController Class
+ * SYSC 3110 - Milestone 3 BoardController Class
  *
  * This document is the BoardController, as per the MVC model, the BoardController handles user input and passes off
  * the information to the BoardModel class. This class has a boardModel and an array list of remaining icons.
@@ -14,7 +14,7 @@ import java.awt.event.WindowEvent;
  * @author Kyra Lothrop 101145872
  * @author Bardia Parmoun 101143006
  * @author Owen VanDusen 101152022
- * @version 1.0
+ * @version 2.0
  */
 
 public class BoardController extends WindowAdapter implements ActionListener {
@@ -52,6 +52,6 @@ public class BoardController extends WindowAdapter implements ActionListener {
      */
     @Override
     public void windowDeiconified(WindowEvent we) {
-        boardModel.sendCommand(BoardModel.Command.REPAINT.getStringCommand());
+        boardModel.sendCommand(BoardModel.Command.CHANGE_WINDOW.getStringCommand());
     }
 }

@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Group 3
- * SYSC 3110 - Milestone 2 BoardFrame Class
+ * SYSC 3110 - Milestone 3 BoardFrame Class
  *
  * This document is the BoardFrame. This class has the BoardModel and BoardController. BoardFrame
  * handles outputting information for the user to see and formatting that output.
@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
  * @author Kyra Lothrop 101145872
  * @author Bardia Parmoun 101143006
  * @author Owen VanDusen 101152022
- * @version 1.0
+ * @version 3.0
  */
 public class BoardFrame extends JFrame implements BoardView  {
     /**
@@ -38,11 +38,10 @@ public class BoardFrame extends JFrame implements BoardView  {
      * List of command buttons.
      */
     private final List<JButton> commandButtons;
-
     /**
      * Keeps track of all the house labels
      */
-    private final Map<BoardCell,List<JLabel>> houseLabels;
+    private Map<BoardCell,List<JLabel>> houseLabels;
     /**
      * Keeps track of all the player JLabels.
      */
@@ -54,15 +53,20 @@ public class BoardFrame extends JFrame implements BoardView  {
     /**
      * The main panel that keeps track of all the cells.
      */
-    private final JPanel mainPanel;
+    private JPanel mainPanel, logoPanel;
     /**
      * The main pane that includes the cells, the players, the status windows, etc
      */
-    private final JLayeredPane layeredPane;
+    private JLayeredPane layeredPane;
     /**
      * Keeps track of the dice panels.
      */
-    private final JPanel[] dicePanels;
+    private JPanel[] dicePanels;
+    /**
+     * Keeps track of the turn label.
+     */
+    private JLabel turnLabel;
+
     /**
      * Keeps track of the size of the board on each side.
      */
@@ -110,7 +114,7 @@ public class BoardFrame extends JFrame implements BoardView  {
     /**
      * The gap between the buttons in the command panel.
      */
-    private static final int COMMAND_PANEL_GAP = 10;
+    private static final int PANEL_GAP = 10;
     /**
      * Shifting the command panel in Y.
      */
@@ -139,6 +143,38 @@ public class BoardFrame extends JFrame implements BoardView  {
      * Keeps track of the location of the die column.
      */
     private static final int DICE_LOCATION_COLUMN = 8;
+    /**
+     * The width of the logo.
+     */
+    private static final int LOGO_WIDTH = 320;
+    /**
+     * The height of the logo.
+     */
+    private static final int LOGO_HEIGHT = 100;
+    /**
+     * The width of the cash icon.
+     */
+    private static final int CASH_WIDTH = 176;
+    /**
+     * The height of the cash icon.
+     */
+    private static final int CASH_HEIGHT = 100;
+    /**
+     * The height of the cell.
+     */
+    private static final int CELL_HEIGHT = 130;
+    /**
+     * Keeps track of location of Jail square.
+     */
+    public static final int JAIL_LOCATION = 10;
+    /**
+     * Keeps track of the location of free parking.
+     */
+    public static final int FREE_PARKING_LOCATION = 20;
+    /**
+     * Keeps track of location of Jail square.
+     */
+    public static final int GOTOJAIL_LOCATION = 30;
 
     /**
      * Constructor for the Board listener, creates the board model, adds the board listener to the board model,
@@ -150,6 +186,29 @@ public class BoardFrame extends JFrame implements BoardView  {
      */
     public BoardFrame(){
         super("Rich Uncle Pennybags!");
+
+        // Keeps track of the player labels and cell panels.
+        playerLabels = new HashMap<>();
+        playerStatusPanels = new HashMap<>();
+        boardCells = new ArrayList<>();
+        commandButtons = new ArrayList<>();
+
+        // Adding the frame to the model.
+        model = new BoardModel();
+        model.addBoardView(this);
+
+        controller = new BoardController(model);
+
+        createGUI();
+
+        model.play();
+    }
+
+    /**
+     * Creating the basic GUI of the monopoly.
+     */
+    private void createGUI(){
+        // Setting the frame settings.
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setResizable(false);
 
@@ -164,51 +223,38 @@ public class BoardFrame extends JFrame implements BoardView  {
         mainPanel = new JPanel();
         mainPanel.setLayout(new GridBagLayout());
         mainPanel.setBackground(Color.decode(BACKGROUND_COLOR));
-        mainPanel.setBounds(0, BOARD_SHIFT_Y + COMMAND_PANEL_GAP, BOARD_WIDTH, BOARD_HEIGHT);
+        mainPanel.setBounds(0, BOARD_SHIFT_Y + PANEL_GAP, BOARD_WIDTH, BOARD_HEIGHT);
 
         layeredPane.add(mainPanel,0);
 
-        // Keeps track of the player labels and cell panels.
-        playerLabels = new HashMap<>();
         houseLabels = new HashMap<>();
-        playerStatusPanels = new HashMap<>();
-        boardCells = new ArrayList<>();
 
-        // Adding the frame to the model.
-        model = new BoardModel();
-        model.addBoardView(this);
+        // Creating the turn label.
+        turnLabel = new JLabel();
+        TitledBorder title = BorderFactory.createTitledBorder("Current Turn");
+        turnLabel.setBorder(title);
+        turnLabel.setBackground(Color.decode(BACKGROUND_COLOR));
+        turnLabel.setBounds(BOARD_WIDTH, PANEL_GAP,
+                WINDOW_WIDTH - BOARD_WIDTH, BOARD_SHIFT_Y);
 
-        controller = new BoardController(model);
+        layeredPane.add(turnLabel,0);
 
-        commandButtons = new ArrayList<>();
+        // Creating the dice panel.
+        createDiceLayout();
 
-        dicePanels = new JPanel[2];
+        // Creating the logo panel.
+        buildLogoDisplay();
 
-        GridBagConstraints c1 = new GridBagConstraints();
-        c1.gridx = DICE_LOCATION_ROW;
-        c1.gridy = DICE_LOCATION_COLUMN;
-        c1.fill = GridBagConstraints.HORIZONTAL;
-        c1.anchor = GridBagConstraints.NORTH;
+        // Creating the cash panel.
+        buildCashDisplay();
 
-        GridBagConstraints c2 = new GridBagConstraints();
-        c2.gridx = DICE_LOCATION_ROW - 1;
-        c2.gridy = DICE_LOCATION_COLUMN;
-        c2.fill = GridBagConstraints.HORIZONTAL;
-        c2.anchor = GridBagConstraints.NORTH;
+        // Adding the panels to board.
+        layeredPane.add(logoPanel,1);
+        layeredPane.moveToFront(logoPanel);
 
-        dicePanels[0] = new JPanel(new BorderLayout());
-        dicePanels[0].setBackground(Color.decode(BACKGROUND_COLOR));
-
-        dicePanels[1] = new JPanel(new BorderLayout());
-        dicePanels[1].setBackground(Color.decode(BACKGROUND_COLOR));
-
-        mainPanel.add(dicePanels[0], c1);
-        mainPanel.add(dicePanels[1], c2);
-
+        // Making the frame visible.
         this.pack();
         this.setVisible(true);
-
-        model.play();
     }
 
     /**
@@ -217,29 +263,66 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @param e the board event, BoardEvent
      */
     @Override
-    public void handleBoardUpdate(BoardEvent e) {
-        switch (e.getType()) {
-            case PLAYER_ROLL -> handleRoll(e.getDice());
-            case BUY -> handleBuyProperty(e.getPlayer(), (Property) e.getBoardCell(), e.getResult());
-            case SELL -> handleSellProperty(e.getPlayer());
-            case PLAYER_STATUS -> handleGetPlayerStatus(e.getPlayer());
-            case CELL_STATUS -> handleGetCellStatus(e.getPlayer().getCurrentCell());
-            case INITIALIZE_MONOPOLY -> handleWelcomeMonopoly();
-            case PAY_FEES -> handlePayFees(e.getPlayer().getCurrentCell(), e.getPlayer(), e.getValue(), e.getResult());
-            case PASS_TURN -> handleCurrentPlayerChange();
-            case GAME_OVER -> handleWinner(e.getPlayers());
-            case INITIALIZE_BOARD -> constructBoard(e.getCells());
-            case CREATE_PLAYER_ICONS -> createPlayers((ArrayList<Player>) e.getPlayers());
-            case GET_NUM_PLAYERS -> getNumPlayers();
-            case INITIALIZE_PLAYERS -> initializePlayers(e.getValue());
-            case GET_COMMAND -> updateAvailableCommands(e.getPlayer(), (ArrayList<BoardModel.Command>) e.getCommands());
-            case PLAYER_MOVE -> handlePlayerGUIMove(e.getPlayer(), e.getValue(), e.getValue2());
-            case REPAINT_BOARD -> handleRepaintBoard();
-            case PLAYER_FORFEIT -> handleForfeitedPlayer(e.getPlayer());
-            case PLAYER_REQUEST_FORFEIT -> handleRequestForfeit(e.getPlayer());
-            case BUILD -> handlePropertyToBuildOn(e.getPlayer(), e.getNeighborhoods());
-            case PAINT_HOUSE -> paintHouse(e.getProperty());
+    public void handleMonopolyUpdate(MonopolyEvent e) {
+        BoardModel source = (BoardModel) e.getSource();
+
+        // If the event is a player input event. 
+        if (e.getStatus() == BoardModel.Status.PLAYER_INPUT){
+            handlePlayerInput((PlayerEvent) e);
+            return;
         }
+
+        BoardEvent be = (BoardEvent) e;
+        Player player = be.getPlayer();
+        switch (e.getStatus()) {
+            case INITIALIZE_MONOPOLY -> handleWelcomeMonopoly();
+            case GAME_OVER -> handleWinner(source.getPlayers());
+            case INITIALIZE_BOARD -> constructBoard(source.getCells());
+            case CREATE_PLAYER_ICONS -> createPlayers(source.getPlayers());
+            case GET_NUM_PLAYERS -> getNumPlayers();
+            case INITIALIZE_PLAYERS -> initializePlayers(source.getPlayerCount());
+            case GET_COMMAND -> updateAvailableCommands(player, be.getCommands());
+            case PASS_GO -> handlePassGo(player);
+            case FREE_PARKING -> handleFreeParking(player);
+            case GO_TO_JAIL -> handleGoToJail(player);
+            case EXIT_JAIL -> handleExitJail(player);
+            case FORCE_PAY_JAIL -> handleForceExitJail();
+        }
+    }
+
+    /**
+     * Selects which method to use based on playerEvent
+     * @author Bardia Parmoun 101143006
+     * @param pe, playerEvent
+     */
+    private void handlePlayerInput (PlayerEvent pe){
+        BoardModel source = (BoardModel) pe.getSource();
+        Player player = pe.getPlayer();
+        BoardModel.Command command = pe.getCommand();
+        switch (command) {
+            case BUY -> handleBuyLocation(player, pe.getCell(), pe.getResult());
+            case REQUEST_SELL -> handleRequestSell(player);
+            case SELL -> handleSell(player, pe.getCell());
+            case CELL_STATUS -> handleGetCellStatus(pe.getCell());
+            case PAY_FEES -> handlePayFees(pe.getCell(), player, pe.getValue(), pe.getResult());
+            case PASS -> handlePassingTurn();
+            case MOVE -> handlePlayerGUIMove(pe.getPlayer(), pe.getValue(), player.getPosition());
+            case REQUEST_FORFEIT -> handleRequestForfeit(player);
+            case FORFEIT -> handleForfeitedPlayer(player);
+            case CHANGE_WINDOW -> handleRepaintBoard();
+            case ROLL_AGAIN -> handleRoll(source.getDice());
+            case BUILD -> handlePropertyToBuildOn(player, player.getBuildableProperties());
+            case PAINT_HOUSE -> paintHouse(pe.getCell());
+        }
+    }
+
+    /**
+     * Handles passing the turn update.
+     * @author Bardia Parmoun, 101143006
+     */
+    private void handlePassingTurn() {
+        disableButtons();
+        turnLabel.setText("Passing the turn!");
     }
 
     /**
@@ -258,10 +341,10 @@ public class BoardFrame extends JFrame implements BoardView  {
      * Handles moving players cell by cell.
      * @author Sarah Chow 101143033
      * @param player the player that is moving, Player
-     * @param amountToMove the amount that a player should move, int
      * @param originalPos the original position of the player, int
      */
     private void handlePlayerGUIMove(Player player, int amountToMove, int originalPos){
+        disableButtons();
         for (int i = originalPos; i < originalPos + amountToMove + 1; i++){
             int newPlayerPosition =  i % BoardModel.SIZE_OF_BOARD;
             showCurrentCell(player, newPlayerPosition);
@@ -279,7 +362,7 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @author Bardia Parmoun 101143006
      * @param players the list of the players to make icons for, List<Player>
      */
-    private void createPlayers(ArrayList<Player> players) {
+    private void createPlayers(List<Player> players) {
         JPanel statusPanel = new JPanel();
         statusPanel.setLayout(new GridLayout(players.size(), 1));
         statusPanel.setBackground(Color.decode(BACKGROUND_COLOR));
@@ -303,7 +386,7 @@ public class BoardFrame extends JFrame implements BoardView  {
         JScrollPane statusPanelWithScroll = new JScrollPane(statusPanel,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 
-        statusPanelWithScroll.setBounds(BOARD_WIDTH, BOARD_SHIFT_Y + COMMAND_PANEL_GAP,
+        statusPanelWithScroll.setBounds(BOARD_WIDTH, BOARD_SHIFT_Y + PANEL_GAP,
                 WINDOW_WIDTH - BOARD_WIDTH, BOARD_HEIGHT);
         layeredPane.add(statusPanelWithScroll, 0);
     }
@@ -320,19 +403,99 @@ public class BoardFrame extends JFrame implements BoardView  {
         panel.revalidate();
         panel.repaint();
         String playerStatus = p.toString();
-        String newStatus = "<html>";
+        StringBuilder newStatus = new StringBuilder("<html>");
         for (int i=0; i < playerStatus.length(); i++){
             if (playerStatus.charAt(i)!='\n'){
-                newStatus += playerStatus.charAt(i);
+                newStatus.append(playerStatus.charAt(i));
             } else {
-                newStatus += "<br/>";
+                newStatus.append("<br/>");
             }
         }
-        newStatus += "</html>";
+        newStatus.append("</html>");
 
-        JLabel statusLabel = new JLabel(newStatus);
+        JLabel statusLabel = new JLabel(newStatus.toString());
         panel.setBackground(Color.decode(BACKGROUND_COLOR));
         panel.add(statusLabel);
+    }
+
+    /**
+     * Build logo display.
+     * @author Bardia Parmoun, 101143006
+     */
+    private void buildLogoDisplay(){
+        logoPanel = new JPanel();
+        logoPanel.setBounds(BOARD_WIDTH/2 - LOGO_WIDTH/2, BOARD_HEIGHT/2, LOGO_WIDTH, LOGO_HEIGHT);
+        logoPanel.setBackground(Color.decode(BACKGROUND_COLOR));
+
+        try {
+            BufferedImage image = ImageIO.read(Objects.requireNonNull(getClass().getResource
+                    ("images/central_logo.png")));
+
+
+            Image newImage = image.getScaledInstance(LOGO_WIDTH, LOGO_HEIGHT, Image.SCALE_DEFAULT);
+            JLabel label = new JLabel(new ImageIcon(newImage));
+            logoPanel.removeAll();
+            logoPanel.add(label);
+        }  catch(Exception e){
+            System.out.println("build logo display failed");
+        }
+    }
+
+    /**
+     * Build cash display.
+     * @author Bardia Parmoun, 101143006
+     */
+    private void buildCashDisplay(){
+        JPanel cashPanel = new JPanel(new BorderLayout());
+        cashPanel.setBounds(CELL_HEIGHT, BOARD_SHIFT_Y + CELL_HEIGHT + PANEL_GAP, CASH_WIDTH/4 + CASH_WIDTH,
+                CASH_HEIGHT);
+
+        cashPanel.setBackground(Color.decode(BACKGROUND_COLOR));
+        try {
+            BufferedImage image = ImageIO.read(Objects.requireNonNull(getClass().getResource("images/money.png")));
+
+
+            Image newImage = image.getScaledInstance(CASH_WIDTH, CASH_HEIGHT, Image.SCALE_DEFAULT);
+            JLabel label = new JLabel(new ImageIcon(newImage));
+            JLabel cashAmount = new JLabel("$" + model.getBankMoney());
+            cashPanel.removeAll();
+            cashPanel.add(label, BorderLayout.WEST);
+            cashPanel.add(cashAmount, BorderLayout.EAST);
+            layeredPane.add(cashPanel,1);
+            layeredPane.moveToFront(cashPanel);
+
+        }  catch(Exception e){
+            System.out.println("build cash display failed");
+        }
+    }
+
+    /**
+     * Create dice panels
+     * @author Sarah Chow 101143033
+     */
+    private void createDiceLayout(){
+        GridBagConstraints die1_constraint = new GridBagConstraints();
+        die1_constraint.gridx = DICE_LOCATION_ROW;
+        die1_constraint.gridy = DICE_LOCATION_COLUMN;
+        die1_constraint.fill = GridBagConstraints.HORIZONTAL;
+        die1_constraint.anchor = GridBagConstraints.NORTH;
+
+        GridBagConstraints die2_constraint = new GridBagConstraints();
+        die2_constraint.gridx = DICE_LOCATION_ROW - 1;
+        die2_constraint.gridy = DICE_LOCATION_COLUMN;
+        die2_constraint.fill = GridBagConstraints.HORIZONTAL;
+        die2_constraint.anchor = GridBagConstraints.NORTH;
+
+        // Creating the dice panels.
+        dicePanels = new JPanel[2];
+        dicePanels[0] = new JPanel(new BorderLayout());
+        dicePanels[0].setBackground(Color.decode(BACKGROUND_COLOR));
+
+        dicePanels[1] = new JPanel(new BorderLayout());
+        dicePanels[1].setBackground(Color.decode(BACKGROUND_COLOR));
+
+        mainPanel.add(dicePanels[0], die1_constraint);
+        mainPanel.add(dicePanels[1], die2_constraint);
     }
 
     /**
@@ -342,7 +505,6 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @param dieIndex keeps track of the die index, int
      */
     private void buildDiceDisplay(int randomRoll, int dieIndex){
-
         try {
             BufferedImage dieImage1 = ImageIO.read(Objects.requireNonNull(getClass().getResource
                     ("images/dice/dice1.png")));
@@ -385,6 +547,7 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @param dice value of the dice, int[]
      */
     private void handleRoll(int[] dice) {
+        disableButtons();
         int die1 = dice[0];
         int die2 = dice[1];
 
@@ -424,18 +587,20 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @author Kyra Lothrop 101145872
      * @param commands keeps track of the list of the commands, List<BoardModel.Command>
      */
-    private void updateAvailableCommands(Player player, ArrayList<BoardModel.Command> commands){
-        String availableCommands = "";
+    private void updateAvailableCommands(Player player, List<BoardModel.Command> commands){
+        StringBuilder availableCommands = new StringBuilder();
 
         for (BoardModel.Command command: commands){
-            availableCommands += command.getStringCommand() + ", ";
+            availableCommands.append(command.getStringCommand()).append(", ");
         }
 
-        availableCommands = availableCommands.substring(0, availableCommands.length() - 2);
+        availableCommands = new StringBuilder(availableCommands.substring(0, availableCommands.length() - 2));
 
         for(JButton b: commandButtons){
-            b.setEnabled(availableCommands.contains(b.getText().toLowerCase()));
+            b.setEnabled(availableCommands.toString().contains(b.getText()));
         }
+
+        turnLabel.setText("Turn: " + player.getIconName().toUpperCase());
 
         updatePlayerStatusPanel(player);
         pack();
@@ -455,13 +620,21 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @author Kyra Lothrop 101145872
      */
     private void getNumPlayers(){
-        Integer[] numPlayerOptions = {2,3,4,5,6,7,8};
-
         try{
+            Integer[] numPlayerOptions = {2,3,4,5,6,7,8};
             int numPlayers = (Integer)JOptionPane.showInputDialog(null,
-                    "How many people will be playing?", "INITIALIZE GAME DATA",
+                    "How many players in total (AI + users)?", "INITIALIZE GAME DATA",
                     JOptionPane.QUESTION_MESSAGE, null, numPlayerOptions, numPlayerOptions[0]);
 
+            ArrayList<Integer> numAIOptions = new ArrayList<>();
+            for(int i = 0; i<= numPlayers; i++){
+                numAIOptions.add(i);
+            }
+            int numAIPlayers = (Integer)JOptionPane.showInputDialog(null,
+                    "How many AI players will be playing?", "INITIALIZE GAME DATA",
+                    JOptionPane.QUESTION_MESSAGE, null, numAIOptions.toArray(), numAIOptions.get(0));
+
+            model.setNumAIPlayer(numAIPlayers);
             model.setNumPlayers(numPlayers);
         }
         catch(Exception e){
@@ -475,28 +648,46 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @param numPlayers keeps track of the number of player, int
      */
     private void initializePlayers(int numPlayers){
+        String[] namesAI = {"GOOGLE", "SIRI", "ALEXA", "BIXBY", "BAYMAX", "WALL-E", "EVA", "TOBIO"};
+
         for (int i = 0; i < numPlayers; i++){
             JTextField playerName = new JTextField();
-            Object[] message = {
-                    "What's player "+ (i+1) + "'s name?", playerName,
-            };
+            String playerIconMessage;
 
-            int ans = JOptionPane.showConfirmDialog(null, message, "Initialize player "+ (i+1),
+            if(i+1 <= (numPlayers-model.getNumAIPlayer())){
+                Object[] message = {
+                        "What's player "+ (i+1) + "'s name?", playerName,
+                };
+
+                int ans = JOptionPane.showConfirmDialog(null, message, "Initialize Player"+ (i+1),
                         JOptionPane.OK_CANCEL_OPTION);
 
-            if (ans != JOptionPane.OK_OPTION){
-                initializationCancel();
+                if (ans != JOptionPane.OK_OPTION){
+                    initializationCancel();
+                }
+
+                playerIconMessage = "Select player " + (i+1) + "'s icon";
+            } else {
+
+                JOptionPane.showMessageDialog(null, "AI player " + namesAI[i] +" initialized",
+                        "Initialize AI player", JOptionPane.PLAIN_MESSAGE);
+                playerName.setText(namesAI[i]);
+
+                playerIconMessage = "Select " + namesAI[i] + "'s icon";
             }
 
             Object[] iconOptions = getListOfIconsUpper();
-            String playerIcon = (String) JOptionPane.showInputDialog(null, "Select player " +
-                                (i+1) + " icon" , "Select Icon", JOptionPane.QUESTION_MESSAGE, null,
-                                iconOptions, iconOptions[0]);
+
+            String playerIcon = (String) JOptionPane.showInputDialog(null, playerIconMessage ,
+                    "Select Icon", JOptionPane.QUESTION_MESSAGE, null, iconOptions, iconOptions[0]);
 
             if (playerIcon == null){
                 initializationCancel();
-            } else {
+            } else if (i+1 <= (numPlayers-model.getNumAIPlayer())){
                 model.addPlayer(new Player(playerName.getText(), findPlayerIcon(playerIcon.toLowerCase())));
+            }
+            else {
+                model.addPlayer(new AIPlayer(model, playerName.getText(), findPlayerIcon(playerIcon.toLowerCase())));
             }
         }
     }
@@ -541,33 +732,23 @@ public class BoardFrame extends JFrame implements BoardView  {
      */
     private void constructBoard(List<BoardCell> cells) {
         // Command buttons
-        JPanel commandsPanel = new JPanel(new GridLayout(2,4, COMMAND_PANEL_GAP, COMMAND_PANEL_GAP));
-        commandsPanel.setBounds(COMMAND_PANEL_GAP, COMMAND_SHIFT_Y,BOARD_WIDTH - 2 * COMMAND_PANEL_GAP,
-                COMMAND_HEIGHT + COMMAND_PANEL_GAP);
+        JPanel commandsPanel = new JPanel(new GridLayout(2,4, PANEL_GAP, PANEL_GAP));
+        commandsPanel.setBounds(PANEL_GAP, COMMAND_SHIFT_Y,BOARD_WIDTH - 2 * PANEL_GAP,
+                COMMAND_HEIGHT + PANEL_GAP);
 
-        String[] buttonsText = {"Roll", "Pass", "Forfeit", "Buy", "Sell", "Pay Rent", "Pay Tax", "Player Status",
-                "Cell Status", "Build"};
+        BoardModel.Command[] buttons = {BoardModel.Command.ROLL_AGAIN, BoardModel.Command.PASS,
+                BoardModel.Command.FORFEIT, BoardModel.Command.BUY, BoardModel.Command.SELL,
+                BoardModel.Command.PAY_FEES, BoardModel.Command.BUILD, BoardModel.Command.CELL_STATUS};
 
         commandsPanel.setBackground(Color.decode(BACKGROUND_COLOR));
 
-        for (String s : buttonsText) {
+        for (BoardModel.Command c : buttons) {
+            String s = c.getStringCommand();
             JButton commandButton = new JButton(s);
+            commandButton.setActionCommand(s);
             commandButton.addActionListener(controller);
             commandButtons.add(commandButton);
             commandsPanel.add(commandButton);
-
-            switch (s) {
-                case "Roll" -> commandButton.setActionCommand(BoardModel.Command.ROLL_AGAIN.getStringCommand());
-                case "Pass" -> commandButton.setActionCommand(BoardModel.Command.PASS.getStringCommand());
-                case "Forfeit" -> commandButton.setActionCommand(BoardModel.Command.FORFEIT.getStringCommand());
-                case "Buy" -> commandButton.setActionCommand(BoardModel.Command.BUY.getStringCommand());
-                case "Sell" -> commandButton.setActionCommand(BoardModel.Command.SELL.getStringCommand());
-                case "Pay Rent" -> commandButton.setActionCommand(BoardModel.Command.PAY_RENT.getStringCommand());
-                case "Pay Tax" -> commandButton.setActionCommand(BoardModel.Command.PAY_TAX.getStringCommand());
-                case "Player Status" -> commandButton.setActionCommand(BoardModel.Command.PLAYER_STATUS.getStringCommand());
-                case "Cell Status" -> commandButton.setActionCommand(BoardModel.Command.CELL_STATUS.getStringCommand());
-                case "Build" -> commandButton.setActionCommand(BoardModel.Command.BUILD.getStringCommand());
-            }
 
             commandButton.setEnabled(false);
         }
@@ -580,25 +761,26 @@ public class BoardFrame extends JFrame implements BoardView  {
         int col_step = -1;
         int direction = GridBagConstraints.WEST;
 
-        for (BoardCell cell: cells) {
+        for (int i = 0; i < cells.size(); i++) {
+            BoardCell cell = cells.get(i);
             try{
                 // Changes the row and col if it hits corners.
-                switch (cell.getName()) {
-                    case "JAIL" -> {
+                switch (i) {
+                    case JAIL_LOCATION -> {
                         row = SIZE - 1;
                         col = 0;
                         row_step = -1;
                         col_step = 0;
                         direction = GridBagConstraints.NORTH;
                     }
-                    case "FREE PARKING" -> {
+                    case FREE_PARKING_LOCATION -> {
                         row = 0;
                         col = 0;
                         row_step = 0;
                         col_step = 1;
                         direction = GridBagConstraints.EAST;
                     }
-                    case "GO TO JAIL" -> {
+                    case GOTOJAIL_LOCATION -> {
                         row = 0;
                         col = SIZE - 1;
                         row_step = 1;
@@ -654,13 +836,13 @@ public class BoardFrame extends JFrame implements BoardView  {
 
                 Rectangle cellPosition = currentCell.getBounds();
 
-                int index =  new ArrayList(playerLabels.keySet()).indexOf(player);
+                int index =  new ArrayList<>(playerLabels.keySet()).indexOf(player);
                 int x = cellPosition.x + 3*cellPosition.width/4 - ICON_SHIFT_ON_CELL -
                         ICON_SHIFT_ON_CELL_PER_PLAYER * index;
                 int y = cellPosition.y + cellPosition.height/2 - ICON_SHIFT_ON_CELL -
                         ICON_SHIFT_ON_CELL_PER_PLAYER * index + BOARD_SHIFT_Y;
 
-                playerLabels.get(player).setBounds(x, y, 50, 50);
+                playerLabels.get(player).setBounds(x, y, ICON_SIZE, ICON_SIZE);
                 layeredPane.moveToFront(playerLabels.get(player));
 
                 this.pack();
@@ -675,17 +857,17 @@ public class BoardFrame extends JFrame implements BoardView  {
      * Displays whether the current player can afford the property they attempted to buy or not.
      * @author Owen VanDusen 101152022
      * @param player player performing actions, Player
-     * @param property property that is in contention for purchasing, Property
+     * @param location property that is in contention for purchasing, Property
      * @param result if the player can afford the property, boolean
      */
-    private void handleBuyProperty(Player player, Property property, boolean result) {
+    private void handleBuyLocation(Player player, BoardCell location, boolean result) {
         String buyMessage;
         if (result){
-            buyMessage = "Player " + player.getIconName().toUpperCase() + " bought " + property.getName();
+            buyMessage = "Player " + player.getIconName().toUpperCase() + " bought " + location.getName();
         } else {
-            buyMessage = "Player " + player.getIconName().toUpperCase() + " cannot afford " + property.getName();
+            buyMessage = "Player " + player.getIconName().toUpperCase() + " cannot afford " + location.getName();
         }
-        JOptionPane.showMessageDialog(null, buyMessage, "BUY PROPERTY", JOptionPane.PLAIN_MESSAGE);
+        JOptionPane.showMessageDialog(null, buyMessage, "BUY LOCATION", JOptionPane.PLAIN_MESSAGE);
     }
 
     /**
@@ -693,19 +875,19 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @author Sarah Chow 101143033
      * @param player player performing actions, Player
      */
-    private void handleSellProperty(Player player) {
-        JPanel panel = new JPanel(new GridLayout(player.getProperties(true).size(), 2));
+    private void handleRequestSell(Player player) {
+        JPanel panel = new JPanel(new GridLayout(player.getOwnedLocations(true).size(), 2));
         ButtonGroup group = new ButtonGroup();
 
-        for (Property p : player.getProperties(true)) {
+        for (BoardCell l : player.getOwnedLocations(true)) {
 
-            JRadioButton button = new JRadioButton(p.getName().toUpperCase());
+            JRadioButton button = new JRadioButton(l.getName().toUpperCase());
 
-            String message = "<html>" + p + "</html>";
+            String message = "<html>" + l + "</html>";
 
             JLabel des = new JLabel(message);
 
-            button.setActionCommand(p.getName());
+            button.setActionCommand(l.getName());
             group.add(button);
 
             des.setVisible(true);
@@ -719,12 +901,11 @@ public class BoardFrame extends JFrame implements BoardView  {
         int ans = JOptionPane.showConfirmDialog(null, panel,
                 "SELL PROPERTY", JOptionPane.OK_CANCEL_OPTION);
         if (ans == JOptionPane.OK_OPTION){
-            for (Property p : player.getProperties(true)){
-                if (group.getSelection().getActionCommand().equals(p.getName())){
-                    player.toggleConfirmSell();
-                    player.setPropertyToSell(p);
-                    JOptionPane.showMessageDialog(null, "Player " +
-                            player.getIconName().toUpperCase() + " sold " + p.getName().toUpperCase());
+            if (group.getSelection() != null) {
+                for (BoardCell l : player.getOwnedLocations(true)){
+                    if (group.getSelection().getActionCommand().equals(l.getName())){
+                        model.sellLocation(player, l);
+                    }
                 }
             }
         }
@@ -734,12 +915,44 @@ public class BoardFrame extends JFrame implements BoardView  {
     }
 
     /**
-     * Displays the status of the current player.
-     * @author Sarah Chow 101143033
-     * @param player player performing actions, Player
+     * Handles the message for selling a cell
+     * @param player the player to sell a cell, Player
+     * @param cell the cell being sold, BoardCell
      */
-    private void handleGetPlayerStatus(Player player) {
-        JOptionPane.showMessageDialog(null, player, "PLAYER STATUS", JOptionPane.PLAIN_MESSAGE);
+    private void handleSell(Player player, BoardCell cell){
+        JOptionPane.showMessageDialog(null, "Player " +
+                player.getIconName().toUpperCase() + " sold " + cell.getName().toUpperCase());
+    }
+
+    /**
+     * Displays the player going to Jail.
+     * @author Sarah Chow 101143033
+     * @param player player to go to jail, Player
+     */
+    private void handleGoToJail(Player player){
+        JOptionPane.showMessageDialog(null,
+                String.format("Player %s has been sent to JAIL!", player.getIconName().toUpperCase()));
+        handlePlayerGUIMove(player, GOTOJAIL_LOCATION - JAIL_LOCATION, GOTOJAIL_LOCATION);
+    }
+
+    /**
+     * Displays prompts if player would like to pay their way out of jail.
+     * @author Sarah Chow 101143033
+     * @param player the player in jail, Player
+     */
+    private void handleExitJail(Player player){
+         JOptionPane.showMessageDialog(null,
+                    String.format("Player %s left JAIL!", player.getIconName().toUpperCase()));
+    }
+
+    /**
+     * Displays prompts if the player has been in jail for 3 rounds, they must pay or forfeit the game.
+     * @author Sarah Chow 101143033
+     */
+    private void handleForceExitJail(){
+        JOptionPane.showMessageDialog(null,
+                "You've exceeded three turns in JAIL. Please pay $50 to the bank!");
+
     }
 
     /**
@@ -775,6 +988,15 @@ public class BoardFrame extends JFrame implements BoardView  {
         if (result){
             feesMessage = "You have successfully paid $" + fees + " to " +
                     boardCell.getOwner().getIconName().toUpperCase();
+
+            Player owner = boardCell.getOwner();
+
+            // Updating the status of panel of the owner that gets the money.
+            if (!owner.getIconName().equals(BoardModel.Icon.BANK.getName())){
+                updatePlayerStatusPanel(owner);
+            } else {
+                buildCashDisplay();
+            }
         }
         else{
             feesMessage = "You cannot currently pay fees to " + boardCell.getOwner().getIconName()
@@ -787,7 +1009,7 @@ public class BoardFrame extends JFrame implements BoardView  {
      * Displays a breaker to indicate change of turn.
      * @author Owen VanDusen 101152022
      */
-    private void handleCurrentPlayerChange() {
+    private void disableButtons() {
         for(JButton b: commandButtons){
             b.setEnabled(false);
         }
@@ -802,7 +1024,7 @@ public class BoardFrame extends JFrame implements BoardView  {
         int ans = JOptionPane.showConfirmDialog(null,
                 "Are you sure you would like to forfeit the game?");
         if (ans == JOptionPane.YES_OPTION){
-            player.toggleRequest_forfeit();
+            model.forfeit(player);
         }
         else{
             JOptionPane.showMessageDialog(null, "Forfeit request cancelled!");
@@ -824,22 +1046,25 @@ public class BoardFrame extends JFrame implements BoardView  {
         JPanel panel = new JPanel(new GridLayout(1, buildableHouses));
         ButtonGroup group = new ButtonGroup();
 
-        for(Property p: player.getProperties(false)){
-            if(buildable.contains(p.getNeighborhood())){
-                JPanel subPanel = new JPanel(new GridLayout(3, 1));
+        for(BoardCell bc: player.getOwnedLocations(false)){
+            if (bc.getType() == BoardCell.CellType.PROPERTY) {
+                Property p = (Property) bc;
+                if (buildable.contains(p.getNeighborhood())) {
+                    JPanel subPanel = new JPanel(new GridLayout(3, 1));
 
-                JRadioButton addButton = new JRadioButton("Add House");
-                addButton.setActionCommand(p.getName());
-                group.add(addButton);
+                    JRadioButton addButton = new JRadioButton("Add House");
+                    addButton.setActionCommand(p.getName());
+                    group.add(addButton);
 
-                JLabel propertyName = new JLabel(p.getName());
-                JLabel houseCost = new JLabel("Cost of a House: " + p.getNeighborhood().getHouseCost());
+                    JLabel propertyName = new JLabel(p.getName());
+                    JLabel houseCost = new JLabel("Cost of a House: " + p.getNeighborhood().getHouseCost());
 
-                subPanel.add(propertyName);
-                subPanel.add(addButton);
-                subPanel.add(houseCost);
-                subPanel.setPreferredSize(new Dimension(100,200));
-                panel.add(subPanel);
+                    subPanel.add(propertyName);
+                    subPanel.add(addButton);
+                    subPanel.add(houseCost);
+                    subPanel.setPreferredSize(new Dimension(100, 200));
+                    panel.add(subPanel);
+                }
             }
         }
 
@@ -848,9 +1073,12 @@ public class BoardFrame extends JFrame implements BoardView  {
         int ans = JOptionPane.showConfirmDialog(null,panel,"BUILD ON PROPERTY",JOptionPane.OK_CANCEL_OPTION);
         if(ans == JOptionPane.OK_OPTION) {
             if (group.getSelection()!=null){
-                for(Property p: player.getProperties(false)){
-                    if(group.getSelection().getActionCommand().equals(p.getName())){
-                        model.buildHouse(p, player);
+                for(BoardCell bc: player.getOwnedLocations(false)){
+                    if (bc.getType() == BoardCell.CellType.PROPERTY){
+                        Property p = (Property) bc;
+                        if(group.getSelection().getActionCommand().equals(p.getName())){
+                            model.buildHouse(p, player);
+                        }
                     }
                 }
             }
@@ -952,17 +1180,39 @@ public class BoardFrame extends JFrame implements BoardView  {
             b.setEnabled(false);
         }
 
-        String gameOverMessage = "";
+        StringBuilder gameOverMessage = new StringBuilder();
         players.sort(Comparator.comparingInt(Player::getRank));
 
-        gameOverMessage += "Player " + players.get(0).getIconName().toUpperCase() + " won the game!\n";
+        gameOverMessage.append("Player ").append(players.get(0).getIconName().toUpperCase()).append(" won the game!\n");
         for (Player player: players){
             if (player.isBankrupt()) {
-                gameOverMessage += "Player " + player.getIconName().toUpperCase() +
-                        " has the rank " + player.getRank() + "\n";
+                gameOverMessage.append("Player ").append(player.getIconName().toUpperCase()).append(" has the rank ")
+                        .append(player.getRank()).append("\n");
             }
         }
-        JOptionPane.showMessageDialog(null, gameOverMessage, "GAME OVER!", JOptionPane.PLAIN_MESSAGE);
+        JOptionPane.showMessageDialog(null, gameOverMessage.toString(), "GAME OVER!",
+                JOptionPane.PLAIN_MESSAGE);
+    }
+
+    /**
+     * Handles landing on free parking.
+     * @param player landed on parking, Player
+     */
+    private void handleFreeParking(Player player) {
+        String message = "Player " + player.getIconName().toUpperCase() + " landed on free parking and collected " +
+                "central money!";
+        JOptionPane.showMessageDialog(null, message, "FREE PARKING!", JOptionPane.PLAIN_MESSAGE);
+        buildCashDisplay();
+    }
+
+    /**
+     * Display that the user has passed GO
+     * @author Kyra Lothrop 101145872
+     * @param player the player that passed GO
+     */
+    private void handlePassGo(Player player) {
+        String message = "Player " + player.getIconName().toUpperCase() +  " passed go!";
+        JOptionPane.showMessageDialog(null, message, "PASSED GO", JOptionPane.PLAIN_MESSAGE);
     }
 
     /**
