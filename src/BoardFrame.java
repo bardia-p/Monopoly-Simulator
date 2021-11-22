@@ -231,8 +231,6 @@ public class BoardFrame extends JFrame implements BoardView  {
             case PLAYER_FORFEIT -> handleForfeitedPlayer(e.getPlayer());
             case PLAYER_REQUEST_FORFEIT -> handleRequestForfeit(e.getPlayer());
             case BUILD -> handleNeighborhoodsToBuild(e.getPlayer(), e.getNeighborhoods());
-            case BUILD_SUCCESS -> addHouseSuccess(e.getPlayer());
-            case BUILD_FAIL -> addHouseFail();
             case PAINT_HOUSE -> paintHouse(e.getProperty());
         }
     }
@@ -805,69 +803,85 @@ public class BoardFrame extends JFrame implements BoardView  {
     }
 
     private void handleNeighborhoodsToBuild(Player player, List<Property.NeighborhoodEnum> buildable){
-        int neighborhoods = buildable.size();
-        JPanel panel = new JPanel(new GridLayout(neighborhoods,1));
+        int buildableHouses = 0;
+        for(Property.NeighborhoodEnum e: buildable){
+            buildableHouses += e.getNumProperties();
+        }
+
+        JPanel panel = new JPanel(new GridLayout(1, buildableHouses));
         ButtonGroup group = new ButtonGroup();
 
-        for(int i = 0; i < buildable.size(); i++){
-            JRadioButton button = new JRadioButton(buildable.get(i).name());
-            button.setActionCommand(buildable.get(i).name());
-            group.add(button);
-            panel.add(button);
-        }
-
-        panel.setPreferredSize(new Dimension(400,200));
-
-        int ans = JOptionPane.showConfirmDialog(null,panel,"BUILD ON PROPERTY",JOptionPane.OK_CANCEL_OPTION);
-        if(ans == JOptionPane.OK_OPTION) {
-            handleAddHouses(player, group.getSelection().getActionCommand());
-        } else {
-            JOptionPane.showMessageDialog(null,"Building Cancelled");
-        }
-    }
-
-    private void handleAddHouses(Player player, String neighborhood){
-        Property.NeighborhoodEnum group = switch(neighborhood){
-            case "BROWN" -> Property.NeighborhoodEnum.BROWN;
-            case "SKY" -> Property.NeighborhoodEnum.SKY;
-            case "MAGENTA" -> Property.NeighborhoodEnum.MAGENTA;
-            case "ORANGE" -> Property.NeighborhoodEnum.ORANGE;
-            case "RED" -> Property.NeighborhoodEnum.RED;
-            case "YELLOW" -> Property.NeighborhoodEnum.YELLOW;
-            case "GREEN" -> Property.NeighborhoodEnum.GREEN;
-            default -> Property.NeighborhoodEnum.INDIGO;
-        };
-
-        JFrame frame = new JFrame();
-        JPanel panel = new JPanel(new GridLayout(1, group.getNumProperties()));
-
         for(Property p: player.getProperties(false)){
-            if(p.getNeighborhood() == group){
+            if(buildable.contains(p.getNeighborhood())){
                 JPanel subPanel = new JPanel(new GridLayout(3, 1));
 
-                JButton addButton = new JButton("+");
-                addButton.addActionListener(controller);
+                JRadioButton addButton = new JRadioButton("Add House");
                 addButton.setActionCommand(p.getName());
+                group.add(addButton);
 
                 JLabel propertyName = new JLabel(p.getName());
-                JLabel houseCost = new JLabel(String.valueOf(group.getHouseCost()));
+                JLabel houseCost = new JLabel(String.valueOf(p.getNeighborhood().getHouseCost()));
 
-                subPanel.add(addButton);
                 subPanel.add(propertyName);
+                subPanel.add(addButton);
                 subPanel.add(houseCost);
                 subPanel.setPreferredSize(new Dimension(100,200));
                 panel.add(subPanel);
             }
         }
 
-        Dimension d = group.getNumProperties() == 3 ? new Dimension(300,200) : new Dimension(200,200);
+        panel.setPreferredSize(new Dimension(400,200));
 
-        panel.setPreferredSize(d);
-        frame.add(panel);
-        frame.setPreferredSize(d);
-        frame.setVisible(true);
-        pack();
+        int ans = JOptionPane.showConfirmDialog(null,panel,"BUILD ON PROPERTY",JOptionPane.OK_CANCEL_OPTION);
+        if(ans == JOptionPane.OK_OPTION) {
+            for(Property p: player.getProperties(false)){
+                if(group.getSelection().getActionCommand().equals(p.getName())){
+                    model.buildHouse(p, player);
+                }
+            }
+        } else {
+            JOptionPane.showMessageDialog(null,"Building Cancelled");
+        }
     }
+
+//    private void handleAddHouses(Player player, String neighborhood){
+//        Property.NeighborhoodEnum group = switch(neighborhood){
+//            case "BROWN" -> Property.NeighborhoodEnum.BROWN;
+//            case "SKY" -> Property.NeighborhoodEnum.SKY;
+//            case "MAGENTA" -> Property.NeighborhoodEnum.MAGENTA;
+//            case "ORANGE" -> Property.NeighborhoodEnum.ORANGE;
+//            case "RED" -> Property.NeighborhoodEnum.RED;
+//            case "YELLOW" -> Property.NeighborhoodEnum.YELLOW;
+//            case "GREEN" -> Property.NeighborhoodEnum.GREEN;
+//            default -> Property.NeighborhoodEnum.INDIGO;
+//        };
+//
+//        JPanel panel = new JPanel(new GridLayout(1, group.getNumProperties()));
+//
+//        for(Property p: player.getProperties(false)){
+//            if(p.getNeighborhood() == group){
+//                JPanel subPanel = new JPanel(new GridLayout(3, 1));
+//
+//                JButton addButton = new JButton("+");
+//                addButton.addActionListener(controller);
+//                addButton.setActionCommand(p.getName());
+//
+//                JLabel propertyName = new JLabel(p.getName());
+//                JLabel houseCost = new JLabel(String.valueOf(group.getHouseCost()));
+//
+//                subPanel.add(addButton);
+//                subPanel.add(propertyName);
+//                subPanel.add(houseCost);
+//                subPanel.setPreferredSize(new Dimension(100,200));
+//                panel.add(subPanel);
+//            }
+//        }
+//
+//        Dimension d = group.getNumProperties() == 3 ? new Dimension(300,200) : new Dimension(200,200);
+//
+//        panel.setPreferredSize(d);
+//        pack();
+//    }
 
     private void addHouseSuccess(Player player){
         String message = player.getIconName() + "has purchased a house";
