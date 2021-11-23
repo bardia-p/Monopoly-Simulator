@@ -453,7 +453,25 @@ public class BoardModelTest {
         boardModel.setDice(20, 0);
         boardModel.move(p2);
         assertEquals(1500 + 350, p2.getCash());
+    }
 
+    @Test
+    public void testBuyHouse(){
+        boardModel.setDice(1, 0);
+        boardModel.move(p1);
+        boardModel.buyLocation(p1.getCurrentCell(), p1);
+
+        boardModel.setDice(2, 0);
+        boardModel.move(p1);
+        boardModel.buyLocation(p1.getCurrentCell(), p1);
+
+        boardModel.buildHouse((Property) p1.getCurrentCell(), p1);
+
+        assertEquals(1, (((Property) p1.getCurrentCell()).getNumHouses()));
+    }
+
+    @Test
+    public void testBuyHotel(){
 
     }
 }
