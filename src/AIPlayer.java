@@ -137,7 +137,7 @@ public class AIPlayer extends Player {
 
     /**
      * Handles the event when the AI player has to roll.
-     * @author Bardia Parmoun 101143006
+     * @author Bardia Parmoun 10114300
      */
     private void handleRoll(){
         model.roll(this);
