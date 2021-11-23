@@ -455,6 +455,11 @@ public class BoardModelTest {
         assertEquals(1500 + 350, p2.getCash());
     }
 
+    /**
+     * Test buying houses and paying house rent. Confirms the player bought a house and is charging the
+     * next rental fee value.
+     * @author Sarah Chow 101143033
+     */
     @Test
     public void testBuyHouse(){
         boardModel.setDice(1, 0);
@@ -468,10 +473,12 @@ public class BoardModelTest {
         boardModel.buildHouse((Property) p1.getCurrentCell(), p1);
 
         assertEquals(1, (((Property) p1.getCurrentCell()).getNumHouses()));
-    }
 
-    @Test
-    public void testBuyHotel(){
+        boardModel.setDice(3, 0);
+        boardModel.move(p2);
+        boardModel.payFees(p2.getCurrentCell(), p2);
+
+        assertEquals(1500 - 20, p2.getCash());
 
     }
 }
