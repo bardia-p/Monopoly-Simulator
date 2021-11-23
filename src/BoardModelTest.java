@@ -419,6 +419,7 @@ public class BoardModelTest {
 
     /**
      * Tests when the player passes GO. Confirms they collected $200.
+     * @author Sarah Chow 101143033
      */
     @Test
     public void testGO(){
@@ -453,7 +454,32 @@ public class BoardModelTest {
         boardModel.setDice(20, 0);
         boardModel.move(p2);
         assertEquals(1500 + 350, p2.getCash());
+    }
 
+    /**
+     * Test buying houses and paying house rent. Confirms the player bought a house and is charging the
+     * next rental fee value.
+     * @author Sarah Chow 101143033
+     */
+    @Test
+    public void testBuyHouse(){
+        boardModel.setDice(1, 0);
+        boardModel.move(p1);
+        boardModel.buyLocation(p1.getCurrentCell(), p1);
+
+        boardModel.setDice(2, 0);
+        boardModel.move(p1);
+        boardModel.buyLocation(p1.getCurrentCell(), p1);
+
+        boardModel.buildHouse((Property) p1.getCurrentCell(), p1);
+
+        assertEquals(1, (((Property) p1.getCurrentCell()).getNumHouses()));
+
+        boardModel.setDice(3, 0);
+        boardModel.move(p2);
+        boardModel.payFees(p2.getCurrentCell(), p2);
+
+        assertEquals(1500 - 20, p2.getCash());
 
     }
 }

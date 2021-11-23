@@ -40,6 +40,10 @@ public class BoardModel {
      */
     public static final int SIZE_OF_BOARD = 40;
     /**
+     * Keeps track of max number of houses.
+     */
+    public static final int MAX_HOUSE_VAL = 5;
+    /**
      * Keeps track of the views.
      */
     private final List<BoardView> views;
@@ -736,7 +740,7 @@ public class BoardModel {
      */
     public void buildHouse(Property property, Player player){
         if(player.getCash() >= property.getNeighborhood().getHouseCost() &&
-                property.getNumHouses() < 5){
+                property.getNumHouses() < MAX_HOUSE_VAL){
             player.pay(property.getNeighborhood().getHouseCost());
             property.addHouse();
             sendBoardUpdate(new PlayerEvent(this, Command.PAINT_HOUSE, player, property));

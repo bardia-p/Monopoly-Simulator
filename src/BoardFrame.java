@@ -1068,7 +1068,7 @@ public class BoardFrame extends JFrame implements BoardView  {
             }
         }
 
-        panel.setPreferredSize(new Dimension(100*buildableHouses,200));
+        panel.setPreferredSize(new Dimension(200*buildableHouses,200));
 
         int ans = JOptionPane.showConfirmDialog(null,panel,"BUILD ON PROPERTY",
                 JOptionPane.OK_CANCEL_OPTION);
@@ -1105,7 +1105,7 @@ public class BoardFrame extends JFrame implements BoardView  {
         Rectangle cellPosition = currentCell.getBounds();
 
         Property property = (Property) cell;
-        if(property.getNumHouses() == 5){
+        if(property.getNumHouses() == BoardModel.MAX_HOUSE_VAL){
             //need to remove all houses and put a hotel
             for (JLabel h: houseLabels.get(cell)){
                 layeredPane.setLayer(h, -1);
