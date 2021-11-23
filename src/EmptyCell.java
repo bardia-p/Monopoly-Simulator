@@ -1,9 +1,6 @@
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 /**
  * Group 3
- * SYSC 3110 - Milestone 2 Go Class
+ * SYSC 3110 - Milestone 3 EmptyCell Class
  *
  * This document is the EmptyCell. This class extends BoardCell and it is used for the cells that have not been
  * implemented yet.
@@ -29,18 +26,13 @@ public class EmptyCell extends BoardCell {
         super(name, null, type, imgPath);
     }
 
-
     /**
-     * Accessor method to package relevant information into a linked hash map.
+     * Accessor method to package relevant information into a string.
      * @author Sarah Chow 101143033
-     * @return attributes of empty cell, Map
+     * @return the cell's current information, String
      */
-    public Map<String, String> getAttributes() {
-
-        Map<String, String> attributes = new LinkedHashMap<>();
-
-        attributes.put("Cell Name: ", String.valueOf(super.getName()));
-
-        return attributes;
+    @Override
+    public String toString() {
+        return "\n\tname='" + super.getName() + '\'';
     }
 }

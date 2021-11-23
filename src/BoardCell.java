@@ -1,8 +1,7 @@
-import java.util.Map;
-
+import java.util.Objects;
 /**
  * Group 3
- * SYSC 3110 - Milestone 2 BoardCell Class
+ * SYSC 3110 - Milestone 3 BoardCell Class
  *
  * This document is the BoardCell. This class extends BoardCell and has a name, owner, and CellType.
  *
@@ -10,7 +9,7 @@ import java.util.Map;
  * @author Kyra Lothrop 101145872
  * @author Bardia Parmoun 101143006
  * @author Owen VanDusen 101152022
- * @version 1.0
+ * @version 2.0
  *
  */
 public abstract class BoardCell {
@@ -34,7 +33,7 @@ public abstract class BoardCell {
     /**
      * Keeps track of all the possible cell types.
      */
-    public enum CellType {PROPERTY, GO, FREE_PARKING, JAIL, TAX, UTILITY, RAILROAD, GO_TO_JAIL}
+    public enum CellType {PROPERTY, GO, FREE_PARKING, JAIL, TAX, UTILITY, RAILROAD, GO_TO_JAIL, CHANCE_AND_CHEST}
 
     /**
      * The constructor for board cell.
@@ -95,10 +94,23 @@ public abstract class BoardCell {
         return imgPath;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BoardCell boardCell = (BoardCell) o;
+        return Objects.equals(name, boardCell.name) && type == boardCell.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, type);
+    }
+
     /**
-     * Accessor method to package relevant information into a Map.
+     * Accessor method to package relevant information into a string.
      * @author Sarah Chow 101143033
-     * @return the cell's current information, Map
+     * @return the cell's current information, String
      */
-    public abstract Map<String, String> getAttributes();
+    public abstract String toString();
 }

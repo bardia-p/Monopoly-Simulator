@@ -3,15 +3,15 @@ import static org.junit.Assert.*;
 
 /**
  * Group 3
- * SYSC 3110 - Milestone 2 BoardModelTest Class
+ * SYSC 3110 - Milestone 3 BoardModelTest Class
  *
  * This test class ensures the backing data used to display the Monopoly game is properly
  * stored in the BoardModel class and that various BoardModel methods are working as expected
  * @author Owen VanDusen 101152022
- * @version 1.0
+ * @author Sarah Chow 101143033
+ * @version 2.0
  */
 public class BoardModelTest {
-
     /**
      * A board model used to test methods
      */
@@ -46,8 +46,11 @@ public class BoardModelTest {
      */
     @Test
     public void testMovePlayer(){
-        boardModel.move(p1,8);
-        boardModel.move(p2,2);
+        boardModel.setDice(8, 0);
+        boardModel.move(p1);
+
+        boardModel.setDice(2, 0);
+        boardModel.move(p2);
 
         assertEquals(8, p1.getPosition());
         assertEquals(2,p2.getPosition());
@@ -60,8 +63,11 @@ public class BoardModelTest {
      */
     @Test
     public void testPlayerCurrentCell(){
-        boardModel.move(p1,16);
-        boardModel.move(p2,4);
+        boardModel.setDice(16, 0);
+        boardModel.move(p1);
+
+        boardModel.setDice(4, 0);
+        boardModel.move(p2);
         assertEquals("St. James Place", p1.getCurrentCell().getName());
         assertEquals(BoardCell.CellType.PROPERTY, p1.getCurrentCell().getType());
         assertEquals("Income Tax", p2.getCurrentCell().getName());
@@ -75,14 +81,18 @@ public class BoardModelTest {
      */
     @Test
     public void testPlayerBuyProperty(){
-        boardModel.move(p1,8);
-        boardModel.buyProperty((Property) p1.getCurrentCell(), p1);
-        boardModel.move(p2, 3);
-        boardModel.buyProperty((Property) p2.getCurrentCell(), p2);
-        boardModel.move(p2, 3);
-        boardModel.buyProperty((Property) p2.getCurrentCell(), p2);
-        assertEquals(1,p1.getProperties(false).size());
-        assertEquals(2, p2.getProperties(false).size());
+        boardModel.setDice(8, 0);
+        boardModel.move(p1);
+        boardModel.buyLocation(p1.getCurrentCell(), p1);
+
+        boardModel.setDice(3, 0);
+        boardModel.move(p2);
+        boardModel.buyLocation(p2.getCurrentCell(), p2);
+
+        boardModel.move(p2);
+        boardModel.buyLocation(p2.getCurrentCell(), p2);
+        assertEquals(1,p1.getOwnedLocations(false).size());
+        assertEquals(2, p2.getOwnedLocations(false).size());
     }
 
     /**
@@ -95,13 +105,14 @@ public class BoardModelTest {
     public void testPlayerPayTax(){
         assertEquals(1500, p1.getCash());
 
-        boardModel.move(p1, 4);
+        boardModel.setDice(4, 0);
+        boardModel.move(p1);
         boardModel.payFees(p1.getCurrentCell(), p1);
         assertEquals(1300, p1.getCash());
         assertEquals(BoardCell.CellType.TAX, p1.getCurrentCell().getType());
 
-
-        boardModel.move(p1,34);
+        boardModel.setDice(34, 0);
+        boardModel.move(p1);
         boardModel.payFees(p1.getCurrentCell(), p1);
         assertEquals(1200, p1.getCash());
         assertEquals(BoardCell.CellType.TAX, p1.getCurrentCell().getType());
@@ -117,12 +128,13 @@ public class BoardModelTest {
     public void testPlayerPayRent(){
         assertEquals(1500, p1.getCash());
 
-        boardModel.move(p2, 9);
-        boardModel.buyProperty((Property) p2.getCurrentCell(), p2);
+        boardModel.setDice(9, 0);
+        boardModel.move(p2);
+        boardModel.buyLocation(p2.getCurrentCell(), p2);
 
-        boardModel.move(p1, 9);
+        boardModel.move(p1);
         boardModel.payFees(p1.getCurrentCell(),p1);
-        assertEquals(1492,p1.getCash());
+        assertEquals(1492, p1.getCash());
         assertEquals(Player.StatusEnum.PAID_FEES, p1.getFeesStatus());
     }
 
@@ -130,25 +142,29 @@ public class BoardModelTest {
      * Has the player buy properties, ensuring that the properties are correctly added to the
      * player information. Then, has the player sell some of their properties, checking that
      * the number of properties owned by the players has decreased accordingly.
-     * @author Owen VanDusen
+     * @author Owen VanDusen 101152022
      */
     @Test
     public void testPlayerSellProperty(){
-        assertEquals(0,p1.getProperties(false).size());
+        assertEquals(0,p1.getOwnedLocations(false).size());
 
-        boardModel.move(p1,3);
-        boardModel.buyProperty((Property)p1.getCurrentCell(), p1);
-        assertEquals(1,p1.getProperties(false).size());
+        boardModel.setDice(3, 0);
+        boardModel.move(p1);
+        boardModel.buyLocation(p1.getCurrentCell(), p1);
+        assertEquals(1,p1.getOwnedLocations(false).size());
 
-        boardModel.move(p1, 10);
-        boardModel.buyProperty((Property)p1.getCurrentCell(), p1);
-        boardModel.move(p1,5);
-        boardModel.buyProperty((Property)p1.getCurrentCell(), p1);
-        assertEquals(3,p1.getProperties(false).size());
+        boardModel.setDice(10, 0);
+        boardModel.move(p1);
+        boardModel.buyLocation(p1.getCurrentCell(), p1);
 
-        boardModel.sellProperty(p1, p1.getProperties(false).get(0));
-        boardModel.sellProperty(p1, p1.getProperties(false).get(0));
-        assertEquals(1,p1.getProperties(false).size());
+        boardModel.setDice(5, 0);
+        boardModel.move(p1);
+        boardModel.buyLocation(p1.getCurrentCell(), p1);
+        assertEquals(3,p1.getOwnedLocations(false).size());
+
+        boardModel.sellLocation(p1, p1.getOwnedLocations(false).get(0));
+        boardModel.sellLocation(p1, p1.getOwnedLocations(false).get(0));
+        assertEquals(1,p1.getOwnedLocations(false).size());
     }
 
     /**
@@ -158,15 +174,19 @@ public class BoardModelTest {
      */
     @Test
     public void testPropertyNotImmediatelySellable(){
-        boardModel.move(p2,1);
-        boardModel.buyProperty((Property) p2.getCurrentCell(), p2);
-        assertEquals(0,p2.getProperties(true).size());
+        boardModel.setDice(1, 0);
+        boardModel.move(p2);
+        boardModel.buyLocation(p2.getCurrentCell(), p2);
+        assertEquals(0,p2.getOwnedLocations(true).size());
 
-        boardModel.move(p1,3);
-        boardModel.buyProperty((Property) p1.getCurrentCell(), p1);
-        boardModel.move(p1, 5);
-        boardModel.buyProperty((Property)p1.getCurrentCell(), p1);
-        assertEquals(0,p1.getProperties(true).size());
+        boardModel.setDice(3, 0);
+        boardModel.move(p1);
+        boardModel.buyLocation(p1.getCurrentCell(), p1);
+
+        boardModel.setDice(5, 0);
+        boardModel.move(p1);
+        boardModel.buyLocation(p1.getCurrentCell(), p1);
+        assertEquals(0,p1.getOwnedLocations(true).size());
     }
 
     /**
@@ -177,7 +197,8 @@ public class BoardModelTest {
     @Test
     public void testPlayerCannotAffordFees(){
         p1.setCash(100);
-        boardModel.move(p1,4);
+        boardModel.setDice(4, 0);
+        boardModel.move(p1);
         boardModel.payFees(p1.getCurrentCell(), p1);
 
         assertEquals(Player.StatusEnum.UNPAID_FEES, p1.getFeesStatus());
@@ -190,16 +211,17 @@ public class BoardModelTest {
      */
     @Test
     public void testPropertiesBecomeSellableAfterTurnPass(){
-        boardModel.move(p1,3);
-        boardModel.buyProperty((Property) p1.getCurrentCell(), p1);
+        boardModel.setDice(3, 0);
+        boardModel.move(p1);
+        boardModel.buyLocation(p1.getCurrentCell(), p1);
         assertTrue(((Property) p1.getCurrentCell()).getRecentlyChanged());
-        assertEquals(0, p1.getProperties(true).size());
-        assertEquals(1, p1.getProperties(false).size());
+        assertEquals(0, p1.getOwnedLocations(true).size());
+        assertEquals(1, p1.getOwnedLocations(false).size());
 
         boardModel.passTurn(p1);
         assertFalse(((Property) p1.getCurrentCell()).getRecentlyChanged());
-        assertEquals(1, p1.getProperties(true).size());
-        assertEquals(1, p1.getProperties(false).size());
+        assertEquals(1, p1.getOwnedLocations(true).size());
+        assertEquals(1, p1.getOwnedLocations(false).size());
     }
 
     /**
@@ -214,5 +236,250 @@ public class BoardModelTest {
             boardModel.roll(p1);
         }
         assertEquals(1, p1.getNumDoubles());
+    }
+
+
+    /**
+     * Test to ensure player 1 has successfully bought a utility.
+     * Checks if their cash has decreased and their total owned properties has increased.
+     * @author Sarah Chow 101143033
+     */
+    @Test
+    public void testBuyUtility(){
+        assertEquals(1500, p1.getCash());
+
+        boardModel.setDice(12, 0);
+        boardModel.move(p1); // Electric Company
+        boardModel.buyLocation(p1.getCurrentCell(), p1);
+
+        assertEquals(1500 - 150, p1.getCash());
+        assertEquals(1, p1.getOwnedLocations(false).size());
+    }
+
+    /**
+     * Test to ensure player 1 has successfully bought a Railroad.
+     * Checks if their cash has decreased and their total owned properties has increased.
+     * @author Sarah Chow 101143033
+     */
+    @Test
+    public void testBuyRailroad(){
+        assertEquals(1500, p1.getCash());
+
+        boardModel.setDice(5, 0);
+        boardModel.move(p1); // Electric Company
+        boardModel.buyLocation(p1.getCurrentCell(), p1);
+
+        assertEquals(1500 - 200, p1.getCash());
+        assertEquals(1, p1.getOwnedLocations(false).size());
+    }
+
+    /**
+     * To test when a player buys one and multiple Utilities. Checks and confirms
+     * the total fees the player pays depending on the number of Utilities in possession.
+     * @author Sarah Chow 101143033
+     */
+    @Test
+    public void testLandOnBoughtUtility(){
+        assertEquals(1500, p2.getCash());
+
+        boardModel.setDice(12, 0);
+        boardModel.move(p1); // Electric Company
+        boardModel.buyLocation(p1.getCurrentCell(), p1);
+
+        // P1 owns one utility
+        boardModel.move(p2); // To make way to Electric Company
+        boardModel.setDice(5, 0);
+        boardModel.payFees(p2.getCurrentCell(), p2);
+        assertEquals(1500 - (5 * 4), p2.getCash()); // One utility fee = rolled number * 4
+        assertEquals(1500 - 150 + (5 * 4), p1.getCash());
+
+        // P1 owns two utilities
+        boardModel.setDice(16, 0);
+        boardModel.move(p1); // Water Works
+        boardModel.buyLocation(p1.getCurrentCell(), p1);
+
+        boardModel.move(p2);
+        boardModel.setDice(5, 3);
+        boardModel.payFees(p2.getCurrentCell(), p2);
+        assertEquals(1500 - (5 * 4) - (8 * 10), p2.getCash()); // Two utilities fee = rolled number * 10
+        assertEquals(1500 - 300 + (5 * 4) + (8 * 10), p1.getCash());
+    }
+
+    /**
+     * To test when a player buys one and multiple Railroads. Checks and confirms the total fees
+     * the player pays depending on the number of Railroads in possession.
+     * @author Sarah Chow 101143033
+     */
+    @Test
+    public void testLandOnBoughtRailroad(){
+        assertEquals(1500, p1.getCash());
+        assertEquals(1500, p2.getCash());
+
+        // P1 owns one railroad
+        boardModel.setDice(5, 0);
+        boardModel.move(p1); // Reading Railroad
+        boardModel.buyLocation(p1.getCurrentCell(), p1);
+
+        boardModel.move(p2);
+        boardModel.payFees(p2.getCurrentCell(), p2);
+        assertEquals(1500 - 25, p2.getCash());
+        assertEquals(1500 - 200 + 25, p1.getCash());
+
+
+        // P1 owns two railroads
+        boardModel.setDice(10, 0);
+        boardModel.move(p1); // Reading Railroad
+        boardModel.buyLocation(p1.getCurrentCell(), p1);
+
+        boardModel.move(p2);
+        boardModel.payFees(p2.getCurrentCell(), p2);
+        assertEquals(1500 - 75, p2.getCash());
+        assertEquals(1500 - 400 + 75, p1.getCash());
+
+
+        // P1 owns three railroads
+        boardModel.move(p1); // Reading Railroad
+        boardModel.buyLocation(p1.getCurrentCell(), p1);
+
+        boardModel.move(p2);
+        boardModel.payFees(p2.getCurrentCell(), p2);
+        assertEquals(1500 - 175, p2.getCash());
+        assertEquals(1500 - 600 + 175, p1.getCash());
+
+
+        // P1 owns four railroads
+        boardModel.move(p1); // Reading Railroad
+        boardModel.buyLocation(p1.getCurrentCell(), p1);
+
+        boardModel.move(p2);
+        boardModel.payFees(p2.getCurrentCell(), p2);
+        assertEquals(1500 - 375, p2.getCash());
+        assertEquals(1500 - 800 + 375, p1.getCash());
+    }
+
+    /**
+     * Test that the player is sent to Jail if they land on Go To Jail.
+     * Checks their position on the baord after they are sent to jail.
+     * @author Sarah Chow 101143033
+     */
+    @Test
+    public void testLandOnGoToJail(){
+        boardModel.setDice(30, 0);
+        boardModel.move(p1);
+
+        assertEquals(10, p1.getPosition()); // Sent to jail
+    }
+
+    /**
+     * Test when a player buys their way out of jail. Checks when the player is in jail and pays the fee.
+     * @author Sarah Chow 101143033
+     */
+    @Test
+    public void testBuyOutOfJail(){
+        assertEquals(1500, p1.getCash());
+        boardModel.setDice(30, 0);
+        boardModel.move(p1);
+        ((Jail)p1.getCurrentCell()).incrementJailRound(p1); // Increment rounds to 1
+
+        boardModel.payFees(p1.getCurrentCell(), p1);
+        assertEquals(1500 - 50, p1.getCash());
+    }
+
+    /**
+     * Test for player to leave jail once they roll a double.
+     * @author Sarah Chow 101143033
+     */
+    @Test
+    public void testRollDoublesJail(){
+        boardModel.setDice(30, 0);
+        boardModel.move(p1);
+        ((Jail)p1.getCurrentCell()).incrementJailRound(p1); // Increment rounds to 1
+
+        boardModel.roll(p1);
+        while(boardModel.getDice()[0] != boardModel.getDice()[1]){
+            boardModel.roll(p1);
+        }
+
+        assertFalse(p1.getResortInJail());
+    }
+
+    /**
+     * Test for player to go to jail if they roll three doubles in a row.
+     * @author Sarah Chow 101143033
+     */
+    @Test
+    public void testRollThreeDoublesJail(){
+        for (int i = 0; i < 3; i++){
+            boardModel.setDoubleRoll(p1);
+        }
+
+        assertEquals(BoardCell.CellType.JAIL, p1.getCurrentCell().getType());
+    }
+
+
+    /**
+     * Tests when the player passes GO. Confirms they collected $200.
+     * @author Sarah Chow 101143033
+     */
+    @Test
+    public void testGO(){
+        assertEquals(1500, p1.getCash());
+
+        boardModel.setDice(45, 0);
+        boardModel.move(p1);
+
+        assertEquals(1500 + 200, p1.getCash());
+    }
+
+    /**
+     * Test when a player lands on free parking.
+     * Confirms that player collects all the taxes and jail payments on the board.
+     * @author Sarah Chow 101143033
+     */
+    @Test
+    public void testFreeParking(){
+        boardModel.setDice(4, 0);
+        boardModel.move(p1); // Income Tax - $200
+        boardModel.payFees(p1.getCurrentCell(), p1);
+
+        boardModel.setDice(26, 0);
+        boardModel.move(p1); // To jail
+        ((Jail)p1.getCurrentCell()).incrementJailRound(p1); // Increment rounds to 1
+        boardModel.payFees(p1.getCurrentCell(), p1); // Pay out of jail - $50
+
+        boardModel.setDice(28, 0);
+        boardModel.move(p1); // Luxury Tax - $100
+        boardModel.payFees(p1.getCurrentCell(), p1);
+
+        boardModel.setDice(20, 0);
+        boardModel.move(p2);
+        assertEquals(1500 + 350, p2.getCash());
+    }
+
+    /**
+     * Test buying houses and paying house rent. Confirms the player bought a house and is charging the
+     * next rental fee value.
+     * @author Sarah Chow 101143033
+     */
+    @Test
+    public void testBuyHouse(){
+        boardModel.setDice(1, 0);
+        boardModel.move(p1);
+        boardModel.buyLocation(p1.getCurrentCell(), p1);
+
+        boardModel.setDice(2, 0);
+        boardModel.move(p1);
+        boardModel.buyLocation(p1.getCurrentCell(), p1);
+
+        boardModel.buildHouse((Property) p1.getCurrentCell(), p1);
+
+        assertEquals(1, (((Property) p1.getCurrentCell()).getNumHouses()));
+
+        boardModel.setDice(3, 0);
+        boardModel.move(p2);
+        boardModel.payFees(p2.getCurrentCell(), p2);
+
+        assertEquals(1500 - 20, p2.getCash());
+
     }
 }
