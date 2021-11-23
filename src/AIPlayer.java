@@ -34,7 +34,7 @@ public class AIPlayer extends Player {
      * @param icon the icon of the player, BoardModel.Icon
      * @author Bardia Parmoun, 101143006
      */
-    AIPlayer(BoardModel model, String name, BoardModel.Icon icon) {
+    public AIPlayer(BoardModel model, String name, BoardModel.Icon icon) {
         super(name, icon, true);
         this.model = model;
         this.numHousesBuilt = 0;
@@ -45,45 +45,101 @@ public class AIPlayer extends Player {
      * @author Bardia Parmoun, 101143006.
      */
     public void nextMove(){
-        BoardCell currentCell = getCurrentCell();
-
         List<BoardModel.Command> availableCommands = model.getCommand(this);
 
         // Checks to see if it can buy a property.
         if (availableCommands.contains(BoardModel.Command.BUY)) {
-            model.buyLocation(currentCell, this);
+            handleBuy();
             // Checks to see if it has any fees to pay
         } else if (availableCommands.contains(BoardModel.Command.PAY_FEES)) {
-            // If it cannot afford the fees.
-            if (!model.payFees(currentCell, this)) {
-                // Tries to sell properties.
-                if (availableCommands.contains(BoardModel.Command.SELL)) {
-                    BoardCell sellableCell = this.getOwnedLocations(true).get(0);
-                    model.sellLocation(this, sellableCell);
-                } else { // If cannot sell it must forfeit.
-                    model.forfeit(this);
-                }
-            }
+            handlePayFees(availableCommands);
             // Checks to see if it can roll.
         } else if (availableCommands.contains(BoardModel.Command.ROLL_AGAIN)) {
-            model.roll(this);
+            handleRoll();
             // Handles building houses
         } else if (numHousesBuilt < BUILD_LIMIT && availableCommands.contains(BoardModel.Command.BUILD)){
-            List<Property.NeighborhoodEnum> buildableProperites = this.getBuildableProperties();
+            handleBuild();
+        } else { // Finally, if it cannot do anything it will pass turn.
+            handlePass();
+        }
+    }
 
-            for (BoardCell bc: getOwnedLocations(false)){
-                if (bc.getType() == BoardCell.CellType.PROPERTY){
-                    Property p = (Property) bc;
-                    // We are limiting the number of houses built to only 2.
-                    if (numHousesBuilt < BUILD_LIMIT && buildableProperites.contains(p.getNeighborhood())){
-                        model.buildHouse(p, this);
-                        numHousesBuilt += 1;
-                    }
+    /**
+     * Handles the time when the player has to pay fees.
+     * @param availableCommands the list of the command, BoardModel.Command.
+     * @author Bardia Parmoun 101143006
+     */
+    private void handlePayFees(List<BoardModel.Command> availableCommands) {
+        BoardCell currentCell = getCurrentCell();
+        // If it cannot afford the fees.
+        if (!model.payFees(currentCell, this)) {
+            // Tries to sell properties.
+            if (availableCommands.contains(BoardModel.Command.SELL)) {
+                handleSell();
+            } else { // If cannot sell it must forfeit.
+                handleForfeit();
+            }
+        }
+    }
+
+    /**
+     * Handles the event when the player has to sell.
+     * @author Bardia Parmoun 101143006
+     */
+    private void handleSell() {
+        BoardCell sellableCell = this.getOwnedLocations(true).get(0);
+        model.sellLocation(this, sellableCell);
+    }
+
+    /**
+     * Handles the AI player forfeit event.
+     * @author Bardia Parmoun 101143006
+     */
+    private void handleForfeit(){
+        model.forfeit(this);
+    }
+
+    /**
+     * Handles the building event.
+     * @author Bardia Parmoun 101143006
+     */
+    private void handleBuild(){
+        List<Property.NeighborhoodEnum> buildableProperites = this.getBuildableProperties();
+
+        for (BoardCell bc: getOwnedLocations(false)){
+            if (bc.getType() == BoardCell.CellType.PROPERTY){
+                Property p = (Property) bc;
+                // We are limiting the number of houses built to only 2.
+                if (numHousesBuilt < BUILD_LIMIT && buildableProperites.contains(p.getNeighborhood())){
+                    model.buildHouse(p, this);
+                    numHousesBuilt += 1;
                 }
             }
-        } else { // Finally, if it cannot do anything it will pass turn.
-            model.passTurn(this);
-            numHousesBuilt = 0;
         }
+    }
+
+    /**
+     * Handles the event when the player has to buy.
+     * @author Bardia Parmoun 101143006
+     */
+    private void handleBuy(){
+        model.buyLocation(getCurrentCell(), this);
+    }
+
+    /**
+     * Handles the event when the player passes.
+     * @author Bardia Parmoun 101143006
+     */
+    private void handlePass(){
+        model.passTurn(this);
+        numHousesBuilt = 0;
+    }
+
+    /**
+     * Handles the event when the AI player has to roll.
+     * @author Bardia Parmoun 101143006
+     */
+    private void handleRoll(){
+        model.roll(this);
     }
 }
