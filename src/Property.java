@@ -18,29 +18,9 @@ public class Property extends BoardCell implements Buyable{
      */
     private final int price;
     /**
-     * Keeps track of the property rent.
+     * Keeps track of the all the possible rents for the property.
      */
-    private final int rent;
-    /**
-     * Rent if the player has one house on the property
-     */
-    private final int oneHouseRent;
-    /**
-     * Rent if the player has two houses on the property
-     */
-    private final int twoHouseRent;
-    /**
-     * Rent if the player has three houses on the property
-     */
-    private final int threeHouseRent;
-    /**
-     * Rent if the player has four houses on the property
-     */
-    private final int fourHouseRent;
-    /**
-     * Rent if the player has 5 houses(a hotel) on the property
-     */
-    private final int hotel;
+    private final int[] houseRents;
     /**
      * Keeps track of whether a property attribute has been recently changed (Excluding self).
      */
@@ -48,7 +28,7 @@ public class Property extends BoardCell implements Buyable{
     /**
      * Keeps track of which group a property belongs to.
      */
-    private NeighborhoodEnum neighborhood;
+    private final NeighborhoodEnum neighborhood;
     /**
      * Keeps track of the number of houses on a given property
      */
@@ -89,18 +69,14 @@ public class Property extends BoardCell implements Buyable{
      * @author Owen VanDusen 101152022
      * @param name Property name, String
      * @param price Property price, int
-     * @param rent Property rent, int
+     * @param houseRents int[]
+     * @param neighborhood NeighborhoodNum
+     * @param imgName String
      */
-    Property(String name, int price, int rent, int oneHouseRent, int twoHouseRent, int threeHouseRent,
-             int fourHouseRent, int hotel, NeighborhoodEnum neighborhood, String imgName){
+    Property(String name, int price, int[] houseRents, NeighborhoodEnum neighborhood, String imgName){
         super(name, null, CellType.PROPERTY, imgName);
         this.price = price;
-        this.rent = rent;
-        this.oneHouseRent = oneHouseRent;
-        this.twoHouseRent = twoHouseRent;
-        this.threeHouseRent = threeHouseRent;
-        this.fourHouseRent = fourHouseRent;
-        this.hotel = hotel;
+        this.houseRents = houseRents;
         this.recentlyChanged = false;
         this.neighborhood = neighborhood;
         this.numHouses = 0;
@@ -121,14 +97,7 @@ public class Property extends BoardCell implements Buyable{
      * @return value of the rent, int
      */
     public int getRent(){
-        return switch(numHouses){
-            case 1 -> oneHouseRent;
-            case 2 -> twoHouseRent;
-            case 3 -> threeHouseRent;
-            case 4 -> fourHouseRent;
-            case 5 -> hotel;
-            default -> rent;
-        };
+        return houseRents[numHouses];
     }
 
     /**
@@ -155,7 +124,7 @@ public class Property extends BoardCell implements Buyable{
      */
     public NeighborhoodEnum getNeighborhood(){
         return this.neighborhood;
-    };
+    }
 
     public boolean addHouse(){
         if(numHouses == 5){

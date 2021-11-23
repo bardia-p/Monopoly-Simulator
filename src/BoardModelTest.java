@@ -410,14 +410,10 @@ public class BoardModelTest {
     @Test
     public void testRollThreeDoublesJail(){
         for (int i = 0; i < 3; i++){
-            boardModel.roll(p1);
-            while(boardModel.getDice()[0] != boardModel.getDice()[1]){
-                boardModel.roll(p1);
-            }
+            boardModel.setDoubleRoll(p1);
         }
 
         assertEquals(BoardCell.CellType.JAIL, p1.getCurrentCell().getType());
-
     }
 
 
@@ -461,4 +457,3 @@ public class BoardModelTest {
 
     }
 }
-

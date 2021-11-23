@@ -1070,7 +1070,8 @@ public class BoardFrame extends JFrame implements BoardView  {
 
         panel.setPreferredSize(new Dimension(100*buildableHouses,200));
 
-        int ans = JOptionPane.showConfirmDialog(null,panel,"BUILD ON PROPERTY",JOptionPane.OK_CANCEL_OPTION);
+        int ans = JOptionPane.showConfirmDialog(null,panel,"BUILD ON PROPERTY",
+                JOptionPane.OK_CANCEL_OPTION);
         if(ans == JOptionPane.OK_OPTION) {
             if (group.getSelection()!=null){
                 for(BoardCell bc: player.getOwnedLocations(false)){
