@@ -419,6 +419,7 @@ public class BoardModelTest {
 
     /**
      * Tests when the player passes GO. Confirms they collected $200.
+     * @author Sarah Chow 101143033
      */
     @Test
     public void testGO(){
