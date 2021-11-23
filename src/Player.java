@@ -221,10 +221,12 @@ public class Player {
         this.cash = 0;
         for (BoardCell location: ownedLocations){
             if(location.getType().equals(BoardCell.CellType.PROPERTY)
-                    || location.getType().equals(BoardCell.CellType.RAILROAD)) {
+                    || location.getType().equals(BoardCell.CellType.RAILROAD)
+                    || location.getType().equals(BoardCell.CellType.UTILITY)) {
                 location.setOwner(null);
             }
         }
+        ownedLocations.clear();
     }
 
     /**
