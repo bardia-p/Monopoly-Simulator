@@ -39,6 +39,12 @@ public class BoardEvent extends MonopolyEvent {
         this.player = model.getCurrentTurn();
     }
 
+    /**
+     * The the constructor for BoardEvent with jub a player.
+     * @param model the main boardmodel, BoardModel.
+     * @param status the status of the board, BoardModel.Status.
+     * @param player the player in event, Player.
+     */
     public BoardEvent(BoardModel model, BoardModel.Status status, Player player){
         this(model, status);
         this.player = player;

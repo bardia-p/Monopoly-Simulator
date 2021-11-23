@@ -317,7 +317,6 @@ public class Player {
         return this.cash;
     }
 
-    //This method will be needed when Jail is implemented :)
     /**
      * Accessor to get the number of doubles.
      * @author Owen VanDusen 101152022
