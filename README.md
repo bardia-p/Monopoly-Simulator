@@ -28,9 +28,11 @@ Sarah Chow - 101143033\
 Owen VanDusen - 101152022 
 
 ## Changes Since Previous Deliverable
-<p>Currently working on the Milestone 2.
-  Building upon Milestone 1, Milestone 2 converted the text-based playable version, to a GUI-based version. 
-  This new version allows the user to view the board, dice roll and use buttons to make game decisions
+<p>Currently working on the Milestone 3.
+  Building upon Milestone 2, Milestone 3 added features to the GUI-based version. 
+  This new version contains the additional features of houses, hotels and special properties 
+  and squares such as Go, Railroads and Utilities. The user also has the option to have any 
+  number of AI players to play the game.
 </p>
 
 ## Known Issues
@@ -38,7 +40,7 @@ Owen VanDusen - 101152022
 </ul>
 
 ## Roadmap Ahead
-<p>Milestone 3: Additional Monopoly features and addition of AI
-In the future milestone other functionalities of the game such as other special properties will be implemented and the 
-  addition of AI will be done. Next, the game will have the option to be customizable. 
+<p>Milestone 4: Save/load features and international versions
+  In the future milestone there will be save/load features and international versions 
+  with custom street names, values and currencies.
 </p>
