@@ -85,6 +85,7 @@ public class BoardModel {
         REQUEST_SELL("Request Sell"),
         REQUEST_FORFEIT("Request Forfeit"),
         BUILD("Build"),
+        PAINT_HOUSE("Paint House"),
         CHANGE_WINDOW("Change Window");
 
         private final String stringCommand;
@@ -182,10 +183,12 @@ public class BoardModel {
         else if (command.equals((Command.CELL_STATUS.getStringCommand()))){
             getCellStatus();
         }
+        else if(command.equals((Command.BUILD.getStringCommand()))){
+            getBuildStatus();
+        }
         else if(command.equals((Command.FORFEIT.getStringCommand()))){
             request_forfeit(turn);
         }
-
         // Avoids race conditions.
         if(turn!= null && !command.equals((Command.PASS.getStringCommand())) &&
                 !command.equals((Command.FORFEIT.getStringCommand()))) {
@@ -203,58 +206,79 @@ public class BoardModel {
     public void constructBoard(){
         cells.addAll(Arrays.asList(
                 new Go(200, "images/board/go.jpg"),
-                new Property("Mediterranean Avenue",60,2, "images/board/mediterranean.jpg"),
+                new Property("Mediterranean Avenue",60, new int[]{2,10,30,90,160,250},
+                        Property.NeighborhoodEnum.BROWN, "images/board/mediterranean.jpg"),
                 new EmptyCell("Community Chest", BoardCell.CellType.CHANCE_AND_CHEST,
                         "images/board/chest_1.jpg"),
-                new Property("Baltic Avenue",60,4, "images/board/baltic.jpg"),
+                new Property("Baltic Avenue",60,new int[]{4,20,60,180,320,450},
+                        Property.NeighborhoodEnum.BROWN,"images/board/baltic.jpg"),
                 new Tax( "Income Tax", 200, bank, "images/board/income_tax.jpg"),
                 new Railroad("Reading Railroad", 200, new Integer[]{25, 50, 100, 200},
                         "images/board/railroad_1.jpg"),
-                new Property("Oriental Avenue",100,6, "images/board/oriental.jpg"),
+                new Property("Oriental Avenue",100,new int[]{6,30,90,270,400,550},
+                        Property.NeighborhoodEnum.SKY,"images/board/oriental.jpg"),
                 new EmptyCell("Chance Card", BoardCell.CellType.CHANCE_AND_CHEST,
                         "images/board/chance_1.jpg"),
-                new Property("Vermont Avenue",100,6, "images/board/vermont.jpg"),
-                new Property("Connecticut Avenue",120,8, "images/board/connecticut.jpg"),
+                new Property("Vermont Avenue",100,new int[]{6,30,90,270,400,550},
+                        Property.NeighborhoodEnum.SKY,"images/board/vermont.jpg"),
+                new Property("Connecticut Avenue",120,new int[]{8,40,100,300,450,600},
+                        Property.NeighborhoodEnum.SKY,"images/board/connecticut.jpg"),
                 new Jail("JAIL", bank,"images/board/jail.jpg"),
-                new Property("St. Charles Place",140,10, "images/board/st_charles.jpg"),
+                new Property("St. Charles Place",140,new int[]{10,50,150,450,625,750},
+                        Property.NeighborhoodEnum.MAGENTA,"images/board/st_charles.jpg"),
                 new Utility("Electric Company", 150,  new Integer[]{4, 10},
                         "images/board/electric.jpg"),
-                new Property("States Avenue",140,10, "images/board/states_avenue.jpg"),
-                new Property("Virginia Avenue",160,12, "images/board/virginia.jpg"),
+                new Property("States Avenue",140,new int[]{10,50,150,450,625,750},
+                        Property.NeighborhoodEnum.MAGENTA,"images/board/states_avenue.jpg"),
+                new Property("Virginia Avenue",160,new int[]{12,60,180,500,700,900},
+                        Property.NeighborhoodEnum.MAGENTA,"images/board/virginia.jpg"),
                 new Railroad("Pennsylvania Railroad", 200, new Integer[]{25, 50, 100, 200},
                         "images/board/railroad_2.jpg"),
-                new Property("St. James Place",180,14, "images/board/st_james.jpg"),
+                new Property("St. James Place",180,new int[]{14,70,200,550,750,950},
+                        Property.NeighborhoodEnum.ORANGE,"images/board/st_james.jpg"),
                 new EmptyCell("Community Chest", BoardCell.CellType.CHANCE_AND_CHEST,
                         "images/board/chest_2.jpg"),
-                new Property("Tennessee Avenue",180,14, "images/board/tennessee.jpg"),
-                new Property("New York Avenue",200,16, "images/board/new_york.jpg"),
+                new Property("Tennessee Avenue",180,new int[]{14,70,200,550,750,950},
+                        Property.NeighborhoodEnum.ORANGE,"images/board/tennessee.jpg"),
+                new Property("New York Avenue",200,new int[]{16,80,220,600,800,1000},
+                        Property.NeighborhoodEnum.ORANGE,"images/board/new_york.jpg"),
                 new FreeParking("images/board/free_parking.jpg"),
-                new Property("Kentucky Avenue",220,18, "images/board/kentucky.jpg"),
+                new Property("Kentucky Avenue",220,new int[]{18,90,250,700,875,1050},
+                        Property.NeighborhoodEnum.RED,"images/board/kentucky.jpg"),
                 new EmptyCell("Chance Card", BoardCell.CellType.CHANCE_AND_CHEST,
                         "images/board/chance_2.jpg"),
-                new Property("Indiana Avenue",220,18, "images/board/indiana.jpg"),
-                new Property("Illinois Avenue",240,20, "images/board/illinois.jpg"),
+                new Property("Indiana Avenue",220,new int[]{18,90,250,700,875,1050},
+                        Property.NeighborhoodEnum.RED,"images/board/indiana.jpg"),
+                new Property("Illinois Avenue",240,new int[]{20,100,300,750,925,1100},
+                        Property.NeighborhoodEnum.RED,"images/board/illinois.jpg"),
                 new Railroad("B. & O. Railroad", 200, new Integer[]{25, 50, 100, 200},
                         "images/board/railroad_3.jpg"),
-                new Property("Atlantic Avenue",260,22, "images/board/atlantic.jpg"),
-                new Property("Ventnor Avenue",260,22, "images/board/ventnor.jpg"),
+                new Property("Atlantic Avenue",260,new int[]{22,110,330,800,975,1150},
+                        Property.NeighborhoodEnum.YELLOW,"images/board/atlantic.jpg"),
+                new Property("Ventnor Avenue",260,new int[]{22,110,330,800,975,1150},
+                        Property.NeighborhoodEnum.YELLOW,"images/board/ventnor.jpg"),
                 new Utility("Water Works", 150,  new Integer[]{4, 10},
                         "images/board/water_works.jpg"),
-                new Property("Marvin Garden",280,24, "images/board/marvin.jpg"),
+                new Property("Marvin Garden",280,new int[]{24,120,360,850,1025,1200},
+                        Property.NeighborhoodEnum.YELLOW,"images/board/marvin.jpg"),
                 new GoToJail("GO TO JAIL", "images/board/go_to_jail.jpg"),
-                new Property("Pacific Avenue",300,26, "images/board/pacific.jpg"),
-                new Property("North Carolina Avenue",300,26, "images/board/north_carolina.jpg"),
+                new Property("Pacific Avenue",300,new int[]{26,130,390,900,1100,1275},
+                        Property.NeighborhoodEnum.GREEN,"images/board/pacific.jpg"),
+                new Property("North Carolina Avenue",300,new int[]{26,130,390,900,1100,1275},
+                        Property.NeighborhoodEnum.GREEN,"images/board/north_carolina.jpg"),
                 new EmptyCell("Community Chest", BoardCell.CellType.CHANCE_AND_CHEST,
                         "images/board/chest_3.jpg"),
-                new Property("Pennsylvania Avenue",320,28, "images/board/pennsylvania.jpg"),
+                new Property("Pennsylvania Avenue",320,new int[]{28,150,450,1000,1200,1400},
+                        Property.NeighborhoodEnum.GREEN,"images/board/pennsylvania.jpg"),
                 new Railroad("Shortline Railroad", 200, new Integer[]{25, 50, 100, 200},
                         "images/board/railroad_4.jpg"),
                 new EmptyCell("Chance Card", BoardCell.CellType.CHANCE_AND_CHEST,
                         "images/board/chance_3.jpg"),
-                new Property("Park Place",350,35, "images/board/park_place.jpg"),
+                new Property("Park Place",350,new int[]{35,175,500,1100,1300,1500},
+                        Property.NeighborhoodEnum.INDIGO,"images/board/park_place.jpg"),
                 new Tax( "Luxury Tax", 100, bank, "images/board/luxury_tax.jpg"),
-                new Property("Boardwalk",500,50, "images/board/boardwalk.jpg")
-        ));
+                new Property("Boardwalk",500,new int[]{50,200,600,1400,1700,2000},
+                        Property.NeighborhoodEnum.INDIGO,"images/board/boardwalk.jpg")));
 
         sendBoardUpdate(new BoardEvent(this,Status.INITIALIZE_BOARD));
     }
@@ -384,8 +408,13 @@ public class BoardModel {
             if (player.hasAnotherRoll() && !player.getResortInJail()) {
                 commands.add(Command.ROLL_AGAIN);
             } else {
-                commands.add(BoardModel.Command.PASS);
+                commands.add(Command.PASS);
             }
+        }
+
+        //If the player has a complete neighborhood they can buy houses on those properties
+        if(setBuildableProperties()){
+            commands.add(Command.BUILD);
         }
 
         // Handles the status commands.
@@ -443,6 +472,87 @@ public class BoardModel {
     }
 
     /**
+     * Checks if the player owns any sets of properties and updates the buildableProperties arraylist to reflect
+     * the current player's options
+     * @author Owen VanDusen 101152022
+     * @return whether or not the player can build houses on any of the properties.
+     */
+    private boolean setBuildableProperties(){
+        boolean buildable = false;
+        ArrayList<Property.NeighborhoodEnum> buildableProperties = new ArrayList<>();
+        if(turn != null) {
+            int brown = 0, sky = 0, magenta = 0, orange = 0, red = 0, yellow = 0, green = 0, indigo = 0;
+            for (BoardCell bc : turn.getOwnedLocations(false)) {
+                if (bc.getType() == BoardCell.CellType.PROPERTY) {
+                    Property p = (Property) bc;
+                    switch (p.getNeighborhood()) {
+                        case BROWN -> {
+                            brown += 1;
+                            if (p.getNeighborhood().getNumProperties() == brown) {
+                                buildableProperties.add(Property.NeighborhoodEnum.BROWN);
+                                buildable = true;
+                            }
+                        }
+                        case SKY -> {
+                            sky += 1;
+                            if (p.getNeighborhood().getNumProperties() == sky) {
+                                buildableProperties.add(Property.NeighborhoodEnum.SKY);
+                                buildable = true;
+                            }
+                        }
+                        case MAGENTA -> {
+                            magenta += 1;
+                            if (p.getNeighborhood().getNumProperties() == magenta) {
+                                buildableProperties.add(Property.NeighborhoodEnum.MAGENTA);
+                                buildable = true;
+                            }
+                        }
+                        case ORANGE -> {
+                            orange += 1;
+                            if (p.getNeighborhood().getNumProperties() == orange) {
+                                buildableProperties.add(Property.NeighborhoodEnum.ORANGE);
+                                buildable = true;
+                            }
+                        }
+                        case RED -> {
+                            red += 1;
+                            if (p.getNeighborhood().getNumProperties() == red) {
+                                buildableProperties.add(Property.NeighborhoodEnum.RED);
+                                buildable = true;
+                            }
+                        }
+                        case YELLOW -> {
+                            yellow += 1;
+                            if (p.getNeighborhood().getNumProperties() == yellow) {
+                                buildableProperties.add(Property.NeighborhoodEnum.YELLOW);
+                                buildable = true;
+                            }
+                        }
+                        case GREEN -> {
+                            green += 1;
+                            if (p.getNeighborhood().getNumProperties() == green) {
+                                buildableProperties.add(Property.NeighborhoodEnum.GREEN);
+                                buildable = true;
+                            }
+                        }
+                        case INDIGO -> {
+                            indigo += 1;
+                            if (p.getNeighborhood().getNumProperties() == indigo) {
+                                buildableProperties.add(Property.NeighborhoodEnum.INDIGO);
+                                buildable = true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            turn.setBuildableProperties(buildableProperties);
+        }
+
+        return buildable;
+    }
+
+    /**
      * Randomly sets the value of two integers between 1-6 to represent rolling two dice. If the player
      * rolls doubles allows them to move again. Calls the move method to move the player.
      * @author Kyra Lothrop 101145872
@@ -466,7 +576,6 @@ public class BoardModel {
                 setDoubleRoll(player);
             }
         }
-
 
         if (!player.getResortInJail()){
             move(player);
@@ -570,11 +679,10 @@ public class BoardModel {
         }
 
         sendBoardUpdate(new PlayerEvent(this, Command.BUY, player, result));
-
     }
 
     /**
-     * Handles propmprting the view for which property to sell.
+     * Handles prompting the view for which property to sell.
      * @author Sarah Chow 101143033
      * @param player player selling the property, Player
      */
@@ -610,6 +718,30 @@ public class BoardModel {
      */
     public void getCellStatus(){
         sendBoardUpdate(new PlayerEvent(this, Command.CELL_STATUS, turn));
+    }
+
+    /**
+     * Accessor to open the build house UI for the current player.
+     * @author Owen VanDusen 1011522022
+     */
+    public void getBuildStatus(){
+        sendBoardUpdate(new PlayerEvent(this, Command.BUILD, turn));
+    }
+
+    /**
+     * Action taken when the player attempts to build a house on one of their properties .
+     * @author Owen VanDusen 101152022
+     * @param property the property that is having a house built on it
+     * @param player the player building the house
+     */
+    public void buildHouse(Property property, Player player){
+        if(player.getCash() >= property.getNeighborhood().getHouseCost() &&
+                property.getNumHouses() < 5){
+            player.pay(property.getNeighborhood().getHouseCost());
+            property.addHouse();
+            sendBoardUpdate(new PlayerEvent(this, Command.PAINT_HOUSE, player, property));
+        }
+
     }
 
     /**
@@ -801,12 +933,16 @@ public class BoardModel {
         gameOver();
     }
 
+    public int findCellIndex(BoardCell cell) {
+        return cells.indexOf(cell);
+    }
+
     /**
      * Returns the list of the cells on the board.
      * @return the list of all the cells on the board.
      * @author Bardia Parmoun, 101143006
      */
-    public List<BoardCell> getCells (){
+    public List<BoardCell> getCells(){
         return cells;
     }
 
@@ -815,7 +951,7 @@ public class BoardModel {
      * @return the list of all the players on the board.
      * @author Bardia Parmoun, 101143006
      */
-    public List<Player> getPlayers (){
+    public List<Player> getPlayers(){
         return players;
     }
 

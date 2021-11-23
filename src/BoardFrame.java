@@ -39,6 +39,10 @@ public class BoardFrame extends JFrame implements BoardView  {
      */
     private final List<JButton> commandButtons;
     /**
+     * Keeps track of all the house labels
+     */
+    private Map<BoardCell,List<JLabel>> houseLabels;
+    /**
      * Keeps track of all the player JLabels.
      */
     private final Map<Player, JLabel> playerLabels;
@@ -96,6 +100,10 @@ public class BoardFrame extends JFrame implements BoardView  {
      */
     private static final int ICON_SIZE = 40;
     /**
+     * The size of the house and hotels.
+     */
+    private static final int HOUSE_SIZE = 20;
+    /**
      * The size of the die.
      */
     private static final int DIE_SIZE = 50;
@@ -119,6 +127,10 @@ public class BoardFrame extends JFrame implements BoardView  {
      * Figures out how much to offset the players on the cell.
      */
     private static final int ICON_SHIFT_ON_CELL = 30;
+    /**
+     * Figures out how much to offset the houses on the cell.
+     */
+    private static final int HOUSE_SHIFT_ON_CELL = 10;
     /**
      * Figures out how much to offset the players on the cell based on each player.
      */
@@ -215,6 +227,8 @@ public class BoardFrame extends JFrame implements BoardView  {
 
         layeredPane.add(mainPanel,0);
 
+        houseLabels = new HashMap<>();
+
         // Creating the turn label.
         turnLabel = new JLabel();
         TitledBorder title = BorderFactory.createTitledBorder("Current Turn");
@@ -297,6 +311,8 @@ public class BoardFrame extends JFrame implements BoardView  {
             case FORFEIT -> handleForfeitedPlayer(player);
             case CHANGE_WINDOW -> handleRepaintBoard();
             case ROLL_AGAIN -> handleRoll(source.getDice());
+            case BUILD -> handlePropertyToBuildOn(player, player.getBuildableProperties());
+            case PAINT_HOUSE -> paintHouse(pe.getCell());
         }
     }
 
@@ -708,7 +724,6 @@ public class BoardFrame extends JFrame implements BoardView  {
         return null;
     }
 
-
     /**
      * Constructs the board from the list of the board cells.
      * @author Bardia Parmoun 101143006
@@ -836,6 +851,7 @@ public class BoardFrame extends JFrame implements BoardView  {
             }
         }
     }
+
 
     /**
      * Displays whether the current player can afford the property they attempted to buy or not.
@@ -1012,6 +1028,132 @@ public class BoardFrame extends JFrame implements BoardView  {
         }
         else{
             JOptionPane.showMessageDialog(null, "Forfeit request cancelled!");
+        }
+    }
+
+    /**
+     * Generates a pop-up GUI for the player to select which property to build a house on.
+     * @author Owen VanDusen 101152022
+     * @param player the player who is paying for the house.
+     * @param buildable List of the colours of neighborhoods the player can build houses on
+     */
+    private void handlePropertyToBuildOn(Player player, List<Property.NeighborhoodEnum> buildable){
+        int buildableHouses = 0;
+        for(Property.NeighborhoodEnum e: buildable){
+            buildableHouses += e.getNumProperties();
+        }
+
+        JPanel panel = new JPanel(new GridLayout(1, buildableHouses));
+        ButtonGroup group = new ButtonGroup();
+
+        for(BoardCell bc: player.getOwnedLocations(false)){
+            if (bc.getType() == BoardCell.CellType.PROPERTY) {
+                Property p = (Property) bc;
+                if (buildable.contains(p.getNeighborhood())) {
+                    JPanel subPanel = new JPanel(new GridLayout(3, 1));
+
+                    JRadioButton addButton = new JRadioButton("Add House");
+                    addButton.setActionCommand(p.getName());
+                    group.add(addButton);
+
+                    JLabel propertyName = new JLabel(p.getName());
+                    JLabel houseCost = new JLabel("Cost of a House: " + p.getNeighborhood().getHouseCost());
+
+                    subPanel.add(propertyName);
+                    subPanel.add(addButton);
+                    subPanel.add(houseCost);
+                    subPanel.setPreferredSize(new Dimension(100, 200));
+                    panel.add(subPanel);
+                }
+            }
+        }
+
+        panel.setPreferredSize(new Dimension(100*buildableHouses,200));
+
+        int ans = JOptionPane.showConfirmDialog(null,panel,"BUILD ON PROPERTY",
+                JOptionPane.OK_CANCEL_OPTION);
+        if(ans == JOptionPane.OK_OPTION) {
+            if (group.getSelection()!=null){
+                for(BoardCell bc: player.getOwnedLocations(false)){
+                    if (bc.getType() == BoardCell.CellType.PROPERTY){
+                        Property p = (Property) bc;
+                        if(group.getSelection().getActionCommand().equals(p.getName())){
+                            model.buildHouse(p, player);
+                        }
+                    }
+                }
+            }
+        } else {
+            JOptionPane.showMessageDialog(null,"Building Cancelled");
+        }
+    }
+
+    /**
+     * Generates a house image and places it on the property where the house has been built.
+     * Offsets in the case where multiple houses have been built.
+     * Replaces 4 houses with a hotel when building the 5th house.
+     * @author Owen VanDusen 101152022
+     * @param cell the board cell where the house needs to be placed.
+     */
+    private void paintHouse(BoardCell cell){
+        int x , y;
+        boolean isHotel = false;
+        int i = model.findCellIndex(cell);
+
+        JPanel currentCell = boardCells.get(i);
+
+        Rectangle cellPosition = currentCell.getBounds();
+
+        Property property = (Property) cell;
+        if(property.getNumHouses() == 5){
+            //need to remove all houses and put a hotel
+            for (JLabel h: houseLabels.get(cell)){
+                layeredPane.setLayer(h, -1);
+            }
+
+            isHotel = true;
+        }
+
+        int offsetCount = isHotel? 1 : property.getNumHouses();
+        //Bottom row of the board
+        if(i < 10){
+            x = cellPosition.x + HOUSE_SHIFT_ON_CELL * offsetCount;
+            y = cellPosition.y + HOUSE_SHIFT_ON_CELL + BOARD_SHIFT_Y;
+        }
+        //Left column of the board
+        else if(i < 20){
+            x = cellPosition.width - HOUSE_SHIFT_ON_CELL;
+            y = cellPosition.y + HOUSE_SHIFT_ON_CELL * offsetCount + BOARD_SHIFT_Y;
+        }
+        //Top row of the board
+        else if(i < 30){
+            x = cellPosition.x + HOUSE_SHIFT_ON_CELL *  offsetCount;
+            y = cellPosition.height - HOUSE_SHIFT_ON_CELL + BOARD_SHIFT_Y;
+        }
+        //Right column of the board
+        else {
+            x = cellPosition.x + HOUSE_SHIFT_ON_CELL;
+            y = cellPosition.y + HOUSE_SHIFT_ON_CELL * offsetCount + BOARD_SHIFT_Y;
+        }
+
+        try {
+            String imgPath = isHotel? "images/houses/Hotel.png" : "images/houses/monopoly house.png";
+            BufferedImage houseImg = ImageIO.read(Objects.requireNonNull(getClass().getResource(imgPath)));
+            Image dimg = houseImg.getScaledInstance(HOUSE_SIZE,HOUSE_SIZE, Image.SCALE_SMOOTH);
+
+            JLabel house = new JLabel(new ImageIcon(dimg));
+            house.setBounds(x,y,HOUSE_SIZE,HOUSE_SIZE);
+
+            if (!houseLabels.containsKey(cell)){
+                houseLabels.put(cell, new ArrayList<>());
+            }
+
+            houseLabels.get(cell).add(house);
+            layeredPane.add(house,1);
+            pack();
+
+        } catch(IOException e) {
+            System.out.println("Could not load the house image");
         }
     }
 

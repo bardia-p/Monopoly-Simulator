@@ -18,6 +18,14 @@ public class AIPlayer extends Player {
      * Keeps track of the model.
      */
     private final BoardModel model;
+    /**
+     * The limit of the number of houses the AI can build.
+     */
+    private static final int BUILD_LIMIT = 2;
+    /**
+     * Keeps track of the number of houses built.
+     */
+    private int numHousesBuilt;
 
     /**
      * The constructor for the AI player.
@@ -29,6 +37,7 @@ public class AIPlayer extends Player {
     AIPlayer(BoardModel model, String name, BoardModel.Icon icon) {
         super(name, icon, true);
         this.model = model;
+        this.numHousesBuilt = 0;
     }
 
     /**
@@ -43,7 +52,6 @@ public class AIPlayer extends Player {
         // Checks to see if it can buy a property.
         if (availableCommands.contains(BoardModel.Command.BUY)) {
             model.buyLocation(currentCell, this);
-
             // Checks to see if it has any fees to pay
         } else if (availableCommands.contains(BoardModel.Command.PAY_FEES)) {
             // If it cannot afford the fees.
@@ -59,8 +67,23 @@ public class AIPlayer extends Player {
             // Checks to see if it can roll.
         } else if (availableCommands.contains(BoardModel.Command.ROLL_AGAIN)) {
             model.roll(this);
-        } else { // Finally if it cannot do anything it will pass turn.
+            // Handles building houses
+        } else if (numHousesBuilt < BUILD_LIMIT && availableCommands.contains(BoardModel.Command.BUILD)){
+            List<Property.NeighborhoodEnum> buildableProperites = this.getBuildableProperties();
+
+            for (BoardCell bc: getOwnedLocations(false)){
+                if (bc.getType() == BoardCell.CellType.PROPERTY){
+                    Property p = (Property) bc;
+                    // We are limiting the number of houses built to only 2.
+                    if (numHousesBuilt < BUILD_LIMIT && buildableProperites.contains(p.getNeighborhood())){
+                        model.buildHouse(p, this);
+                        numHousesBuilt += 1;
+                    }
+                }
+            }
+        } else { // Finally, if it cannot do anything it will pass turn.
             model.passTurn(this);
+            numHousesBuilt = 0;
         }
     }
 }

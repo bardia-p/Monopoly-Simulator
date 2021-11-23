@@ -37,6 +37,10 @@ public class Player {
      */
     private final List<BoardCell> ownedLocations;
     /**
+     * Keeps track of the list of the properities the player can build on.
+     */
+    private List<Property.NeighborhoodEnum> buildableProperties;
+    /**
      * Keeps track of the property the play is currently standing on.
      */
     private BoardCell currentCell;
@@ -134,6 +138,25 @@ public class Player {
         this.rank = 0;
         this.resortInJail = false;
         this.isAI = false;
+        buildableProperties = new ArrayList<>();
+    }
+
+    /**
+     * Sets the list of the buildable properties.
+     * @author Bardia Parmoun, 101143006
+     * @param buildableProperties the list of the buildable properites.
+     */
+    public void setBuildableProperties(ArrayList<Property.NeighborhoodEnum> buildableProperties){
+        this.buildableProperties = buildableProperties;
+    }
+
+    /**
+     * Returns the list of the buildableproperties.
+     * @author Bardia Parmoun, 101143006
+     * @return the list of the buildable properties.
+     */
+    public List<Property.NeighborhoodEnum> getBuildableProperties(){
+        return buildableProperties;
     }
 
     /**
