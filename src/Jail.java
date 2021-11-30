@@ -44,6 +44,19 @@ public class Jail extends BoardCell{
     }
 
     /**
+     * The constructor for jail cell without imgName
+     *
+     * @param name keeps track of the name of the cell, String
+     * @author Sarah Chow 101143033
+     */
+    public Jail(String name, Player owner) {
+        super(name, owner, CellType.JAIL, "");
+
+        inJail = new HashMap<>();
+
+    }
+
+    /**
      * Remove player from jail.
      * @author Sarah Chow 101143033
      * @param player the player in jail, Player

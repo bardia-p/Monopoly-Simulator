@@ -12,6 +12,14 @@
  */
 public class FreeParking extends BoardCell{
     /**
+     * The constructor of free parking without imgName
+     * @author Bardia Parmoun, 101143006
+     */
+    public FreeParking(){
+        super("FREE PARKING", null, CellType.FREE_PARKING, "");
+    }
+
+    /**
      * The constructor of free parking
      * @author Bardia Parmoun, 101143006
      * @param imgName the image of the cell, String

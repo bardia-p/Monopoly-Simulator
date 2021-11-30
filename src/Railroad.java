@@ -41,6 +41,19 @@ public class Railroad extends BoardCell implements Buyable{
     }
 
     /**
+     * Constructor for the Railroad without imgName.
+     * @author Kyra Lothrop 101145872
+     * @param name Railroad name, String
+     * @param price Railroad price, int
+     */
+    public Railroad(String name, int price, Integer[] rentValues) {
+        super(name, null, CellType.RAILROAD, "");
+        this.price = price;
+        this.recentlyChanged = false;
+        this.rentValues = rentValues;
+    }
+
+    /**
      * Accessor to calculate rent.
      * @author Kyra Lothrop
      * @param numRailroads number of railroads the player owns, int

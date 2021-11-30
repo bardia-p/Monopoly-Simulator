@@ -30,6 +30,18 @@ public class Tax extends BoardCell{
     }
 
     /**
+     * The main constructor for Tax, without imgName
+     * @author Bardia Parmoun 101143006
+     * @param name of the cell, String
+     * @param tax amount of tax for the cell, int
+     * @param owner, the owner of the cell Player
+     */
+    Tax(String name, int tax, Player owner){
+        super(name, owner, CellType.TAX, "");
+        this.tax = tax;
+    }
+
+    /**
      * Returns the tax amount of the cell.
      * @author Owen VanDusen 101152022
      * @return the tax of the property, int
