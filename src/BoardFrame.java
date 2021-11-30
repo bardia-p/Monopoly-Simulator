@@ -169,10 +169,6 @@ public class BoardFrame extends JFrame implements BoardView  {
      */
     private static final int CELL_WIDTH = 56;
     /**
-     * Keeps track of location of GO square.
-     */
-    public static final int GO_LOCATION = 0;
-    /**
      * Keeps track of location of Jail square.
      */
     public static final int JAIL_LOCATION = 10;
@@ -772,153 +768,137 @@ public class BoardFrame extends JFrame implements BoardView  {
 
         for (int i = 0; i < cells.size(); i++) {
             BoardCell cell = cells.get(i);
-            try{
-                // Changes the row and col if it hits corners.
-                switch (i) {
-                    case JAIL_LOCATION -> {
-                        row = SIZE - 1;
-                        col = 0;
-                        row_step = -1;
-                        col_step = 0;
-                        direction = GridBagConstraints.NORTH;
-
-                    }
-                    case FREE_PARKING_LOCATION -> {
-                        row = 0;
-                        col = 0;
-                        row_step = 0;
-                        col_step = 1;
-                        direction = GridBagConstraints.EAST;
-                    }
-                    case GOTOJAIL_LOCATION -> {
-                        row = 0;
-                        col = SIZE - 1;
-                        row_step = 1;
-                        col_step = 0;
-                        direction = GridBagConstraints.SOUTH;
-
-                    }
+            // Changes the row and col if it hits corners.
+            switch (i) {
+                case JAIL_LOCATION -> {
+                    row = SIZE - 1;
+                    col = 0;
+                    row_step = -1;
+                    col_step = 0;
+                    direction = GridBagConstraints.NORTH;
                 }
-
-                // Finds the position of the cell.
-                GridBagConstraints c = new GridBagConstraints();
-                c.gridx = col;
-                c.gridy = row;
-                c.fill = GridBagConstraints.HORIZONTAL;
-                c.anchor = direction;
-                c.insets = new Insets(0,0,0,0);
-
-                // Places the cell in a panel.
-                JPanel panel = new JPanel(new BorderLayout());
-                panel.setBackground(Color.decode(BACKGROUND_COLOR));
-
-                // Loads the cell image.
-                String imgPath = cell.getImgPath();
-                if (!imgPath.equals("")){
-                    BufferedImage image = ImageIO.read(Objects.requireNonNull(getClass().getResource(cell.getImgPath())));
-                    JLabel label = new JLabel(new ImageIcon(image));
-                    // Adds the panel to the board and list of panels.
-                    panel.add(label);
-                } else {
-                    JLabel nameLabel;
-                    JLabel neighbourhoodLabel;
-                    JLabel priceLabel;
-                    JLabel emptyLabel = new JLabel();
-
-                    if (cell.getType() == BoardCell.CellType.PROPERTY){
-                        neighbourhoodLabel = new JLabel("");
-                        // if true the component paints every pixel within its bounds
-                        neighbourhoodLabel.setOpaque(true);
-                        Property p = (Property) cell;
-                        neighbourhoodLabel.setBackground(Color.decode(p.getNeighborhood().getColor()));
-                    } else {
-                        neighbourhoodLabel = new JLabel();
-                    }
-
-                    if (cell.getType() == BoardCell.CellType.PROPERTY ||
-                            cell.getType() == BoardCell.CellType.RAILROAD ||
-                            cell.getType() == BoardCell.CellType.UTILITY){
-
-                        int price = ((Buyable)cell).getPrice();
-                        priceLabel = new JLabel("$" + price);
-                    } else if (cell.getType() == BoardCell.CellType.TAX) {
-                        int price = ((Tax)cell).getTax();
-                        priceLabel = new JLabel("$" + price);
-                    } else {
-                        priceLabel = new JLabel();
-                    }
-
-                    priceLabel.setFont(new Font("Verdana", Font.PLAIN, 8));
-
-                    switch (direction){
-                        case (GridBagConstraints.NORTH) ->{
-                            nameLabel = new JLabel("<html><p style =\"width:23px\">"+cell.getName()+"</p></html>");
-                            nameLabel.setFont(new Font("Verdana", Font.PLAIN, 8));
-                            panel.setLayout(new GridLayout(1, 4));
-                            panel.setPreferredSize(new Dimension(CELL_HEIGHT, CELL_WIDTH));
-
-                            panel.add(priceLabel);
-                            panel.add(nameLabel);
-                            panel.add(emptyLabel);
-                            panel.add(neighbourhoodLabel);
-                        }
-                        case (GridBagConstraints.SOUTH) ->{
-                            nameLabel = new JLabel("<html><p style =\"width:23px\">"+cell.getName()+"</p></html>");
-                            nameLabel.setFont(new Font("Verdana", Font.PLAIN, 8));
-
-                            panel.setLayout(new GridLayout(1, 4));
-                            panel.setPreferredSize(new Dimension(CELL_HEIGHT, CELL_WIDTH));
-
-                            panel.add(neighbourhoodLabel);
-                            panel.add(nameLabel);
-                            panel.add(emptyLabel);
-                            panel.add(priceLabel);
-                        }
-                        case (GridBagConstraints.EAST) ->{
-                            nameLabel = new JLabel("<html><p style =\"width:40px\">"+cell.getName()+"</p></html>");
-                            nameLabel.setFont(new Font("Verdana", Font.PLAIN, 8));
-
-                            panel.setLayout(new GridLayout(4, 1));
-                            panel.setPreferredSize(new Dimension(CELL_WIDTH, CELL_HEIGHT));
-
-                            panel.add(priceLabel);
-                            panel.add(nameLabel);
-                            panel.add(emptyLabel);
-                            panel.add(neighbourhoodLabel);
-                        }
-                        case (GridBagConstraints.WEST) ->{
-                            nameLabel = new JLabel("<html><p style =\"width:40px\">"+cell.getName()+"</p></html>");
-                            nameLabel.setFont(new Font("Verdana", Font.PLAIN, 8));
-
-                            panel.setLayout(new GridLayout(4, 1));
-                            panel.setPreferredSize(new Dimension(CELL_WIDTH, CELL_HEIGHT));
-
-                            panel.add(neighbourhoodLabel);
-                            panel.add(nameLabel);
-                            panel.add(emptyLabel);
-                            panel.add(priceLabel);
-                        }
-                    }
+                case FREE_PARKING_LOCATION -> {
+                    row = 0;
+                    col = 0;
+                    row_step = 0;
+                    col_step = 1;
+                    direction = GridBagConstraints.EAST;
                 }
-
-                LineBorder border = (LineBorder) BorderFactory.createLineBorder(Color.black);
-                panel.setBorder(border);
-
-                boardCells.add(panel);
-
-                mainPanel.add(panel, c);
-
-                row += row_step;
-                col += col_step;
-            } catch (IOException e) {
-                System.out.println("Could not find the image!");
+                case GOTOJAIL_LOCATION -> {
+                    row = 0;
+                    col = SIZE - 1;
+                    row_step = 1;
+                    col_step = 0;
+                    direction = GridBagConstraints.SOUTH;
+                }
             }
+
+            // Finds the position of the cell.
+            GridBagConstraints c = new GridBagConstraints();
+            c.gridx = col;
+            c.gridy = row;
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.anchor = direction;
+            c.insets = new Insets(0,0,0,0);
+
+            // Places the cell in a panel.
+            JPanel panel = new JPanel(new BorderLayout());
+            panel.setBackground(Color.decode(BACKGROUND_COLOR));
+
+            constructCell(cell, panel, direction);
+
+            LineBorder border = (LineBorder) BorderFactory.createLineBorder(Color.black);
+            panel.setBorder(border);
+
+            boardCells.add(panel);
+
+            mainPanel.add(panel, c);
+
+            row += row_step;
+            col += col_step;
         }
 
         // adding all the components to the frame
         this.repaint();
     }
 
+    /**
+     * Creates a cell panel with images or labels
+     * @param cell the cell, BoardCell
+     * @param panel the panel, JPanel
+     * @param direction the direction of the cell, int
+     */
+    private void constructCell(BoardCell cell, JPanel panel, int direction){
+        // Loads the cell image.
+        String imgPath = cell.getImgPath();
+        if (!imgPath.equals("")){
+            BufferedImage image;
+            try {
+                image = ImageIO.read(Objects.requireNonNull(getClass().getResource(cell.getImgPath())));
+                JLabel label = new JLabel(new ImageIcon(image));
+                // Adds the panel to the board and list of panels.
+                panel.add(label);
+            } catch (IOException e) {
+                System.out.println("could not load cell images.");
+            }
+        } else {
+            JLabel nameLabel; // Displays the name of the cell
+            JLabel neighbourhoodLabel = new JLabel(); // Displays the neighbourhood color.
+            JLabel priceLabel = new JLabel(); // Displays the price of the cell.
+            JLabel emptyLabel = new JLabel(); //Keeps a gap between the labels.
+
+            // Making the neighbourhood label.
+            if (cell.getType() == BoardCell.CellType.PROPERTY){
+                neighbourhoodLabel = new JLabel("");
+                // if true the component paints every pixel within its bounds
+                neighbourhoodLabel.setOpaque(true);
+                Property p = (Property) cell;
+                neighbourhoodLabel.setBackground(Color.decode(p.getNeighborhood().getColor()));
+            }
+
+            // Making the price label.
+            if (cell.getType() == BoardCell.CellType.PROPERTY ||
+                    cell.getType() == BoardCell.CellType.RAILROAD ||
+                    cell.getType() == BoardCell.CellType.UTILITY){
+
+                int price = ((Buyable)cell).getPrice();
+                priceLabel = new JLabel("$" + price);
+            } else if (cell.getType() == BoardCell.CellType.TAX) {
+                int price = ((Tax)cell).getTax();
+                priceLabel = new JLabel("$" + price);
+            }
+
+            priceLabel.setFont(new Font("Verdana", Font.PLAIN, 8));
+
+            // Creating the name label and panel layout.
+            if (direction == GridBagConstraints.WEST || direction == GridBagConstraints.EAST){
+                nameLabel = new JLabel("<html><p style =\"width:40px\">"+cell.getName()+"</p></html>");
+                nameLabel.setFont(new Font("Verdana", Font.PLAIN, 8));
+
+                panel.setLayout(new GridLayout(4, 1));
+                panel.setPreferredSize(new Dimension(CELL_WIDTH, CELL_HEIGHT));
+            } else {
+                nameLabel = new JLabel("<html><p style =\"width:23px\">"+cell.getName()+"</p></html>");
+                nameLabel.setFont(new Font("Verdana", Font.PLAIN, 8));
+
+                panel.setLayout(new GridLayout(1, 4));
+                panel.setPreferredSize(new Dimension(CELL_HEIGHT, CELL_WIDTH));
+            }
+
+            // Adding the labels to the cells.
+            if (direction == GridBagConstraints.WEST || direction == GridBagConstraints.SOUTH){
+                panel.add(neighbourhoodLabel);
+                panel.add(nameLabel);
+                panel.add(emptyLabel);
+                panel.add(priceLabel);
+            } else {
+                panel.add(priceLabel);
+                panel.add(nameLabel);
+                panel.add(emptyLabel);
+                panel.add(neighbourhoodLabel);
+            }
+        }
+    }
 
     /**
      * Displays the name of the property the current player is standing on in the terminal.

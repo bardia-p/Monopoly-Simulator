@@ -27,16 +27,6 @@ public class Go extends BoardCell {
         this.reward = reward;
     }
 
-    /**
-     * The constructor for Go without imgName
-     * @author Owen VanDusen 101152022
-     * @param reward keeps track of the Go reward, int
-     */
-    public Go(int reward){
-        super("GO", null, CellType.GO, "");
-        this.reward = reward;
-    }
-
 
     /**
      * Accessor for the reward attribute.

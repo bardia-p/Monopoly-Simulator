@@ -31,7 +31,7 @@ public class BoardModelTest {
     @Before
     public void initialize(){
         boardModel = new BoardModel();
-        boardModel.constructBoard();
+        boardModel.constructBoard(true);
         p1 = new Player("Owen", BoardModel.Icon.BATTLESHIP);
         p2 = new Player("Also Owen", BoardModel.Icon.THIMBLE);
 

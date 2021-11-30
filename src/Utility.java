@@ -45,10 +45,7 @@ public class Utility extends BoardCell implements Buyable{
      * @param price Utility price, int
      */
     public Utility(String name, int price, Integer[] rentValues) {
-        super(name, null, CellType.UTILITY, "");
-        this.price = price;
-        this.recentlyChanged = false;
-        this.rentValues = rentValues;
+        this(name, price, rentValues, "");
     }
 
     /**

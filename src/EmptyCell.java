@@ -37,7 +37,8 @@ public class EmptyCell extends BoardCell {
      * @param imgPath, the path to the image, String
      */
     public EmptyCell(String name, CellType type){
-        super(name, null, type, "");
+
+        this(name, type, "");
     }
 
     /**

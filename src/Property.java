@@ -98,12 +98,7 @@ public class Property extends BoardCell implements Buyable{
      * @param neighborhood NeighborhoodNum
      */
     Property(String name, int price, int[] houseRents, NeighborhoodEnum neighborhood){
-        super(name, null, CellType.PROPERTY, "");
-        this.price = price;
-        this.houseRents = houseRents;
-        this.recentlyChanged = false;
-        this.neighborhood = neighborhood;
-        this.numHouses = 0;
+        this(name, price, houseRents, neighborhood, "");
     }
 
 

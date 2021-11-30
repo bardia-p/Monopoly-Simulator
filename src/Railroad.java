@@ -47,10 +47,7 @@ public class Railroad extends BoardCell implements Buyable{
      * @param price Railroad price, int
      */
     public Railroad(String name, int price, Integer[] rentValues) {
-        super(name, null, CellType.RAILROAD, "");
-        this.price = price;
-        this.recentlyChanged = false;
-        this.rentValues = rentValues;
+        this(name, price, rentValues, "");
     }
 
     /**
