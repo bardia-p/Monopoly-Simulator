@@ -1,4 +1,5 @@
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Group 3
@@ -982,6 +983,12 @@ public class BoardModel {
                         if (turn.isPlayerAI()){
                             if (!animationRunning){
                                 ((AIPlayer) turn).nextMove();
+                                try{
+                                    TimeUnit.MILLISECONDS.sleep(50);
+                                }
+                                catch(Exception e){
+                                    System.out.println("wait failed");
+                                }
                             }
                         }
 
