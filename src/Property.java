@@ -37,21 +37,23 @@ public class Property extends BoardCell implements Buyable{
      * Keeps track of the grouping of properties on the board according to their colours.
      */
     public enum NeighborhoodEnum{
-        BROWN(2,50),
-        SKY(3,50),
-        MAGENTA(3,100),
-        ORANGE(3,100),
-        RED(3,150),
-        YELLOW(3,150),
-        GREEN(3,200),
-        INDIGO(2,200);
+        BROWN(2,50, "#955436"),
+        SKY(3,50, "#aae0fa"),
+        MAGENTA(3,100, "#d93a96"),
+        ORANGE(3,100, "#f7941d"),
+        RED(3,150, "#ed1b24"),
+        YELLOW(3,150, "#fef200"),
+        GREEN(3,200, "#1bb359"),
+        INDIGO(2,200, "#0072bb");
 
         private final int numProperties;
         private final int houseCost;
+        private String color;
 
-        NeighborhoodEnum(int numProperties, int houseCost){
+        NeighborhoodEnum(int numProperties, int houseCost, String color){
             this.numProperties = numProperties;
             this.houseCost = houseCost;
+            this.color = color;
         }
 
         public int getNumProperties(){
@@ -59,6 +61,8 @@ public class Property extends BoardCell implements Buyable{
         }
 
         public int getHouseCost(){return this.houseCost;}
+
+        public String getColor(){return this.color;}
     }
 
     /**
@@ -81,6 +85,22 @@ public class Property extends BoardCell implements Buyable{
         this.neighborhood = neighborhood;
         this.numHouses = 0;
     }
+
+    /**
+     * Constructor for the Property, without the imgName
+     * @author Sarah Chow 101143033
+     * @author Kyra Lothrop 101145872
+     * @author Bardia Parmoun 101143006
+     * @author Owen VanDusen 101152022
+     * @param name Property name, String
+     * @param price Property price, int
+     * @param houseRents int[]
+     * @param neighborhood NeighborhoodNum
+     */
+    Property(String name, int price, int[] houseRents, NeighborhoodEnum neighborhood){
+        this(name, price, houseRents, neighborhood, "");
+    }
+
 
     /**
      * Accessor to get the price of the property.

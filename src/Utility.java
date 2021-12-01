@@ -39,6 +39,16 @@ public class Utility extends BoardCell implements Buyable{
     }
 
     /**
+     * Constructor for the Utility without imgName
+     * @author Kyra Lothrop 101145872
+     * @param name Utility name, String
+     * @param price Utility price, int
+     */
+    public Utility(String name, int price, Integer[] rentValues) {
+        this(name, price, rentValues, "");
+    }
+
+    /**
      * Accessor to calculate rent.
      * @author Kyra Lothrop
      * @param numUtilities number of utilities the player owns, int
