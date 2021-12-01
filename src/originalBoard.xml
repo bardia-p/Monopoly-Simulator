@@ -39,7 +39,7 @@
         </icon>
     </players>
 
-    <config>
+    <boardcells>
         <cell>
             <type>Go</type>
             <reward>200</reward>
@@ -57,7 +57,7 @@
                 <fee>160</fee>
                 <fee>250</fee>
             </rent>
-            <NeighbourhoodEnum>brown</NeighbourhoodEnum>
+            <neighbourhood>brown</neighbourhood>
             <image>"images/board/mediterranean.jpg"</image>
         </cell>
         <cell>
@@ -78,13 +78,15 @@
                 <fee>320</fee>
                 <fee>450</fee>
             </rent>
-            <NeighbourhoodEnum>brown</NeighbourhoodEnum>
+            <neighbourhood>brown</neighbourhood>
             <image>"images/board/baltic.jpg"</image>
         </cell>
         <cell>
             <type>Tax</type>
             <name>Income Tax</name>
-            <rent>200</rent>
+            <rent>
+                <fee>200</fee>
+            </rent>
             <owner>bank</owner>
             <image>"images/board/income_tax.jpg"</image>
         </cell>
@@ -112,7 +114,7 @@
                 <fee>400</fee>
                 <fee>550</fee>
             </rent>
-            <NeighbourhoodEnum>sky</NeighbourhoodEnum>
+            <neighbourhood>sky</neighbourhood>
             <image>"images/board/oriental.jpg"</image>
         </cell>
         <cell>
@@ -133,7 +135,7 @@
                 <fee>400</fee>
                 <fee>550</fee>
             </rent>
-            <NeighbourhoodEnum>sky</NeighbourhoodEnum>
+            <neighbourhood>sky</neighbourhood>
             <image>"images/board/vermont.jpg"</image>
         </cell>
         <cell>
@@ -148,7 +150,7 @@
                 <fee>450</fee>
                 <fee>600</fee>
             </rent>
-            <NeighbourhoodEnum>sky</NeighbourhoodEnum>
+            <neighbourhood>sky</neighbourhood>
             <image>"images/board/connecticut.jpg"</image>
         </cell>
         <cell>
@@ -169,17 +171,17 @@
                 <fee>625</fee>
                 <fee>750</fee>
             </rent>
-            <NeighbourhoodEnum>magenta</NeighbourhoodEnum>
+            <neighbourhood>magenta</neighbourhood>
             <image>"images/board/st_charles.jpg"</image>
         </cell>
         <cell>
             <type>Utility</type>
             <name>Electric Company</name>
             <price>150</price>
-            <rentValues>
+            <rent>
                 <fee>4</fee>
                 <fee>10</fee>
-            </rentValues>
+            </rent>
             <image>"images/board/electric.jpg"</image>
         </cell>
         <cell>
@@ -194,7 +196,7 @@
                 <fee>625</fee>
                 <fee>750</fee>
             </rent>
-            <NeighbourhoodEnum>magenta</NeighbourhoodEnum>
+            <neighbourhood>magenta</neighbourhood>
             <image>"images/board/states_avenue.jpg"</image>
         </cell>
         <cell>
@@ -209,7 +211,7 @@
                 <fee>700</fee>
                 <fee>900</fee>
             </rent>
-            <NeighbourhoodEnum>magenta</NeighbourhoodEnum>
+            <neighbourhood>magenta</neighbourhood>
             <image>"images/board/virginia.jpg"</image>
         </cell>
         <cell>
@@ -236,7 +238,7 @@
                 <fee>750</fee>
                 <fee>950</fee>
             </rent>
-            <NeighbourhoodEnum>orange</NeighbourhoodEnum>
+            <neighbourhood>orange</neighbourhood>
             <image>"images/board/st_james.jpg"</image>
         </cell>
         <cell>
@@ -257,7 +259,7 @@
                 <fee>750</fee>
                 <fee>950</fee>
             </rent>
-            <NeighbourhoodEnum>orange</NeighbourhoodEnum>
+            <neighbourhood>orange</neighbourhood>
             <image>"images/board/tennessee.jpg"</image>
         </cell>
         <cell>
@@ -272,7 +274,7 @@
                 <fee>800</fee>
                 <fee>1000</fee>
             </rent>
-            <NeighbourhoodEnum>orange</NeighbourhoodEnum>
+            <neighbourhood>orange</neighbourhood>
             <image>"images/board/new_york.jpg"</image>
         </cell>
         <cell>
@@ -291,7 +293,7 @@
                 <fee>875</fee>
                 <fee>1050</fee>
             </rent>
-            <NeighbourhoodEnum>red</NeighbourhoodEnum>
+            <neighbourhood>red</neighbourhood>
             <image>"images/board/kentucky.jpg"</image>
         </cell>
         <cell>
@@ -312,7 +314,7 @@
                 <fee>875</fee>
                 <fee>1050</fee>
             </rent>
-            <NeighbourhoodEnum>red</NeighbourhoodEnum>
+            <neighbourhood>red</neighbourhood>
             <image>"images/board/indiana.jpg"</image>
         </cell>
         <cell>
@@ -327,12 +329,12 @@
                 <fee>925</fee>
                 <fee>1100</fee>
             </rent>
-            <NeighbourhoodEnum>red</NeighbourhoodEnum>
+            <neighbourhood>red</neighbourhood>
             <image>"images/board/illinois.jpg"</image>
         </cell>
         <cell>
             <type>Railroad</type>
-            <name>B. & O. Railroad</name>
+            <name>B. &amp; O. Railroad</name>
             <price>200</price>
             <rent>
                 <fee>25</fee>
@@ -354,7 +356,7 @@
                 <fee>975</fee>
                 <fee>1150</fee>
             </rent>
-            <NeighbourhoodEnum>yellow</NeighbourhoodEnum>
+            <neighbourhood>yellow</neighbourhood>
             <image>"images/board/atlantic.jpg"</image>
         </cell>
         <cell>
@@ -369,7 +371,7 @@
                 <fee>975</fee>
                 <fee>1150</fee>
             </rent>
-            <NeighbourhoodEnum>yellow</NeighbourhoodEnum>
+            <neighbourhood>yellow</neighbourhood>
             <image>"images/board/ventnor.jpg"</image>
         </cell>
         <cell>
@@ -394,7 +396,7 @@
                 <fee>1025</fee>
                 <fee>1200</fee>
             </rent>
-            <NeighbourhoodEnum>yellow</NeighbourhoodEnum>
+            <neighbourhood>yellow</neighbourhood>
             <image>"images/board/marvin.jpg"</image>
         </cell>
         <cell>
@@ -414,7 +416,7 @@
                 <fee>1100</fee>
                 <fee>1275</fee>
             </rent>
-            <NeighbourhoodEnum>green</NeighbourhoodEnum>
+            <neighbourhood>green</neighbourhood>
             <image>"images/board/pacific.jpg"</image>
         </cell>
         <cell>
@@ -429,7 +431,7 @@
                 <fee>1100</fee>
                 <fee>1275</fee>
             </rent>
-            <NeighbourhoodEnum>green</NeighbourhoodEnum>
+            <neighbourhood>green</neighbourhood>
             <image>"images/board/north_carolina.jpg"</image>
         </cell>
         <cell>
@@ -450,7 +452,7 @@
                 <fee>1200</fee>
                 <fee>1400</fee>
             </rent>
-            <NeighbourhoodEnum>green</NeighbourhoodEnum>
+            <neighbourhood>green</neighbourhood>
             <image>"images/board/pennsylvania.jpg"</image>
         </cell>
         <cell>
@@ -483,13 +485,15 @@
                 <fee>1300</fee>
                 <fee>1500</fee>
             </rent>
-            <NeighbourhoodEnum>indigo</NeighbourhoodEnum>
+            <neighbourhood>indigo</neighbourhood>
             <image>"images/board/park_place.jpg"</image>
         </cell>
         <cell>
             <type>Tax</type>
             <name>Luxury Tax</name>
-            <rent>100</rent>
+            <rent>
+                <fee>100</fee>
+            </rent>
             <owner>bank</owner>
             <image>"images/board/luxury_tax.jpg"</image>
         </cell>
@@ -505,10 +509,10 @@
                 <fee>1700</fee>
                 <fee>2000</fee>
             </rent>
-            <NeighbourhoodEnum>indigo</NeighbourhoodEnum>
+            <neighbourhood>indigo</neighbourhood>
             <image>"images/board/boardwalk.jpg"</image>
         </cell>
-    </config>
+    </boardcells>
 
     
 </board>

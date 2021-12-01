@@ -25,7 +25,7 @@
         </icon>
     </players>
 
-    <config>
+    <boardcells>
         <cell>
             <type>Go</type>
             <reward>200</reward>
@@ -42,7 +42,7 @@
                 <fee>160</fee>
                 <fee>250</fee>
             </rent>
-            <NeighbourhoodEnum>brown</NeighbourhoodEnum>
+            <neighbourhood>brown</neighbourhood>
         </cell>
         <cell>
             <type>EmptyCell</type>
@@ -61,12 +61,14 @@
                 <fee>320</fee>
                 <fee>450</fee>
             </rent>
-            <NeighbourhoodEnum>brown</NeighbourhoodEnum>
+            <neighbourhood>brown</neighbourhood>
         </cell>
         <cell>
             <type>Tax</type>
             <name>Parasites</name>
-            <rent>200</rent>
+            <rent>
+                <fee>200</fee>
+            </rent>
             <owner>bank</owner>
         </cell>
         <cell>
@@ -92,7 +94,7 @@
                 <fee>400</fee>
                 <fee>550</fee>
             </rent>
-            <NeighbourhoodEnum>sky</NeighbourhoodEnum>
+            <neighbourhood>sky</neighbourhood>
         </cell>
         <cell>
             <type>EmptyCell</type>
@@ -111,7 +113,7 @@
                 <fee>400</fee>
                 <fee>550</fee>
             </rent>
-            <NeighbourhoodEnum>sky</NeighbourhoodEnum>
+            <neighbourhood>sky</neighbourhood>
         </cell>
         <cell>
             <type>Property</type>
@@ -125,7 +127,7 @@
                 <fee>450</fee>
                 <fee>600</fee>
             </rent>
-            <NeighbourhoodEnum>sky</NeighbourhoodEnum>
+            <neighbourhood>sky</neighbourhood>
         </cell>
         <cell>
             <type>Jail</type>
@@ -144,16 +146,16 @@
                 <fee>625</fee>
                 <fee>750</fee>
             </rent>
-            <NeighbourhoodEnum>magenta</NeighbourhoodEnum>
+            <neighbourhood>magenta</neighbourhood>
         </cell>
         <cell>
             <type>Utility</type>
             <name>Microverse</name>
             <price>150</price>
-            <rentValues>
+            <rent>
                 <fee>4</fee>
                 <fee>10</fee>
-            </rentValues>
+            </rent>
         </cell>
         <cell>
             <type>Property</type>
@@ -167,7 +169,7 @@
                 <fee>625</fee>
                 <fee>750</fee>
             </rent>
-            <NeighbourhoodEnum>magenta</NeighbourhoodEnum>
+            <neighbourhood>magenta</neighbourhood>
         </cell>
         <cell>
             <type>Property</type>
@@ -181,7 +183,7 @@
                 <fee>700</fee>
                 <fee>900</fee>
             </rent>
-            <NeighbourhoodEnum>magenta</NeighbourhoodEnum>
+            <neighbourhood>magenta</neighbourhood>
         </cell>
         <cell>
             <type>Railroad</type>
@@ -206,7 +208,7 @@
                 <fee>750</fee>
                 <fee>950</fee>
             </rent>
-            <NeighbourhoodEnum>orange</NeighbourhoodEnum>
+            <neighbourhood>orange</neighbourhood>
         </cell>
         <cell>
             <type>EmptyCell</type>
@@ -225,7 +227,7 @@
                 <fee>750</fee>
                 <fee>950</fee>
             </rent>
-            <NeighbourhoodEnum>orange</NeighbourhoodEnum>
+            <neighbourhood>orange</neighbourhood>
         </cell>
         <cell>
             <type>Property</type>
@@ -239,7 +241,7 @@
                 <fee>800</fee>
                 <fee>1000</fee>
             </rent>
-            <NeighbourhoodEnum>orange</NeighbourhoodEnum>
+            <neighbourhood>orange</neighbourhood>
         </cell>
         <cell>
             <type>Free Parking</type>
@@ -256,7 +258,7 @@
                 <fee>875</fee>
                 <fee>1050</fee>
             </rent>
-            <NeighbourhoodEnum>red</NeighbourhoodEnum>
+            <neighbourhood>red</neighbourhood>
         </cell>
         <cell>
             <type>EmptyCell</type>
@@ -275,7 +277,7 @@
                 <fee>875</fee>
                 <fee>1050</fee>
             </rent>
-            <NeighbourhoodEnum>red</NeighbourhoodEnum>
+            <neighbourhood>red</neighbourhood>
         </cell>
         <cell>
             <type>Property</type>
@@ -289,7 +291,7 @@
                 <fee>925</fee>
                 <fee>1100</fee>
             </rent>
-            <NeighbourhoodEnum>red</NeighbourhoodEnum>
+            <neighbourhood>red</neighbourhood>
         </cell>
         <cell>
             <type>Railroad</type>
@@ -314,7 +316,7 @@
                 <fee>975</fee>
                 <fee>1150</fee>
             </rent>
-            <NeighbourhoodEnum>yellow</NeighbourhoodEnum>
+            <neighbourhood>yellow</neighbourhood>
         </cell>
         <cell>
             <type>Property</type>
@@ -328,7 +330,7 @@
                 <fee>975</fee>
                 <fee>1150</fee>
             </rent>
-            <NeighbourhoodEnum>yellow</NeighbourhoodEnum>
+            <neighbourhood>yellow</neighbourhood>
         </cell>
         <cell>
             <type>Utility</type>
@@ -351,7 +353,7 @@
                 <fee>1025</fee>
                 <fee>1200</fee>
             </rent>
-            <NeighbourhoodEnum>yellow</NeighbourhoodEnum>
+            <neighbourhood>yellow</neighbourhood>
         </cell>
         <cell>
             <type>Go To Jail</type>
@@ -369,7 +371,7 @@
                 <fee>1100</fee>
                 <fee>1275</fee>
             </rent>
-            <NeighbourhoodEnum>green</NeighbourhoodEnum>
+            <neighbourhood>green</neighbourhood>
         </cell>
         <cell>
             <type>Property</type>
@@ -383,7 +385,7 @@
                 <fee>1100</fee>
                 <fee>1275</fee>
             </rent>
-            <NeighbourhoodEnum>green</NeighbourhoodEnum>
+            <neighbourhood>green</neighbourhood>
         </cell>
         <cell>
             <type>EmptyCell</type>
@@ -402,7 +404,7 @@
                 <fee>1200</fee>
                 <fee>1400</fee>
             </rent>
-            <NeighbourhoodEnum>green</NeighbourhoodEnum>
+            <neighbourhood>green</neighbourhood>
         </cell>
         <cell>
             <type>Railroad</type>
@@ -432,12 +434,14 @@
                 <fee>1300</fee>
                 <fee>1500</fee>
             </rent>
-            <NeighbourhoodEnum>indigo</NeighbourhoodEnum>
+            <neighbourhood>indigo</neighbourhood>
         </cell>
         <cell>
             <type>Tax</type>
             <name>Morty Insurance</name>
-            <rent>100</rent>
+            <rent>
+                <fee>100</fee>
+            </rent>
             <owner>bank</owner>
         </cell>
         <cell>
@@ -452,9 +456,9 @@
                 <fee>1700</fee>
                 <fee>2000</fee>
             </rent>
-            <NeighbourhoodEnum>indigo</NeighbourhoodEnum>
+            <neighbourhood>indigo</neighbourhood>
         </cell>
-    </config>
+    </boardcells>
 
 
 </board>
