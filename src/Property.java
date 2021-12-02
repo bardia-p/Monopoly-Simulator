@@ -20,7 +20,7 @@ public class Property extends BoardCell implements Buyable{
     /**
      * Keeps track of the all the possible rents for the property.
      */
-    private final int[] houseRents;
+    private final Integer[] houseRents;
     /**
      * Keeps track of whether a property attribute has been recently changed (Excluding self).
      */
@@ -77,7 +77,7 @@ public class Property extends BoardCell implements Buyable{
      * @param neighborhood NeighborhoodNum
      * @param imgName String
      */
-    Property(String name, int price, int[] houseRents, NeighborhoodEnum neighborhood, String imgName){
+    Property(String name, int price, Integer[] houseRents, NeighborhoodEnum neighborhood, String imgName){
         super(name, null, CellType.PROPERTY, imgName);
         this.price = price;
         this.houseRents = houseRents;
@@ -97,7 +97,7 @@ public class Property extends BoardCell implements Buyable{
      * @param houseRents int[]
      * @param neighborhood NeighborhoodNum
      */
-    Property(String name, int price, int[] houseRents, NeighborhoodEnum neighborhood){
+    Property(String name, int price, Integer[] houseRents, NeighborhoodEnum neighborhood){
         this(name, price, houseRents, neighborhood, "");
     }
 

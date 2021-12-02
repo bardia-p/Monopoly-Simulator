@@ -833,7 +833,7 @@ public class BoardFrame extends JFrame implements BoardView  {
         }
 
         // adding all the components to the frame
-        this.repaint();
+        this.pack();
     }
 
     /**
@@ -845,10 +845,11 @@ public class BoardFrame extends JFrame implements BoardView  {
     private void constructCell(BoardCell cell, JPanel panel, int direction){
         // Loads the cell image.
         String imgPath = cell.getImgPath();
+        System.out.println(imgPath);
         if (!imgPath.equals("")){ //if the cell has an image load it.
             BufferedImage image;
             try {
-                image = ImageIO.read(Objects.requireNonNull(getClass().getResource(cell.getImgPath())));
+                image = ImageIO.read(Objects.requireNonNull(getClass().getResource(imgPath)));
                 JLabel label = new JLabel(new ImageIcon(image));
                 // Adds the panel to the board and list of panels.
                 panel.add(label);

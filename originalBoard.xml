@@ -1,0 +1,485 @@
+<!--
+Sarah Chow
+101143033
+-->
+
+<board>
+    <boardcells>
+        <cell>
+            <type>Go</type>
+            <rent>
+                <fee>200</fee>
+            </rent>
+            <image>images/board/go.jpg</image>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>Mediterranean Avenue</name>
+            <price>60</price>
+            <rent>
+                <fee>2</fee>
+                <fee>10</fee>
+                <fee>30</fee>
+                <fee>90</fee>
+                <fee>160</fee>
+                <fee>250</fee>
+            </rent>
+            <neighbourhood>brown</neighbourhood>
+            <image>images/board/mediterranean.jpg</image>
+        </cell>
+        <cell>
+            <type>EmptyCell</type>
+            <name>Community Chest</name>
+            <cellType>chance and chest</cellType>
+            <image>images/board/chest_1.jpg</image>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>Baltic Avenue</name>
+            <price>60</price>
+            <rent>
+                <fee>4</fee>
+                <fee>20</fee>
+                <fee>60</fee>
+                <fee>180</fee>
+                <fee>320</fee>
+                <fee>450</fee>
+            </rent>
+            <neighbourhood>brown</neighbourhood>
+            <image>images/board/baltic.jpg</image>
+        </cell>
+        <cell>
+            <type>Tax</type>
+            <name>Income Tax</name>
+            <rent>
+                <fee>200</fee>
+            </rent>
+            <owner>bank</owner>
+            <image>images/board/income_tax.jpg</image>
+        </cell>
+        <cell>
+            <type>Railroad</type>
+            <name>Reading Railroad</name>
+            <price>200</price>
+            <rent>
+                <fee>2</fee>
+                <fee>50</fee>
+                <fee>100</fee>
+                <fee>200</fee>
+            </rent>
+            <image>images/board/railroad_1.jpg</image>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>Oriental Avenue</name>
+            <price>100</price>
+            <rent>
+                <fee>6</fee>
+                <fee>30</fee>
+                <fee>90</fee>
+                <fee>270</fee>
+                <fee>400</fee>
+                <fee>550</fee>
+            </rent>
+            <neighbourhood>sky</neighbourhood>
+            <image>images/board/oriental.jpg</image>
+        </cell>
+        <cell>
+            <type>EmptyCell</type>
+            <name>Chance Card</name>
+            <cellType>chance and chest</cellType>
+            <image>images/board/chance_1.jpg</image>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>Vermont Avenue</name>
+            <price>100</price>
+            <rent>
+                <fee>6</fee>
+                <fee>30</fee>
+                <fee>90</fee>
+                <fee>270</fee>
+                <fee>400</fee>
+                <fee>550</fee>
+            </rent>
+            <neighbourhood>sky</neighbourhood>
+            <image>images/board/vermont.jpg</image>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>Connecticut Avenue</name>
+            <price>120</price>
+            <rent>
+                <fee>8</fee>
+                <fee>40</fee>
+                <fee>100</fee>
+                <fee>300</fee>
+                <fee>450</fee>
+                <fee>600</fee>
+            </rent>
+            <neighbourhood>sky</neighbourhood>
+            <image>images/board/connecticut.jpg</image>
+        </cell>
+        <cell>
+            <type>Jail</type>
+            <name>Jail</name>
+            <owner>bank</owner>
+            <image>images/board/jail.jpg</image>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>St. Charles Place</name>
+            <price>140</price>
+            <rent>
+                <fee>10</fee>
+                <fee>50</fee>
+                <fee>150</fee>
+                <fee>450</fee>
+                <fee>625</fee>
+                <fee>750</fee>
+            </rent>
+            <neighbourhood>magenta</neighbourhood>
+            <image>images/board/st_charles.jpg</image>
+        </cell>
+        <cell>
+            <type>Utility</type>
+            <name>Electric Company</name>
+            <price>150</price>
+            <rent>
+                <fee>4</fee>
+                <fee>10</fee>
+            </rent>
+            <image>images/board/electric.jpg</image>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>States Avenue</name>
+            <price>140</price>
+            <rent>
+                <fee>10</fee>
+                <fee>50</fee>
+                <fee>150</fee>
+                <fee>450</fee>
+                <fee>625</fee>
+                <fee>750</fee>
+            </rent>
+            <neighbourhood>magenta</neighbourhood>
+            <image>images/board/states_avenue.jpg</image>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>Virginia Avenue</name>
+            <price>160</price>
+            <rent>
+                <fee>12</fee>
+                <fee>60</fee>
+                <fee>180</fee>
+                <fee>500</fee>
+                <fee>700</fee>
+                <fee>900</fee>
+            </rent>
+            <neighbourhood>magenta</neighbourhood>
+            <image>images/board/virginia.jpg</image>
+        </cell>
+        <cell>
+            <type>Railroad</type>
+            <name>Pennsylvania Railroad</name>
+            <price>200</price>
+            <rent>
+                <fee>25</fee>
+                <fee>50</fee>
+                <fee>100</fee>
+                <fee>200</fee>
+            </rent>
+            <image>images/board/railroad_2.jpg</image>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>St. James Place</name>
+            <price>180</price>
+            <rent>
+                <fee>14</fee>
+                <fee>70</fee>
+                <fee>200</fee>
+                <fee>550</fee>
+                <fee>750</fee>
+                <fee>950</fee>
+            </rent>
+            <neighbourhood>orange</neighbourhood>
+            <image>images/board/st_james.jpg</image>
+        </cell>
+        <cell>
+            <type>EmptyCell</type>
+            <name>Community Chest</name>
+            <cellType>chance and chest</cellType>
+            <image>images/board/chest_2.jpg</image>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>Tennessee Avenue</name>
+            <price>180</price>
+            <rent>
+                <fee>14</fee>
+                <fee>70</fee>
+                <fee>200</fee>
+                <fee>550</fee>
+                <fee>750</fee>
+                <fee>950</fee>
+            </rent>
+            <neighbourhood>orange</neighbourhood>
+            <image>images/board/tennessee.jpg</image>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>New York Avenue</name>
+            <price>200</price>
+            <rent>
+                <fee>16</fee>
+                <fee>80</fee>
+                <fee>220</fee>
+                <fee>600</fee>
+                <fee>800</fee>
+                <fee>1000</fee>
+            </rent>
+            <neighbourhood>orange</neighbourhood>
+            <image>images/board/new_york.jpg</image>
+        </cell>
+        <cell>
+            <type>Free Parking</type>
+            <image>images/board/free_parking.jpg</image>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>Kentucky Avenue</name>
+            <price>220</price>
+            <rent>
+                <fee>18</fee>
+                <fee>90</fee>
+                <fee>250</fee>
+                <fee>700</fee>
+                <fee>875</fee>
+                <fee>1050</fee>
+            </rent>
+            <neighbourhood>red</neighbourhood>
+            <image>images/board/kentucky.jpg</image>
+        </cell>
+        <cell>
+            <type>EmptyCell</type>
+            <name>Chance Card</name>
+            <cellType>chance and chest</cellType>
+            <image>images/board/chance_2.jpg</image>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>Indiana Avenue</name>
+            <price>220</price>
+            <rent>
+                <fee>18</fee>
+                <fee>90</fee>
+                <fee>250</fee>
+                <fee>700</fee>
+                <fee>875</fee>
+                <fee>1050</fee>
+            </rent>
+            <neighbourhood>red</neighbourhood>
+            <image>images/board/indiana.jpg</image>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>Illinois Avenue</name>
+            <price>240</price>
+            <rent>
+                <fee>20</fee>
+                <fee>100</fee>
+                <fee>300</fee>
+                <fee>750</fee>
+                <fee>925</fee>
+                <fee>1100</fee>
+            </rent>
+            <neighbourhood>red</neighbourhood>
+            <image>images/board/illinois.jpg</image>
+        </cell>
+        <cell>
+            <type>Railroad</type>
+            <name>B. &amp; O. Railroad</name>
+            <price>200</price>
+            <rent>
+                <fee>25</fee>
+                <fee>50</fee>
+                <fee>100</fee>
+                <fee>200</fee>
+            </rent>
+            <image>images/board/railroad_3.jpg</image>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>Atlantic Avenue</name>
+            <price>260</price>
+            <rent>
+                <fee>22</fee>
+                <fee>110</fee>
+                <fee>330</fee>
+                <fee>800</fee>
+                <fee>975</fee>
+                <fee>1150</fee>
+            </rent>
+            <neighbourhood>yellow</neighbourhood>
+            <image>images/board/atlantic.jpg</image>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>Ventnor Avenue</name>
+            <price>260</price>
+            <rent>
+                <fee>22</fee>
+                <fee>110</fee>
+                <fee>330</fee>
+                <fee>800</fee>
+                <fee>975</fee>
+                <fee>1150</fee>
+            </rent>
+            <neighbourhood>yellow</neighbourhood>
+            <image>images/board/ventnor.jpg</image>
+        </cell>
+        <cell>
+            <type>Utility</type>
+            <name>Water Works</name>
+            <price>150</price>
+            <rent>
+                <fee>4</fee>
+                <fee>10</fee>
+            </rent>
+            <image>images/board/water_works.jpg</image>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>Marvin Garden</name>
+            <price>280</price>
+            <rent>
+                <fee>24</fee>
+                <fee>120</fee>
+                <fee>360</fee>
+                <fee>850</fee>
+                <fee>1025</fee>
+                <fee>1200</fee>
+            </rent>
+            <neighbourhood>yellow</neighbourhood>
+            <image>images/board/marvin.jpg</image>
+        </cell>
+        <cell>
+            <type>Go To Jail</type>
+            <name>GO TO JAIL</name>
+            <image>images/board/go_to_jail.jpg</image>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>Pacific Avenue</name>
+            <price>300</price>
+            <rent>
+                <fee>26</fee>
+                <fee>130</fee>
+                <fee>390</fee>
+                <fee>900</fee>
+                <fee>1100</fee>
+                <fee>1275</fee>
+            </rent>
+            <neighbourhood>green</neighbourhood>
+            <image>images/board/pacific.jpg</image>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>North Carolina Avenue</name>
+            <price>300</price>
+            <rent>
+                <fee>26</fee>
+                <fee>130</fee>
+                <fee>390</fee>
+                <fee>900</fee>
+                <fee>1100</fee>
+                <fee>1275</fee>
+            </rent>
+            <neighbourhood>green</neighbourhood>
+            <image>images/board/north_carolina.jpg</image>
+        </cell>
+        <cell>
+            <type>EmptyCell</type>
+            <name>Community Chest</name>
+            <cellType>chance and chest</cellType>
+            <image>images/board/chest_3.jpg</image>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>Pennsylvania Avenue</name>
+            <price>320</price>
+            <rent>
+                <fee>28</fee>
+                <fee>150</fee>
+                <fee>450</fee>
+                <fee>1000</fee>
+                <fee>1200</fee>
+                <fee>1400</fee>
+            </rent>
+            <neighbourhood>green</neighbourhood>
+            <image>images/board/pennsylvania.jpg</image>
+        </cell>
+        <cell>
+            <type>Railroad</type>
+            <name>Shortline Railroad</name>
+            <price>200</price>
+            <rent>
+                <fee>25</fee>
+                <fee>50</fee>
+                <fee>100</fee>
+                <fee>200</fee>
+            </rent>
+            <image>images/board/railroad_4.jpg</image>
+        </cell>
+        <cell>
+            <type>EmptyCell</type>
+            <name>Chance Card</name>
+            <cellType>chance and chest</cellType>
+            <image>images/board/chance_3.jpg</image>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>Park Place</name>
+            <price>350</price>
+            <rent>
+                <fee>35</fee>
+                <fee>175</fee>
+                <fee>500</fee>
+                <fee>1100</fee>
+                <fee>1300</fee>
+                <fee>1500</fee>
+            </rent>
+            <neighbourhood>indigo</neighbourhood>
+            <image>images/board/park_place.jpg</image>
+        </cell>
+        <cell>
+            <type>Tax</type>
+            <name>Luxury Tax</name>
+            <rent>
+                <fee>100</fee>
+            </rent>
+            <owner>bank</owner>
+            <image>images/board/luxury_tax.jpg</image>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>Boardwalk</name>
+            <price>500</price>
+            <rent>
+                <fee>50</fee>
+                <fee>200</fee>
+                <fee>600</fee>
+                <fee>1400</fee>
+                <fee>1700</fee>
+                <fee>2000</fee>
+            </rent>
+            <neighbourhood>indigo</neighbourhood>
+            <image>images/board/boardwalk.jpg</image>
+        </cell>
+    </boardcells>
+</board>
+
+
