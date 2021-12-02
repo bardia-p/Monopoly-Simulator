@@ -845,7 +845,6 @@ public class BoardFrame extends JFrame implements BoardView  {
     private void constructCell(BoardCell cell, JPanel panel, int direction){
         // Loads the cell image.
         String imgPath = cell.getImgPath();
-        System.out.println(imgPath);
         if (!imgPath.equals("")){ //if the cell has an image load it.
             BufferedImage image;
             try {
