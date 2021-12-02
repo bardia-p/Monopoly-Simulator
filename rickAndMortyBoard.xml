@@ -1,34 +1,18 @@
+<!--
+Sarah Chow
+101143033
+-->
+
 <!-- 6 players -->
 
 <board>
-    <players>
-        <icon>
-            <name>council of rick's badge</name>
-        </icon>
-        <icon>
-            <name>meeseeks box</name>
-        </icon>
-        <icon>
-            <name>portal gun</name>
-        </icon>
-        <icon>
-            <name>plumbus</name>
-        </icon>
-        <icon>
-            <name>rick's ship</name>
-        </icon>
-        <icon>
-            <name>snuffle's helmet</name>
-        </icon>
-        <icon>
-            <name>bank</name>
-        </icon>
-    </players>
-
     <boardcells>
         <cell>
             <type>Go</type>
-            <reward>200</reward>
+            <rent>
+                <fee>200</fee>
+            </rent>
+            <image>images/board/go.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -133,6 +117,7 @@
             <type>Jail</type>
             <name>Jail</name>
             <owner>bank</owner>
+            <image>images/board/jail.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -245,6 +230,7 @@
         </cell>
         <cell>
             <type>Free Parking</type>
+            <image>images/board/free_parking.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -358,6 +344,7 @@
         <cell>
             <type>Go To Jail</type>
             <name>GO TO JAIL</name>
+            <image>images/board/go_to_jail.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -459,8 +446,6 @@
             <neighbourhood>indigo</neighbourhood>
         </cell>
     </boardcells>
-
-
 </board>
 
 

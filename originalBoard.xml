@@ -1,49 +1,16 @@
-
+<!--
+Sarah Chow
+101143033
+-->
 
 <board>
-    <players>
-        <icon>
-            <name>boot</name>
-            <image>"images/icons/boot.png"</image>
-        </icon>
-        <icon>
-            <name>iron</name>
-            <image>"images/icons/iron.png"</image>
-        </icon>
-        <icon>
-            <name>scottie dog</name>
-            <image>"images/icons/scottie_dog.png"</image>
-        </icon>
-        <icon>
-            <name>battleship</name>
-            <image>"images/icons/battleship.png"</image>
-        </icon>
-        <icon>
-            <name>top hat</name>
-            <image>"images/icons/top_hat.png"</image>
-        </icon>
-        <icon>
-            <name>wheelbarrow</name>
-            <image>"images/icons/wheelbarrow.png"</image>
-        </icon>
-        <icon>
-            <name>thimble</name>
-            <image>"images/icons/thimble.png"</image>
-        </icon>
-        <icon>
-            <name>racing car</name>
-            <image>"images/icons/racing_car.png"</image>
-        </icon>
-        <icon>
-            <name>bank</name>
-        </icon>
-    </players>
-
     <boardcells>
         <cell>
             <type>Go</type>
-            <reward>200</reward>
-            <image>"images/board/go.jpg"</image>
+            <rent>
+                <fee>200</fee>
+            </rent>
+            <image>images/board/go.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -58,13 +25,13 @@
                 <fee>250</fee>
             </rent>
             <neighbourhood>brown</neighbourhood>
-            <image>"images/board/mediterranean.jpg"</image>
+            <image>images/board/mediterranean.jpg</image>
         </cell>
         <cell>
             <type>EmptyCell</type>
             <name>Community Chest</name>
             <cellType>chance and chest</cellType>
-            <image>"images/board/chest_1.jpg"</image>
+            <image>images/board/chest_1.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -79,7 +46,7 @@
                 <fee>450</fee>
             </rent>
             <neighbourhood>brown</neighbourhood>
-            <image>"images/board/baltic.jpg"</image>
+            <image>images/board/baltic.jpg</image>
         </cell>
         <cell>
             <type>Tax</type>
@@ -88,7 +55,7 @@
                 <fee>200</fee>
             </rent>
             <owner>bank</owner>
-            <image>"images/board/income_tax.jpg"</image>
+            <image>images/board/income_tax.jpg</image>
         </cell>
         <cell>
             <type>Railroad</type>
@@ -100,7 +67,7 @@
                 <fee>100</fee>
                 <fee>200</fee>
             </rent>
-            <image>"images/board/railroad_1.jpg"</image>
+            <image>images/board/railroad_1.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -115,13 +82,13 @@
                 <fee>550</fee>
             </rent>
             <neighbourhood>sky</neighbourhood>
-            <image>"images/board/oriental.jpg"</image>
+            <image>images/board/oriental.jpg</image>
         </cell>
         <cell>
             <type>EmptyCell</type>
             <name>Chance Card</name>
             <cellType>chance and chest</cellType>
-            <image>"images/board/chance_1.jpg"</image>
+            <image>images/board/chance_1.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -136,7 +103,7 @@
                 <fee>550</fee>
             </rent>
             <neighbourhood>sky</neighbourhood>
-            <image>"images/board/vermont.jpg"</image>
+            <image>images/board/vermont.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -151,13 +118,13 @@
                 <fee>600</fee>
             </rent>
             <neighbourhood>sky</neighbourhood>
-            <image>"images/board/connecticut.jpg"</image>
+            <image>images/board/connecticut.jpg</image>
         </cell>
         <cell>
             <type>Jail</type>
             <name>Jail</name>
             <owner>bank</owner>
-            <image>"images/board/jail.jpg"</image>
+            <image>images/board/jail.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -172,7 +139,7 @@
                 <fee>750</fee>
             </rent>
             <neighbourhood>magenta</neighbourhood>
-            <image>"images/board/st_charles.jpg"</image>
+            <image>images/board/st_charles.jpg</image>
         </cell>
         <cell>
             <type>Utility</type>
@@ -182,7 +149,7 @@
                 <fee>4</fee>
                 <fee>10</fee>
             </rent>
-            <image>"images/board/electric.jpg"</image>
+            <image>images/board/electric.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -197,7 +164,7 @@
                 <fee>750</fee>
             </rent>
             <neighbourhood>magenta</neighbourhood>
-            <image>"images/board/states_avenue.jpg"</image>
+            <image>images/board/states_avenue.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -212,7 +179,7 @@
                 <fee>900</fee>
             </rent>
             <neighbourhood>magenta</neighbourhood>
-            <image>"images/board/virginia.jpg"</image>
+            <image>images/board/virginia.jpg</image>
         </cell>
         <cell>
             <type>Railroad</type>
@@ -224,7 +191,7 @@
                 <fee>100</fee>
                 <fee>200</fee>
             </rent>
-            <image>"images/board/railroad_2.jpg"</image>
+            <image>images/board/railroad_2.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -239,13 +206,13 @@
                 <fee>950</fee>
             </rent>
             <neighbourhood>orange</neighbourhood>
-            <image>"images/board/st_james.jpg"</image>
+            <image>images/board/st_james.jpg</image>
         </cell>
         <cell>
             <type>EmptyCell</type>
             <name>Community Chest</name>
             <cellType>chance and chest</cellType>
-            <image>"images/board/chest_2.jpg"</image>
+            <image>images/board/chest_2.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -260,7 +227,7 @@
                 <fee>950</fee>
             </rent>
             <neighbourhood>orange</neighbourhood>
-            <image>"images/board/tennessee.jpg"</image>
+            <image>images/board/tennessee.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -275,11 +242,11 @@
                 <fee>1000</fee>
             </rent>
             <neighbourhood>orange</neighbourhood>
-            <image>"images/board/new_york.jpg"</image>
+            <image>images/board/new_york.jpg</image>
         </cell>
         <cell>
             <type>Free Parking</type>
-            <image>"images/board/free_parking.jpg"</image>
+            <image>images/board/free_parking.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -294,13 +261,13 @@
                 <fee>1050</fee>
             </rent>
             <neighbourhood>red</neighbourhood>
-            <image>"images/board/kentucky.jpg"</image>
+            <image>images/board/kentucky.jpg</image>
         </cell>
         <cell>
             <type>EmptyCell</type>
             <name>Chance Card</name>
             <cellType>chance and chest</cellType>
-            <image>"images/board/chance_2.jpg"</image>
+            <image>images/board/chance_2.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -315,7 +282,7 @@
                 <fee>1050</fee>
             </rent>
             <neighbourhood>red</neighbourhood>
-            <image>"images/board/indiana.jpg"</image>
+            <image>images/board/indiana.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -330,7 +297,7 @@
                 <fee>1100</fee>
             </rent>
             <neighbourhood>red</neighbourhood>
-            <image>"images/board/illinois.jpg"</image>
+            <image>images/board/illinois.jpg</image>
         </cell>
         <cell>
             <type>Railroad</type>
@@ -342,7 +309,7 @@
                 <fee>100</fee>
                 <fee>200</fee>
             </rent>
-            <image>"images/board/railroad_3.jpg"</image>
+            <image>images/board/railroad_3.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -357,7 +324,7 @@
                 <fee>1150</fee>
             </rent>
             <neighbourhood>yellow</neighbourhood>
-            <image>"images/board/atlantic.jpg"</image>
+            <image>images/board/atlantic.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -372,7 +339,7 @@
                 <fee>1150</fee>
             </rent>
             <neighbourhood>yellow</neighbourhood>
-            <image>"images/board/ventnor.jpg"</image>
+            <image>images/board/ventnor.jpg</image>
         </cell>
         <cell>
             <type>Utility</type>
@@ -382,7 +349,7 @@
                 <fee>4</fee>
                 <fee>10</fee>
             </rent>
-            <image>"images/board/water_works.jpg"</image>
+            <image>images/board/water_works.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -397,12 +364,12 @@
                 <fee>1200</fee>
             </rent>
             <neighbourhood>yellow</neighbourhood>
-            <image>"images/board/marvin.jpg"</image>
+            <image>images/board/marvin.jpg</image>
         </cell>
         <cell>
             <type>Go To Jail</type>
             <name>GO TO JAIL</name>
-            <image>"images/board/go_to_jail.jpg"</image>
+            <image>images/board/go_to_jail.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -417,7 +384,7 @@
                 <fee>1275</fee>
             </rent>
             <neighbourhood>green</neighbourhood>
-            <image>"images/board/pacific.jpg"</image>
+            <image>images/board/pacific.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -432,13 +399,13 @@
                 <fee>1275</fee>
             </rent>
             <neighbourhood>green</neighbourhood>
-            <image>"images/board/north_carolina.jpg"</image>
+            <image>images/board/north_carolina.jpg</image>
         </cell>
         <cell>
             <type>EmptyCell</type>
             <name>Community Chest</name>
             <cellType>chance and chest</cellType>
-            <image>"images/board/chest_3.jpg"</image>
+            <image>images/board/chest_3.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -453,7 +420,7 @@
                 <fee>1400</fee>
             </rent>
             <neighbourhood>green</neighbourhood>
-            <image>"images/board/pennsylvania.jpg"</image>
+            <image>images/board/pennsylvania.jpg</image>
         </cell>
         <cell>
             <type>Railroad</type>
@@ -465,13 +432,13 @@
                 <fee>100</fee>
                 <fee>200</fee>
             </rent>
-            <image>"images/board/railroad_4.jpg"</image>
+            <image>images/board/railroad_4.jpg</image>
         </cell>
         <cell>
             <type>EmptyCell</type>
             <name>Chance Card</name>
             <cellType>chance and chest</cellType>
-            <image>"images/board/chance_3.jpg"</image>
+            <image>images/board/chance_3.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -486,7 +453,7 @@
                 <fee>1500</fee>
             </rent>
             <neighbourhood>indigo</neighbourhood>
-            <image>"images/board/park_place.jpg"</image>
+            <image>images/board/park_place.jpg</image>
         </cell>
         <cell>
             <type>Tax</type>
@@ -495,7 +462,7 @@
                 <fee>100</fee>
             </rent>
             <owner>bank</owner>
-            <image>"images/board/luxury_tax.jpg"</image>
+            <image>images/board/luxury_tax.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -510,11 +477,9 @@
                 <fee>2000</fee>
             </rent>
             <neighbourhood>indigo</neighbourhood>
-            <image>"images/board/boardwalk.jpg"</image>
+            <image>images/board/boardwalk.jpg</image>
         </cell>
     </boardcells>
-
-    
 </board>
 
 
