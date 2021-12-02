@@ -7,7 +7,7 @@
 /dataSources/
 /dataSources.local.xml
 out/
-.idea/
+/.idea/
 *.iml
 src/META-INF
 .DS_Store
