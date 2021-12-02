@@ -13,3 +13,4 @@ src/META-INF
 .DS_Store
 src/.DS_Store
 src/image/.DS_Store
+build/
