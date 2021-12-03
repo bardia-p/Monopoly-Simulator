@@ -964,7 +964,7 @@ public class BoardModel {
      * @author Kyra Lothrop 101145872
      */
     public void play() {
-        constructBoard("board_config/rickAndMortyBoard.xml"); //for debug
+        constructBoard("board_config/originalBoard.xml"); //for debug
         initializeMonopoly();
         getNumPlayers();
         initiatePlayers();
