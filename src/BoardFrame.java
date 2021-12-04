@@ -5,6 +5,7 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -22,11 +23,11 @@ import java.util.concurrent.TimeUnit;
  * @author Owen VanDusen 101152022
  * @version 3.0
  */
-public class BoardFrame extends JFrame implements BoardView  {
+public class BoardFrame extends JFrame implements BoardView, Serializable {
     /**
      * Keeps track of the board model.
      */
-    private final BoardModel model;
+    private BoardModel model;
     /**
      * Keeps track of the board controller.
      */
@@ -292,6 +293,7 @@ public class BoardFrame extends JFrame implements BoardView  {
             case GO_TO_JAIL -> handleGoToJail(player);
             case EXIT_JAIL -> handleExitJail(player);
             case FORCE_PAY_JAIL -> handleForceExitJail(player);
+            case UPDATE_MODEL -> updateModel(source);
         }
     }
 
@@ -318,6 +320,8 @@ public class BoardFrame extends JFrame implements BoardView  {
             case ROLL_AGAIN -> handleRoll(source.getDice());
             case BUILD -> handlePropertyToBuildOn(player, player.getBuildableProperties());
             case PAINT_HOUSE -> paintHouse(pe.getCell());
+            case SAVE -> handleSave();
+            case LOAD -> handleLoad();
         }
     }
 
@@ -757,7 +761,8 @@ public class BoardFrame extends JFrame implements BoardView  {
 
         BoardModel.Command[] buttons = {BoardModel.Command.ROLL_AGAIN, BoardModel.Command.PASS,
                 BoardModel.Command.FORFEIT, BoardModel.Command.BUY, BoardModel.Command.SELL,
-                BoardModel.Command.PAY_FEES, BoardModel.Command.BUILD, BoardModel.Command.CELL_STATUS};
+                BoardModel.Command.PAY_FEES, BoardModel.Command.BUILD, BoardModel.Command.CELL_STATUS,
+                BoardModel.Command.SAVE, BoardModel.Command.LOAD};
 
         commandsPanel.setBackground(Color.decode(BACKGROUND_COLOR));
 
@@ -1319,6 +1324,20 @@ public class BoardFrame extends JFrame implements BoardView  {
     private void handlePassGo(Player player) {
         String message = "Player " + player.getIconName().toUpperCase() +  " passed go!";
         displayStatus(message, player.isPlayerAI());
+    }
+
+    private void handleSave(){
+        displayStatus("Game saved as text.ser !", false);
+    }
+
+    private void handleLoad(){
+        displayStatus("Game loaded!", false);
+    }
+
+    public void updateModel(BoardModel model){
+        this.model = model;
+
+        controller.updateModel(model);
     }
 
     /**

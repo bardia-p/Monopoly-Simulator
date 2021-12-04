@@ -2,7 +2,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import java.io.File;
+import java.io.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
  * @author Owen VanDusen 101152022
  * @version 3.0
  */
-public class BoardModel {
+public class BoardModel implements Serializable {
     /**
      * Keeps track of the cells.
      */
@@ -64,7 +64,7 @@ public class BoardModel {
     /**
      * Keeps track of the bank player.
      */
-    private final Player bank;
+    private Player bank;
     /**
      * Checks to see if the roll button was pressed.
      */
@@ -78,13 +78,13 @@ public class BoardModel {
      * Keeps track of the board_config directory to read the XML files.
      */
     private final static String CONFIG_DIR = "board_config";
-
     /**
      * Keeps track of the possible board statuses.
      */
     public enum Status {
         GET_NUM_PLAYERS, CREATE_PLAYER_ICONS, INITIALIZE_BOARD, INITIALIZE_MONOPOLY, INITIALIZE_PLAYERS,
-        GET_COMMAND, GO_TO_JAIL, EXIT_JAIL, FORCE_PAY_JAIL, GAME_OVER, PASS_GO, FREE_PARKING, PLAYER_INPUT
+        GET_COMMAND, GO_TO_JAIL, EXIT_JAIL, FORCE_PAY_JAIL, GAME_OVER, PASS_GO, FREE_PARKING, PLAYER_INPUT,
+        UPDATE_MODEL;
     }
 
     /**
@@ -103,7 +103,9 @@ public class BoardModel {
         REQUEST_FORFEIT("Request Forfeit"),
         BUILD("Build"),
         PAINT_HOUSE("Paint House"),
-        CHANGE_WINDOW("Change Window");
+        CHANGE_WINDOW("Change Window"),
+        SAVE("Save"),
+        LOAD("Load");
 
         private final String stringCommand;
 
@@ -203,6 +205,10 @@ public class BoardModel {
             getBuildStatus();
         } else if (command.equals((Command.FORFEIT.getStringCommand()))) {
             request_forfeit(turn);
+        } else if (command.equals((Command.SAVE.getStringCommand()))){
+            serializationSave();
+        } else if (command.equals((Command.LOAD.getStringCommand()))){
+            serializationLoad();
         }
         // Avoids race conditions.
         if (turn != null && !command.equals((Command.PASS.getStringCommand())) &&
@@ -392,6 +398,8 @@ public class BoardModel {
         commands.add(Command.FORFEIT);
 
 
+        commands.add(Command.SAVE);
+        commands.add(Command.LOAD);
         sendBoardUpdate(new BoardEvent(this, BoardModel.Status.GET_COMMAND, player, commands));
 
         return commands;
@@ -946,6 +954,28 @@ public class BoardModel {
         return bank.getCash();
     }
 
+    public List<BoardView> getViews() {
+        return views;
+    }
+
+    public boolean isGameFinish() {
+        return gameFinish;
+    }
+
+    public Player getTurn() {
+        return turn;
+    }
+
+    public Player getBank() {
+        return bank;
+    }
+
+    public boolean isCheckDoubleRoll() {
+        return checkDoubleRoll;
+    }
+
+
+
     /**
      * It parses the file with a parser
      *
@@ -960,6 +990,66 @@ public class BoardModel {
         SAXParser s = spf.newSAXParser();
         s.parse(f, handler);
     }
+
+
+    public void serializationLoad(){
+        try{
+            FileInputStream fileIn = new FileInputStream("test.ser");
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+
+            BoardModel bmTemp = (BoardModel) in.readObject();
+
+            this.players.clear();
+            this.players.addAll(bmTemp.getPlayers());
+
+            this.cells.clear();
+            this.cells.addAll(bmTemp.getCells());
+
+            this.views.clear();
+            this.views.addAll(bmTemp.getViews());
+
+            this.gameFinish = bmTemp.isGameFinish();
+
+            this.turn = bmTemp.getTurn();
+
+            this.bank = bmTemp.getBank();
+
+            this.checkDoubleRoll = bmTemp.isCheckDoubleRoll();
+
+            sendBoardUpdate(new BoardEvent(this, Status.UPDATE_MODEL));
+
+            for(Player p: players){
+                System.out.println(p.getCash());
+            }
+
+
+        }
+        catch(Exception e){
+            System.out.println("import serialzation failed");
+        }
+
+    }
+
+    public void serializationSave(){
+        try{
+            FileOutputStream fileOut = new FileOutputStream("test.ser");
+
+            ObjectOutputStream out = new ObjectOutputStream((fileOut));
+
+            out.writeObject(this);
+
+            out.close();
+            fileOut.close();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+
+
+
 
     /**
      * Primary loop of the program. Alternates the active players based on the list generated
