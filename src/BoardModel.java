@@ -32,7 +32,7 @@ public class BoardModel implements Serializable {
     /**
      * Keeps track of the dice rolls.
      */
-    private final int[] dice;
+    private int[] dice;
     /**
      * Keeps track of the number of players.
      */
@@ -56,7 +56,7 @@ public class BoardModel implements Serializable {
     /**
      * Keeps track of when the game should end.
      */
-    private boolean gameFinish;
+    private volatile boolean gameFinish;
     /**
      * Keeps track of the current player turn.
      */
@@ -74,6 +74,7 @@ public class BoardModel implements Serializable {
      */
     private boolean animationRunning;
 
+    private volatile boolean loadNewGame;
     /**
      * Keeps track of the board_config directory to read the XML files.
      */
@@ -84,7 +85,7 @@ public class BoardModel implements Serializable {
     public enum Status {
         GET_NUM_PLAYERS, CREATE_PLAYER_ICONS, INITIALIZE_BOARD, INITIALIZE_MONOPOLY, INITIALIZE_PLAYERS,
         GET_COMMAND, GO_TO_JAIL, EXIT_JAIL, FORCE_PAY_JAIL, GAME_OVER, PASS_GO, FREE_PARKING, PLAYER_INPUT,
-        UPDATE_MODEL;
+        UPDATE_MODEL
     }
 
     /**
@@ -173,7 +174,8 @@ public class BoardModel implements Serializable {
         players = new ArrayList<>();
         dice = new int[]{0, 0};
         bank = new Player("Bank", Icon.BANK, 0);
-        gameFinish = false;
+        gameFinish = true;
+        loadNewGame = true;
         turn = null;
         numPlayers = 0;
         checkDoubleRoll = false;
@@ -848,6 +850,7 @@ public class BoardModel implements Serializable {
     public void forfeit(Player player) {
         player.setBankrupt();
         player.setRank(numPlayers--);
+        System.out.println(numPlayers);
         sendBoardUpdate(new PlayerEvent(this, Command.FORFEIT, player));
         passTurn(player);
     }
@@ -974,8 +977,6 @@ public class BoardModel implements Serializable {
         return checkDoubleRoll;
     }
 
-
-
     /**
      * It parses the file with a parser
      *
@@ -992,9 +993,11 @@ public class BoardModel implements Serializable {
     }
 
 
-    public void serializationLoad(){
+    private void serializationLoad(){
         try{
-            FileInputStream fileIn = new FileInputStream("test.ser");
+            gameFinish = true;
+
+            FileInputStream fileIn = new FileInputStream("test.txt");
             ObjectInputStream in = new ObjectInputStream(fileIn);
 
             BoardModel bmTemp = (BoardModel) in.readObject();
@@ -1005,8 +1008,13 @@ public class BoardModel implements Serializable {
             this.cells.clear();
             this.cells.addAll(bmTemp.getCells());
 
-            this.views.clear();
-            this.views.addAll(bmTemp.getViews());
+            this.dice = getDice();
+
+            this.numPlayers = bmTemp.getPlayerCount();
+
+            System.out.println(numPlayers);
+
+            this.numAIPlayer = bmTemp.getNumAIPlayer();
 
             this.gameFinish = bmTemp.isGameFinish();
 
@@ -1018,21 +1026,18 @@ public class BoardModel implements Serializable {
 
             sendBoardUpdate(new BoardEvent(this, Status.UPDATE_MODEL));
 
-            for(Player p: players){
-                System.out.println(p.getCash());
-            }
-
+            loadNewGame = true;
 
         }
         catch(Exception e){
-            System.out.println("import serialzation failed");
+            System.out.println(e.getMessage());
         }
 
     }
 
-    public void serializationSave(){
+    private void serializationSave(){
         try{
-            FileOutputStream fileOut = new FileOutputStream("test.ser");
+            FileOutputStream fileOut = new FileOutputStream("test.txt");
 
             ObjectOutputStream out = new ObjectOutputStream((fileOut));
 
@@ -1046,11 +1051,6 @@ public class BoardModel implements Serializable {
         }
     }
 
-
-
-
-
-
     /**
      * Primary loop of the program. Alternates the active players based on the list generated
      * and gets the actions they are able to take. Once there is only one player remaining finishes
@@ -1059,16 +1059,17 @@ public class BoardModel implements Serializable {
      * @author Kyra Lothrop 101145872
      */
     public void play() {
-        constructBoard("rickAndMortyBoard.xml"); //for debug
-        initializeMonopoly();
-        getNumPlayers();
-        initiatePlayers();
+        gameFinish = false;
 
         while (!gameFinish) {
-            for (Player player : players) {
-                turn = player;
-                if (!player.isBankrupt()) {
+            for (int i =0; i < players.size(); i++) {
+                Player player = players.get(i);
 
+                if (turn == null){
+                    turn = player;
+                }
+
+                if (turn == player && !player.isBankrupt()) {
                     // Checks to see if the player is in jail.
                     if (player.getResortInJail()) {
                         Jail jail = (Jail) player.getCurrentCell();
@@ -1079,7 +1080,7 @@ public class BoardModel implements Serializable {
                     getCommand(player);
 
                     // Keeps prompting the player for commands until their turn is over.
-                    while (turn != null) {
+                    while (!gameFinish && turn != null) {
                         if (turn.isPlayerAI()) {
                             if (!animationRunning) {
                                 ((AIPlayer) turn).nextMove();
@@ -1101,11 +1102,30 @@ public class BoardModel implements Serializable {
                 // Checks to see if the game is over
                 if (numPlayers == 1) {
                     gameFinish = true;
+                    gameOver();
+                }
+
+                if (gameFinish){
                     break;
                 }
             }
         }
+    }
 
-        gameOver();
+    private void handleNewGame(){
+        constructBoard("rickAndMortyBoard.xml"); //for debug
+        initializeMonopoly();
+        getNumPlayers();
+        initiatePlayers();
+    }
+
+    public void start(){
+        handleNewGame();
+        while (true){
+            if (loadNewGame){
+                loadNewGame = false;
+                play();
+            }
+        }
     }
 }

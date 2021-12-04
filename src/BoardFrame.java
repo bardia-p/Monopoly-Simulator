@@ -5,7 +5,6 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -23,7 +22,7 @@ import java.util.concurrent.TimeUnit;
  * @author Owen VanDusen 101152022
  * @version 3.0
  */
-public class BoardFrame extends JFrame implements BoardView, Serializable {
+public class BoardFrame extends JFrame implements BoardView {
     /**
      * Keeps track of the board model.
      */
@@ -207,7 +206,9 @@ public class BoardFrame extends JFrame implements BoardView, Serializable {
 
         createGUI();
 
-        model.play();
+        this.setVisible(true);
+
+        model.start();
     }
 
     /**
@@ -258,9 +259,6 @@ public class BoardFrame extends JFrame implements BoardView, Serializable {
         add(layeredPane);
 
         pack();
-        //updateFrame();
-        // Making the frame visible.
-        this.setVisible(true);
     }
 
     /**
@@ -1335,9 +1333,24 @@ public class BoardFrame extends JFrame implements BoardView, Serializable {
     }
 
     public void updateModel(BoardModel model){
+        getContentPane().removeAll();
+        layeredPane.removeAll();
+        playerLabels.clear();
+        playerStatusPanels.clear();
+
         this.model = model;
 
         controller.updateModel(model);
+
+        createGUI();
+        this.constructBoard(model.getCells());
+        this.createPlayers(model.getPlayers());
+
+        for (Player p: model.getPlayers()){
+            this.showCurrentCell(p, p.getPosition());
+        }
+
+        this.revalidate();
     }
 
     /**
