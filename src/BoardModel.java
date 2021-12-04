@@ -120,14 +120,14 @@ public class BoardModel {
      * Keeps track of the player icons
      */
     public enum Icon {
-        BOOT("boot", "images/icons/boot.png"),
-        IRON("iron", "images/icons/iron.png"),
-        SCOTTIE_DOG("scottie dog", "images/icons/scottie_dog.png"),
-        BATTLESHIP("battleship", "images/icons/battleship.png"),
-        TOP_HAT("top hat", "images/icons/top_hat.png"),
-        WHEELBARROW("wheelbarrow", "images/icons/wheelbarrow.png"),
-        THIMBLE("thimble", "images/icons/thimble.png"),
-        RACING_CAR("racing car", "images/icons/racing_car.png"),
+        BOOT("boot", "images/original_icons/boot.png"),
+        IRON("iron", "images/original_icons/iron.png"),
+        SCOTTIE_DOG("scottie dog", "images/original_icons/scottie_dog.png"),
+        BATTLESHIP("battleship", "images/original_icons/battleship.png"),
+        TOP_HAT("top hat", "images/original_icons/top_hat.png"),
+        WHEELBARROW("wheelbarrow", "images/original_icons/wheelbarrow.png"),
+        THIMBLE("thimble", "images/original_icons/thimble.png"),
+        RACING_CAR("racing car", "images/original_icons/racing_car.png"),
         BANK("bank", "");
 
         private final String name;

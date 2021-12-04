@@ -4,6 +4,41 @@ Sarah Chow
 -->
 
 <board>
+    <players>
+        <icon>
+            <name>battleship</name>
+            <image>images/original_icons/battleship.png</image>
+        </icon>
+        <icon>
+            <name>boot</name>
+            <image>images/original_icons/boot.png</image>
+        </icon>
+        <icon>
+            <name>iron</name>
+            <image>images/original_icons/iron.png</image>
+        </icon>
+        <icon>
+            <name>racing car</name>
+            <image>images/original_icons/racing_car.png</image>
+        </icon>
+        <icon>
+            <name>scottie dog</name>
+            <image>images/original_icons/scottie_dog.png</image>
+        </icon>
+        <icon>
+            <name>thimble</name>
+            <image>images/original_icons/thimble.png</image>
+        </icon>
+        <icon>
+            <name>top hat</name>
+            <image>images/original_icons/top_hat.png</image>
+        </icon>
+        <icon>
+            <name>wheelbarrow</name>
+            <image>images/original_icons/wheelbarrow.png</image>
+        </icon>
+    </players>
+
     <boardcells>
         <cell>
             <type>Go</type>
