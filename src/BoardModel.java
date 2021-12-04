@@ -75,6 +75,11 @@ public class BoardModel {
     private boolean animationRunning;
 
     /**
+     * Keeps track of the board_config directory to read the XML files.
+     */
+    private final static String CONFIG_DIR = "board_config";
+
+    /**
      * Keeps track of the possible board statuses.
      */
     public enum Status {
@@ -217,7 +222,7 @@ public class BoardModel {
     public void constructBoard(String filename) {
         try {
             //File f = new File("board_config/rickAndMortyBoard.xml");
-            File f = new File(filename);
+            File f = new File(CONFIG_DIR + "/" + filename);
 
             readSAX(f, new XMLParser(this, bank));
 
@@ -964,7 +969,7 @@ public class BoardModel {
      * @author Kyra Lothrop 101145872
      */
     public void play() {
-        constructBoard("board_config/originalBoard.xml"); //for debug
+        constructBoard("rickAndMortyBoard.xml"); //for debug
         initializeMonopoly();
         getNumPlayers();
         initiatePlayers();
