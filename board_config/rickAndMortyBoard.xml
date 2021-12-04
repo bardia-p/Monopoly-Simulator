@@ -3,6 +3,8 @@ Sarah Chow
 101143033
 -->
 
+<!-- 6 players -->
+
 <board>
     <boardcells>
         <cell>
@@ -14,7 +16,7 @@ Sarah Chow
         </cell>
         <cell>
             <type>Property</type>
-            <name>Mediterranean Avenue</name>
+            <name>Harry Herpson High school</name>
             <price>60</price>
             <rent>
                 <fee>2</fee>
@@ -25,17 +27,15 @@ Sarah Chow
                 <fee>250</fee>
             </rent>
             <neighbourhood>brown</neighbourhood>
-            <image>images/board/mediterranean.jpg</image>
         </cell>
         <cell>
             <type>EmptyCell</type>
-            <name>Community Chest</name>
+            <name>Inter-Dimensional Cable TV</name>
             <cellType>chance and chest</cellType>
-            <image>images/board/chest_1.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
-            <name>Baltic Avenue</name>
+            <name>Needful Things</name>
             <price>60</price>
             <rent>
                 <fee>4</fee>
@@ -46,32 +46,29 @@ Sarah Chow
                 <fee>450</fee>
             </rent>
             <neighbourhood>brown</neighbourhood>
-            <image>images/board/baltic.jpg</image>
         </cell>
         <cell>
             <type>Tax</type>
-            <name>Income Tax</name>
+            <name>Parasites</name>
             <rent>
                 <fee>200</fee>
             </rent>
             <owner>bank</owner>
-            <image>images/board/income_tax.jpg</image>
         </cell>
         <cell>
             <type>Railroad</type>
-            <name>Reading Railroad</name>
+            <name>Bone Train</name>
             <price>200</price>
             <rent>
-                <fee>2</fee>
+                <fee>25</fee>
                 <fee>50</fee>
                 <fee>100</fee>
                 <fee>200</fee>
             </rent>
-            <image>images/board/railroad_1.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
-            <name>Oriental Avenue</name>
+            <name>Anatomy Park</name>
             <price>100</price>
             <rent>
                 <fee>6</fee>
@@ -82,17 +79,15 @@ Sarah Chow
                 <fee>550</fee>
             </rent>
             <neighbourhood>sky</neighbourhood>
-            <image>images/board/oriental.jpg</image>
         </cell>
         <cell>
             <type>EmptyCell</type>
-            <name>Chance Card</name>
+            <name>Get Schwifty!</name>
             <cellType>chance and chest</cellType>
-            <image>images/board/chance_1.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
-            <name>Vermont Avenue</name>
+            <name>Earth C-137</name>
             <price>100</price>
             <rent>
                 <fee>6</fee>
@@ -103,11 +98,10 @@ Sarah Chow
                 <fee>550</fee>
             </rent>
             <neighbourhood>sky</neighbourhood>
-            <image>images/board/vermont.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
-            <name>Connecticut Avenue</name>
+            <name>Gazorpazorp</name>
             <price>120</price>
             <rent>
                 <fee>8</fee>
@@ -118,7 +112,6 @@ Sarah Chow
                 <fee>600</fee>
             </rent>
             <neighbourhood>sky</neighbourhood>
-            <image>images/board/connecticut.jpg</image>
         </cell>
         <cell>
             <type>Jail</type>
@@ -128,7 +121,7 @@ Sarah Chow
         </cell>
         <cell>
             <type>Property</type>
-            <name>St. Charles Place</name>
+            <name>Blips And Chitz</name>
             <price>140</price>
             <rent>
                 <fee>10</fee>
@@ -139,21 +132,19 @@ Sarah Chow
                 <fee>750</fee>
             </rent>
             <neighbourhood>magenta</neighbourhood>
-            <image>images/board/st_charles.jpg</image>
         </cell>
         <cell>
             <type>Utility</type>
-            <name>Electric Company</name>
+            <name>Microverse</name>
             <price>150</price>
             <rent>
                 <fee>4</fee>
                 <fee>10</fee>
             </rent>
-            <image>images/board/electric.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
-            <name>States Avenue</name>
+            <name>Gear World</name>
             <price>140</price>
             <rent>
                 <fee>10</fee>
@@ -164,11 +155,10 @@ Sarah Chow
                 <fee>750</fee>
             </rent>
             <neighbourhood>magenta</neighbourhood>
-            <image>images/board/states_avenue.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
-            <name>Virginia Avenue</name>
+            <name>Jerryboree</name>
             <price>160</price>
             <rent>
                 <fee>12</fee>
@@ -179,11 +169,10 @@ Sarah Chow
                 <fee>900</fee>
             </rent>
             <neighbourhood>magenta</neighbourhood>
-            <image>images/board/virginia.jpg</image>
         </cell>
         <cell>
             <type>Railroad</type>
-            <name>Pennsylvania Railroad</name>
+            <name>Zigerion Ship</name>
             <price>200</price>
             <rent>
                 <fee>25</fee>
@@ -191,11 +180,10 @@ Sarah Chow
                 <fee>100</fee>
                 <fee>200</fee>
             </rent>
-            <image>images/board/railroad_2.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
-            <name>St. James Place</name>
+            <name>Fantasy World</name>
             <price>180</price>
             <rent>
                 <fee>14</fee>
@@ -206,17 +194,15 @@ Sarah Chow
                 <fee>950</fee>
             </rent>
             <neighbourhood>orange</neighbourhood>
-            <image>images/board/st_james.jpg</image>
         </cell>
         <cell>
             <type>EmptyCell</type>
-            <name>Community Chest</name>
+            <name>Inter-Dimensional Cable TV</name>
             <cellType>chance and chest</cellType>
-            <image>images/board/chest_2.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
-            <name>Tennessee Avenue</name>
+            <name>Pluto</name>
             <price>180</price>
             <rent>
                 <fee>14</fee>
@@ -227,11 +213,10 @@ Sarah Chow
                 <fee>950</fee>
             </rent>
             <neighbourhood>orange</neighbourhood>
-            <image>images/board/tennessee.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
-            <name>New York Avenue</name>
+            <name>Purge Planet</name>
             <price>200</price>
             <rent>
                 <fee>16</fee>
@@ -242,7 +227,6 @@ Sarah Chow
                 <fee>1000</fee>
             </rent>
             <neighbourhood>orange</neighbourhood>
-            <image>images/board/new_york.jpg</image>
         </cell>
         <cell>
             <type>Free Parking</type>
@@ -250,7 +234,7 @@ Sarah Chow
         </cell>
         <cell>
             <type>Property</type>
-            <name>Kentucky Avenue</name>
+            <name>Nuptia 4</name>
             <price>220</price>
             <rent>
                 <fee>18</fee>
@@ -261,17 +245,15 @@ Sarah Chow
                 <fee>1050</fee>
             </rent>
             <neighbourhood>red</neighbourhood>
-            <image>images/board/kentucky.jpg</image>
         </cell>
         <cell>
             <type>EmptyCell</type>
-            <name>Chance Card</name>
+            <name>Get Schwifty!</name>
             <cellType>chance and chest</cellType>
-            <image>images/board/chance_2.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
-            <name>Indiana Avenue</name>
+            <name>Pawn Shop Planet</name>
             <price>220</price>
             <rent>
                 <fee>18</fee>
@@ -282,11 +264,10 @@ Sarah Chow
                 <fee>1050</fee>
             </rent>
             <neighbourhood>red</neighbourhood>
-            <image>images/board/indiana.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
-            <name>Illinois Avenue</name>
+            <name>Unity's Planet</name>
             <price>240</price>
             <rent>
                 <fee>20</fee>
@@ -297,11 +278,10 @@ Sarah Chow
                 <fee>1100</fee>
             </rent>
             <neighbourhood>red</neighbourhood>
-            <image>images/board/illinois.jpg</image>
         </cell>
         <cell>
             <type>Railroad</type>
-            <name>B. &amp; O. Railroad</name>
+            <name>S.S. Independence</name>
             <price>200</price>
             <rent>
                 <fee>25</fee>
@@ -309,11 +289,10 @@ Sarah Chow
                 <fee>100</fee>
                 <fee>200</fee>
             </rent>
-            <image>images/board/railroad_3.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
-            <name>Atlantic Avenue</name>
+            <name>St. Gloopy Noops Hospital</name>
             <price>260</price>
             <rent>
                 <fee>22</fee>
@@ -324,11 +303,10 @@ Sarah Chow
                 <fee>1150</fee>
             </rent>
             <neighbourhood>yellow</neighbourhood>
-            <image>images/board/atlantic.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
-            <name>Ventnor Avenue</name>
+            <name>Cromulon Dimension</name>
             <price>260</price>
             <rent>
                 <fee>22</fee>
@@ -339,21 +317,19 @@ Sarah Chow
                 <fee>1150</fee>
             </rent>
             <neighbourhood>yellow</neighbourhood>
-            <image>images/board/ventnor.jpg</image>
         </cell>
         <cell>
             <type>Utility</type>
-            <name>Water Works</name>
+            <name>Miniverse</name>
             <price>150</price>
             <rent>
                 <fee>4</fee>
                 <fee>10</fee>
             </rent>
-            <image>images/board/water_works.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
-            <name>Marvin Garden</name>
+            <name>Citadel Of Ricks</name>
             <price>280</price>
             <rent>
                 <fee>24</fee>
@@ -364,7 +340,6 @@ Sarah Chow
                 <fee>1200</fee>
             </rent>
             <neighbourhood>yellow</neighbourhood>
-            <image>images/board/marvin.jpg</image>
         </cell>
         <cell>
             <type>Go To Jail</type>
@@ -373,7 +348,7 @@ Sarah Chow
         </cell>
         <cell>
             <type>Property</type>
-            <name>Pacific Avenue</name>
+            <name>Birdperson Planet</name>
             <price>300</price>
             <rent>
                 <fee>26</fee>
@@ -384,11 +359,10 @@ Sarah Chow
                 <fee>1275</fee>
             </rent>
             <neighbourhood>green</neighbourhood>
-            <image>images/board/pacific.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
-            <name>North Carolina Avenue</name>
+            <name>Planet Squanch</name>
             <price>300</price>
             <rent>
                 <fee>26</fee>
@@ -399,17 +373,15 @@ Sarah Chow
                 <fee>1275</fee>
             </rent>
             <neighbourhood>green</neighbourhood>
-            <image>images/board/north_carolina.jpg</image>
         </cell>
         <cell>
             <type>EmptyCell</type>
-            <name>Community Chest</name>
+            <name>Inter-Dimensional Cable TV</name>
             <cellType>chance and chest</cellType>
-            <image>images/board/chest_3.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
-            <name>Pennsylvania Avenue</name>
+            <name>Dwarf Terrace 9</name>
             <price>320</price>
             <rent>
                 <fee>28</fee>
@@ -420,11 +392,10 @@ Sarah Chow
                 <fee>1400</fee>
             </rent>
             <neighbourhood>green</neighbourhood>
-            <image>images/board/pennsylvania.jpg</image>
         </cell>
         <cell>
             <type>Railroad</type>
-            <name>Shortline Railroad</name>
+            <name>Beta 7 Ship</name>
             <price>200</price>
             <rent>
                 <fee>25</fee>
@@ -432,17 +403,15 @@ Sarah Chow
                 <fee>100</fee>
                 <fee>200</fee>
             </rent>
-            <image>images/board/railroad_4.jpg</image>
         </cell>
         <cell>
             <type>EmptyCell</type>
-            <name>Chance Card</name>
+            <name>Get Schwifty!</name>
             <cellType>chance and chest</cellType>
-            <image>images/board/chance_3.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
-            <name>Park Place</name>
+            <name>Morty's Bedroom</name>
             <price>350</price>
             <rent>
                 <fee>35</fee>
@@ -453,20 +422,18 @@ Sarah Chow
                 <fee>1500</fee>
             </rent>
             <neighbourhood>indigo</neighbourhood>
-            <image>images/board/park_place.jpg</image>
         </cell>
         <cell>
             <type>Tax</type>
-            <name>Luxury Tax</name>
+            <name>Morty Insurance</name>
             <rent>
                 <fee>100</fee>
             </rent>
             <owner>bank</owner>
-            <image>images/board/luxury_tax.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
-            <name>Boardwalk</name>
+            <name>Rick's Garage</name>
             <price>500</price>
             <rent>
                 <fee>50</fee>
@@ -477,7 +444,6 @@ Sarah Chow
                 <fee>2000</fee>
             </rent>
             <neighbourhood>indigo</neighbourhood>
-            <image>images/board/boardwalk.jpg</image>
         </cell>
     </boardcells>
 </board>
