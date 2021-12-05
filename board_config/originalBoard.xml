@@ -5,12 +5,9 @@ Sarah Chow
 
 <board>
     <colour>#cbe4d0</colour>
+    <audioPath>audio/monopoly_music.wav</audioPath>
 
     <players>
-        <icon>
-            <name>battleship</name>
-            <image>images/original/icons/battleship.png</image>
-        </icon>
         <icon>
             <name>boot</name>
             <image>images/original/icons/boot.png</image>
@@ -26,6 +23,10 @@ Sarah Chow
         <icon>
             <name>scottie dog</name>
             <image>images/original/icons/scottie_dog.png</image>
+        </icon>
+        <icon>
+            <name>battleship</name>
+            <image>images/original/icons/battleship.png</image>
         </icon>
         <icon>
             <name>thimble</name>

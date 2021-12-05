@@ -1,13 +1,17 @@
 import javax.imageio.ImageIO;
+import javax.sound.sampled.*;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.net.URL;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import java.io.File;
 
 /**
  * Group 3
@@ -183,6 +187,29 @@ public class BoardFrame extends JFrame implements BoardView  {
      */
     public static final int GOTOJAIL_LOCATION = 30;
 
+
+    private enum XMLFiles{
+        ORIGINAL("Original Monopoly", "originalBoard.xml"),
+        RICK_MORTY("Rick and Morty Monopoly", "rick_morty_board.xml"),
+        RICK_MORTY_IMAGES("Rick and Morty Monopoly (Deluxe)", "rick_morty_board_images.xml");
+
+        private final String name;
+        private final String filename;
+
+        XMLFiles(String name, String filename){
+            this.name = name;
+            this.filename = filename;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getFilename() {
+            return filename;
+        }
+    }
+
     public enum ThemeColour {
         BACKGROUND("#cbe4d0", "#000000");
 
@@ -243,8 +270,14 @@ public class BoardFrame extends JFrame implements BoardView  {
 
         createGUI();
 
+        Sound s = new Sound();
+        s.newThread();
+
         model.play();
     }
+
+
+
 
     /**
      * Creating the basic GUI of the monopoly.
@@ -361,6 +394,7 @@ public class BoardFrame extends JFrame implements BoardView  {
     private void displayStatus(String msg, boolean textMode){
         if (textMode){
             statusLabel.setText(msg);
+            statusLabel.setForeground(Color.decode(ThemeColour.BACKGROUND.textColour));
         } else {
             JOptionPane.showMessageDialog(null, msg);
         }

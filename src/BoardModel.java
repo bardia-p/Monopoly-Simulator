@@ -41,6 +41,10 @@ public class BoardModel {
      * Keeps track of the number of AI players.
      */
     private int numAIPlayer;
+
+
+    private String filename;
+
     /**
      * Keeps track of the size of the board.
      */
@@ -191,6 +195,7 @@ public class BoardModel {
         numPlayers = 0;
         checkDoubleRoll = false;
         animationRunning = false;
+        filename = "";
     }
 
     /**
@@ -236,7 +241,7 @@ public class BoardModel {
      */
     public void constructBoard(String filename) {
         try {
-            //File f = new File("board_config/rickAndMortyBoard.xml");
+            //File f = new File("board_config/rick_morty_board.xml");
             File f = new File(CONFIG_DIR + "/" + filename);
 
             readSAX(f, new XMLParser(this, bank));
@@ -976,6 +981,10 @@ public class BoardModel {
         s.parse(f, handler);
     }
 
+    public void setFilename(String filename){
+        this.filename = filename;
+    }
+
     /**
      * Primary loop of the program. Alternates the active players based on the list generated
      * and gets the actions they are able to take. Once there is only one player remaining finishes
@@ -984,8 +993,8 @@ public class BoardModel {
      * @author Kyra Lothrop 101145872
      */
     public void play() {
-        constructBoard("rickAndMortyBoardImages.xml"); //for debug
         initializeMonopoly();
+        constructBoard("rick_morty_board_images.xml");
         getNumPlayers();
         initiatePlayers();
 
