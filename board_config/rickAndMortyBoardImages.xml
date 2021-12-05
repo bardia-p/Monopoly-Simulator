@@ -6,6 +6,8 @@ Sarah Chow
 <!-- 6 players -->
 
 <board>
+    <colour>#131929</colour>
+
     <players>
         <icon>
             <name>council of ricks badge</name>

@@ -6,6 +6,8 @@ Sarah Chow
 <!-- 6 players -->
 
 <board>
+    <colour>#cbe4d0</colour>
+
     <players>
         <icon>
             <name>council of ricks badge</name>
@@ -39,7 +41,7 @@ Sarah Chow
             <rent>
                 <fee>200</fee>
             </rent>
-            <image>images/board/go.jpg</image>
+            <image>images/original_board/go.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -144,7 +146,7 @@ Sarah Chow
             <type>Jail</type>
             <name>Jail</name>
             <owner>bank</owner>
-            <image>images/board/jail.jpg</image>
+            <image>images/original_board/jail.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -257,7 +259,7 @@ Sarah Chow
         </cell>
         <cell>
             <type>Free Parking</type>
-            <image>images/board/free_parking.jpg</image>
+            <image>images/original_board/free_parking.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -371,7 +373,7 @@ Sarah Chow
         <cell>
             <type>Go To Jail</type>
             <name>GO TO JAIL</name>
-            <image>images/board/go_to_jail.jpg</image>
+            <image>images/original_board/go_to_jail.jpg</image>
         </cell>
         <cell>
             <type>Property</type>

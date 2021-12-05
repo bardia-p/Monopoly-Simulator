@@ -84,7 +84,8 @@ public class BoardModel {
      */
     public enum Status {
         GET_NUM_PLAYERS, CREATE_PLAYER_ICONS, INITIALIZE_BOARD, INITIALIZE_MONOPOLY, INITIALIZE_PLAYERS,
-        GET_COMMAND, GO_TO_JAIL, EXIT_JAIL, FORCE_PAY_JAIL, GAME_OVER, PASS_GO, FREE_PARKING, PLAYER_INPUT
+        GET_COMMAND, GO_TO_JAIL, EXIT_JAIL, FORCE_PAY_JAIL, GAME_OVER, PASS_GO, FREE_PARKING, PLAYER_INPUT,
+        BACKGROUND_COLOUR
     }
 
     /**
@@ -120,7 +121,7 @@ public class BoardModel {
      * Keeps track of the player icons
      */
     public enum Icon {
-        BOOT("boot", "images/original_icons/boot.png"),
+        BOOT("boot", "images/rick_morty_icons/council_of_ricks_badge.png"),
         IRON("iron", "images/original_icons/iron.png"),
         SCOTTIE_DOG("scottie dog", "images/original_icons/scottie_dog.png"),
         BATTLESHIP("battleship", "images/original_icons/battleship.png"),
@@ -926,6 +927,21 @@ public class BoardModel {
         dice[1] = dice2;
     }
 
+    public void setBackgroundColour(String hex){
+
+        BoardFrame.ThemeColour themeColour;
+
+        if (hex.equals(BoardFrame.ThemeColour.ORIGINAL.getBackgroundColour())){
+            themeColour = BoardFrame.ThemeColour.ORIGINAL;
+        }
+        else{
+            themeColour = BoardFrame.ThemeColour.RICK_MORTY;
+        }
+
+
+        sendBoardUpdate(new BoardEvent(this, Status.BACKGROUND_COLOUR, themeColour));
+    }
+
     /**
      * Accessor method to get the current turn.
      *
@@ -969,7 +985,7 @@ public class BoardModel {
      * @author Kyra Lothrop 101145872
      */
     public void play() {
-        constructBoard("rickAndMortyBoardImages.xml"); //for debug
+        constructBoard("rickAndMortyBoard.xml"); //for debug
         initializeMonopoly();
         getNumPlayers();
         initiatePlayers();

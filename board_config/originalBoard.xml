@@ -4,6 +4,8 @@ Sarah Chow
 -->
 
 <board>
+    <colour>#cbe4d0</colour>
+
     <players>
         <icon>
             <name>battleship</name>

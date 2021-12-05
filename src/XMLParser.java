@@ -54,6 +54,8 @@ public class XMLParser extends DefaultHandler {
      */
     private int attributeSelector = -1;
 
+    private String backgroundColour;
+
     /**
      * The constructor for the parser.
      * @param model the board model, BoardModel.
@@ -78,6 +80,7 @@ public class XMLParser extends DefaultHandler {
                 this.imgPath = "";
                 this.neighborhood = "";
                 this.fees = new ArrayList<>();
+                this.backgroundColour = "";
             }
             case "type" -> attributeSelector = 0;
             case "name" -> attributeSelector = 1;
@@ -85,6 +88,7 @@ public class XMLParser extends DefaultHandler {
             case "fee" -> attributeSelector = 3;
             case "neighbourhood" -> attributeSelector = 4;
             case "image" -> attributeSelector = 5;
+            case "colour" -> attributeSelector = 6;
             default -> attributeSelector = -1; // The other tags are ignored.
         }
     }
@@ -160,6 +164,9 @@ public class XMLParser extends DefaultHandler {
                 }
             }
         }
+        else if (qName.equals("colour")){
+            model.setBackgroundColour(backgroundColour);
+        }
     }
 
     /**
@@ -176,6 +183,7 @@ public class XMLParser extends DefaultHandler {
             case 3 -> fees.add(Integer.parseInt(new String(ch, start, length)));
             case 4 -> neighborhood = new String(ch, start, length);
             case 5 -> imgPath = new String(ch, start, length);
+            case 6 -> backgroundColour = new String(ch, start, length);
         }
 
         attributeSelector = -1;
