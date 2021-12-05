@@ -1062,10 +1062,12 @@ public class BoardModel implements Serializable {
         gameFinish = false;
 
         while (!gameFinish) {
+            boolean isNewTurn = false;
             for (int i =0; i < players.size(); i++) {
                 Player player = players.get(i);
 
                 if (turn == null){
+                    isNewTurn = true;
                     turn = player;
                 }
 
@@ -1076,7 +1078,9 @@ public class BoardModel implements Serializable {
                         jail.incrementJailRound(player); // Pass their turn in jail
                     }
 
-                    roll(player);
+                    if(isNewTurn){
+                        roll(player);
+                    }
                     getCommand(player);
 
                     // Keeps prompting the player for commands until their turn is over.
