@@ -1350,7 +1350,28 @@ public class BoardFrame extends JFrame implements BoardView {
             this.showCurrentCell(p, p.getPosition());
         }
 
+        for (BoardCell b: model.getCells()){
+            if(b instanceof Property){
+                helpUpdateHouse((Property) b);
+            }
+        }
+
         this.revalidate();
+    }
+
+    /**
+     * Helps update model rerender houses on each of the properties
+     * in the correct positions.
+     * @param p the property having houses rendered
+     */
+    void helpUpdateHouse(Property p){
+        int totalHouses = p.getNumHouses();
+        p.setNumHouses(0);
+
+        for(int i = 0; i < totalHouses; i++){
+            p.addHouse();
+            this.paintHouse(p);
+        }
     }
 
     /**

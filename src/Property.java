@@ -158,6 +158,8 @@ public class Property extends BoardCell implements Buyable{
         return numHouses;
     }
 
+    public void setNumHouses(int numHouses) {this.numHouses = numHouses;}
+
     /**
      * Accessor method to package relevant information into a string.
      * @author Sarah Chow 101143033
