@@ -4,10 +4,15 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * Group 3
@@ -67,6 +72,10 @@ public class BoardFrame extends JFrame implements BoardView  {
      * Keeps track of the turn label.
      */
     private JLabel statusLabel;
+
+    private JMenuBar menuBar;
+    private JMenu fileMenu;
+    private JMenuItem newGame, loadGame, saveGame;
 
     /**
      * Keeps track of the size of the board on each side.
@@ -206,13 +215,44 @@ public class BoardFrame extends JFrame implements BoardView  {
 
         createGUI();
 
-        model.play();
+        //model.play("originalBoard");
     }
 
     /**
      * Creating the basic GUI of the monopoly.
      */
     private void createGUI(){
+        // Creating JMenu
+        this.menuBar = new JMenuBar();
+
+        this.fileMenu = new JMenu("File");
+
+        this.newGame = new JMenuItem("New Board");
+        this.saveGame = new JMenuItem("Save Board");
+        this.loadGame = new JMenuItem("Load Board");
+
+        this.fileMenu.add(newGame);
+        this.fileMenu.add(saveGame);
+        this.fileMenu.add(loadGame);
+
+        menuBar.add(fileMenu);
+
+        this.add(menuBar);
+        this.setJMenuBar(menuBar);
+
+        // JMenu
+        newGame.setEnabled(true);
+        newGame.setActionCommand(BoardModel.Command.NEW_BOARD.getStringCommand());
+        newGame.addActionListener(controller);
+
+        loadGame.setEnabled(true);
+        loadGame.setActionCommand(BoardModel.Command.LOAD_BOARD.getStringCommand());
+        loadGame.addActionListener(controller);
+
+        saveGame.setEnabled(false);
+        saveGame.setActionCommand(BoardModel.Command.SAVE_BOARD.getStringCommand());
+        saveGame.addActionListener(controller);
+
         // Setting the frame settings.
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setResizable(false);
@@ -280,6 +320,7 @@ public class BoardFrame extends JFrame implements BoardView  {
         BoardEvent be = (BoardEvent) e;
         Player player = be.getPlayer();
         switch (e.getStatus()) {
+            case CHOOSE_BOARD -> handleChooseBoard();
             case INITIALIZE_MONOPOLY -> handleWelcomeMonopoly();
             case GAME_OVER -> handleWinner(source.getPlayers());
             case INITIALIZE_BOARD -> constructBoard(source.getCells());
@@ -287,6 +328,7 @@ public class BoardFrame extends JFrame implements BoardView  {
             case GET_NUM_PLAYERS -> getNumPlayers();
             case INITIALIZE_PLAYERS -> initializePlayers(source.getPlayerCount());
             case GET_COMMAND -> updateAvailableCommands(player, be.getCommands());
+            //case FILE_MENU_OPTIONS -> updateAvailableMenuOptions();
             case PASS_GO -> handlePassGo(player);
             case FREE_PARKING -> handleFreeParking(player);
             case GO_TO_JAIL -> handleGoToJail(player);
@@ -625,6 +667,11 @@ public class BoardFrame extends JFrame implements BoardView  {
         updatePlayerStatusPanel(player);
     }
 
+    private void updateAvailableMenuOptions(){
+        //here1
+
+    }
+
     /**
      * Method to cancel the player initialization process.
      * @author Sarah Chow 101143033
@@ -632,6 +679,30 @@ public class BoardFrame extends JFrame implements BoardView  {
     private void initializationCancel(){
         JOptionPane.showMessageDialog(null, "Game initialization is cancelled!");
         System.exit(0);
+    }
+
+    private void handleChooseBoard(){
+        List<File> boardFileOptions = new ArrayList<>();
+        try{
+            boardFileOptions = Files.walk(Paths.get("board_config"))
+                    .filter(Files::isRegularFile)
+                    .map(Path::toFile)
+                    .collect(Collectors.toList());
+
+            List<String> stringFileNames = new ArrayList<>();
+            for(File f: boardFileOptions){
+                stringFileNames.add(f.getName());
+            }
+
+            String selectedBoard = (String) JOptionPane.showInputDialog(null,
+                    "Select the Monopoly board", "SELECT BOARD",
+                    JOptionPane.QUESTION_MESSAGE, null, stringFileNames.toArray(), stringFileNames.get(0));
+
+            model.play(selectedBoard);
+        }catch(IOException e){
+            System.out.println(e);
+        }
+
     }
 
     /**

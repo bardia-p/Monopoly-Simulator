@@ -3,6 +3,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
+import java.sql.SQLOutput;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -83,7 +84,7 @@ public class BoardModel {
      * Keeps track of the possible board statuses.
      */
     public enum Status {
-        GET_NUM_PLAYERS, CREATE_PLAYER_ICONS, INITIALIZE_BOARD, INITIALIZE_MONOPOLY, INITIALIZE_PLAYERS,
+        GET_NUM_PLAYERS, CREATE_PLAYER_ICONS, CHOOSE_BOARD, INITIALIZE_BOARD, INITIALIZE_MONOPOLY, INITIALIZE_PLAYERS,
         GET_COMMAND, GO_TO_JAIL, EXIT_JAIL, FORCE_PAY_JAIL, GAME_OVER, PASS_GO, FREE_PARKING, PLAYER_INPUT
     }
 
@@ -103,7 +104,10 @@ public class BoardModel {
         REQUEST_FORFEIT("Request Forfeit"),
         BUILD("Build"),
         PAINT_HOUSE("Paint House"),
-        CHANGE_WINDOW("Change Window");
+        CHANGE_WINDOW("Change Window"),
+        NEW_BOARD("New Board"),
+        LOAD_BOARD("Load Board"),
+        SAVE_BOARD("Save Board");
 
         private final String stringCommand;
 
@@ -203,12 +207,23 @@ public class BoardModel {
             getBuildStatus();
         } else if (command.equals((Command.FORFEIT.getStringCommand()))) {
             request_forfeit(turn);
+        } else if(command.equals((Command.NEW_BOARD.getStringCommand()))){
+            chooseBoard();
+        } else if(command.equals((Command.LOAD_BOARD.getStringCommand()))){
+            //TODO
+        } else if(command.equals((Command.SAVE_BOARD.getStringCommand()))){
+            //TODO
         }
+
         // Avoids race conditions.
         if (turn != null && !command.equals((Command.PASS.getStringCommand())) &&
                 !command.equals((Command.FORFEIT.getStringCommand()))) {
             getCommand(turn);
         }
+    }
+
+    public void chooseBoard(){
+        sendBoardUpdate(new BoardEvent(this, Status.CHOOSE_BOARD));
     }
 
     /**
@@ -968,8 +983,8 @@ public class BoardModel {
      *
      * @author Kyra Lothrop 101145872
      */
-    public void play() {
-        constructBoard("rickAndMortyBoard.xml"); //for debug
+    public void play(String boardFileName) {
+        constructBoard(boardFileName);
         initializeMonopoly();
         getNumPlayers();
         initiatePlayers();
