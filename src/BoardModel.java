@@ -83,6 +83,7 @@ public class BoardModel implements Serializable{
 
     private volatile boolean newGame;
 
+    private String filename;
 
     /**
      * Keeps track of the possible board statuses.
@@ -161,8 +162,8 @@ public class BoardModel implements Serializable{
             return used;
         }
 
-        public void setUsed() {
-            used = true;
+        public void setUsed(boolean used) {
+            this.used = used;
         }
     }
 
@@ -187,6 +188,7 @@ public class BoardModel implements Serializable{
         newGame = false;
         checkDoubleRoll = false;
         animationRunning = false;
+        filename = "";
     }
 
     /**
@@ -217,7 +219,7 @@ public class BoardModel implements Serializable{
         } else if(command.equals((Command.NEW_BOARD.getStringCommand()))){
             chooseBoard();
         } else if(command.equals((Command.LOAD_BOARD.getStringCommand()))){
-            startNewGame(false);
+            serializationLoad();
         } else if(command.equals((Command.SAVE_BOARD.getStringCommand()))){
             serializationSave();
         }
@@ -1118,8 +1120,11 @@ public class BoardModel implements Serializable{
         }
     }
 
-    public void handleNewGame(String filename){
+    public void handleNewGame(){
         sendBoardUpdate(new BoardEvent(this, Status.NEW_GAME));
+        constructBoard(filename);
+        getNumPlayers();
+        initiatePlayers();
 
         loadGame = true;
     }
@@ -1127,19 +1132,28 @@ public class BoardModel implements Serializable{
     public void start(){
         while (true){
             if (loadGame){
+                if (newGame){
+                    handleNewGame();
+                    newGame = false;
+                }
                 loadGame = false;
                 play();
             }
         }
     }
 
-    public void startNewGame(boolean newGame){
+    public void startNewGame(String selectedBoard){
+        cells = new ArrayList<>();
+        players = new ArrayList<>();
+        dice = new int[]{0, 0};
+        bank = new Player("Bank", Icon.BANK, 0);
+        turn = null;
+        numPlayers = 0;
         gameFinish = true;
-
-        if (newGame){
-            handleNewGame("originalBoard.xml");
-        } else{
-            serializationLoad();
-        }
+        loadGame = true;
+        newGame = true;
+        checkDoubleRoll = false;
+        animationRunning = false;
+        filename = selectedBoard;
     }
 }

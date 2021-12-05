@@ -297,7 +297,7 @@ public class BoardFrame extends JFrame implements BoardView  {
         add(layeredPane);
 
         pack();
-        //updateFrame();
+
         // Making the frame visible.
         this.setVisible(true);
     }
@@ -328,7 +328,6 @@ public class BoardFrame extends JFrame implements BoardView  {
             case GET_NUM_PLAYERS -> getNumPlayers();
             case INITIALIZE_PLAYERS -> initializePlayers(source.getPlayerCount());
             case GET_COMMAND -> updateAvailableCommands(player, be.getCommands());
-            //case FILE_MENU_OPTIONS -> updateAvailableMenuOptions();
             case PASS_GO -> handlePassGo(player);
             case FREE_PARKING -> handleFreeParking(player);
             case GO_TO_JAIL -> handleGoToJail(player);
@@ -700,7 +699,7 @@ public class BoardFrame extends JFrame implements BoardView  {
                     "Select the Monopoly board", "SELECT BOARD",
                     JOptionPane.QUESTION_MESSAGE, null, stringFileNames.toArray(), stringFileNames.get(0));
 
-            model.startNewGame(true);
+            model.startNewGame(selectedBoard);
         }catch(IOException e){
             System.out.println(e);
         }
@@ -740,6 +739,11 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @param numPlayers keeps track of the number of player, int
      */
     private void initializePlayers(int numPlayers){
+        // Resetting all the icons when making a new icon.
+        for (BoardModel.Icon icon: BoardModel.Icon.values()){
+            icon.setUsed(false);
+        }
+
         String[] namesAI = {"GOOGLE", "SIRI", "ALEXA", "BIXBY", "BAYMAX", "WALL-E", "EVA", "TOBIO"};
 
         for (int i = 0; i < numPlayers; i++){
@@ -809,7 +813,7 @@ public class BoardFrame extends JFrame implements BoardView  {
     private BoardModel.Icon findPlayerIcon(String icon) {
         for (BoardModel.Icon ic: BoardModel.Icon.values()){
             if (ic.getName().equals(icon)) {
-                ic.setUsed();
+                ic.setUsed(true);
                 return ic;
             }
         }
@@ -1404,7 +1408,7 @@ public class BoardFrame extends JFrame implements BoardView  {
             this.showCurrentCell(p, p.getPosition());
         }
 
-        this.revalidate();
+        this.pack();
     }
 
     private void clearBoard(){
@@ -1418,10 +1422,6 @@ public class BoardFrame extends JFrame implements BoardView  {
 
     private void makeNewBoard(){
         clearBoard();
-
-        model.constructBoard("originalBoard.xml");
-        model.getNumPlayers();
-        model.initiatePlayers();
     }
 
     /**
