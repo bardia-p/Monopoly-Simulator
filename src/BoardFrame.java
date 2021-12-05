@@ -176,14 +176,11 @@ public class BoardFrame extends JFrame implements BoardView  {
      */
     public static final int GOTOJAIL_LOCATION = 30;
 
-    public static ThemeColour themeColour;
-
     public enum ThemeColour {
-        ORIGINAL("#cbe4d0", "#000000"),
-        RICK_MORTY("#131929", "#FFFFFF");
+        BACKGROUND("#cbe4d0", "#000000");
 
-        private final String backgroundColour;
-        private final String textColour;
+        private String backgroundColour;
+        private String textColour;
 
 
         ThemeColour(String backgroundColour, String textColour){
@@ -191,6 +188,10 @@ public class BoardFrame extends JFrame implements BoardView  {
             this.textColour = textColour;
         }
 
+        public void setColorPair(String backgroundColour, String textColour){
+            this.backgroundColour = backgroundColour;
+            this.textColour = textColour;
+        }
     }
 
 
@@ -202,7 +203,7 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @author Bardia Parmoun 101143006
      * @author Owen VanDusen 10115202
      */
-    public BoardFrame(ThemeColour themeColour){
+    public BoardFrame(){
         super("Rich Uncle Pennybags!");
 
         // Keeps track of the player labels and cell panels.
@@ -216,8 +217,6 @@ public class BoardFrame extends JFrame implements BoardView  {
         model.addBoardView(this);
 
         controller = new BoardController(model);
-
-        this.themeColour = themeColour;
 
         createGUI();
 
@@ -236,12 +235,10 @@ public class BoardFrame extends JFrame implements BoardView  {
         layeredPane = new JLayeredPane();
         layeredPane.setOpaque(true);
         layeredPane.setPreferredSize(new Dimension(WINDOW_WIDTH,WINDOW_HEIGHT + 100));
-        layeredPane.setBackground(Color.decode(themeColour.backgroundColour));
 
         // The main panel that keeps track of all the cells
         mainPanel = new JPanel();
         mainPanel.setLayout(new GridBagLayout());
-        mainPanel.setBackground(Color.decode(themeColour.backgroundColour));
         mainPanel.setBounds(0, BOARD_SHIFT_Y + PANEL_GAP, BOARD_WIDTH, BOARD_HEIGHT);
 
         layeredPane.add(mainPanel,0);
@@ -250,25 +247,12 @@ public class BoardFrame extends JFrame implements BoardView  {
 
         // Creating the turn label.
         statusLabel = new JLabel();
-        statusLabel.setForeground(Color.decode(themeColour.textColour));
-        statusLabel.setBackground(Color.decode(themeColour.backgroundColour));
+        statusLabel.setForeground(Color.decode(ThemeColour.BACKGROUND.textColour));
+        statusLabel.setBackground(Color.decode(ThemeColour.BACKGROUND.backgroundColour));
         statusLabel.setBounds(BOARD_WIDTH, PANEL_GAP,
                 WINDOW_WIDTH - BOARD_WIDTH, BOARD_SHIFT_Y);
 
         layeredPane.add(statusLabel,0);
-
-        // Creating the dice panel.
-        createDiceLayout();
-
-        // Creating the logo panel.
-        buildLogoDisplay();
-
-        // Creating the cash panel.
-        buildCashDisplay();
-
-        // Adding the panels to board.
-        layeredPane.add(logoPanel,1);
-        layeredPane.moveToFront(logoPanel);
 
         add(layeredPane);
 
@@ -399,18 +383,18 @@ public class BoardFrame extends JFrame implements BoardView  {
     private void createPlayers(List<Player> players) {
         JPanel statusPanel = new JPanel();
         statusPanel.setLayout(new GridLayout(players.size(), 1));
-        statusPanel.setBackground(Color.decode(themeColour.backgroundColour));
+        statusPanel.setBackground(Color.decode(ThemeColour.BACKGROUND.backgroundColour));
 
         for (Player p: players){
             JLabel playerLabel = new JLabel();
             JPanel playerPanel = new JPanel();
             TitledBorder title = BorderFactory.createTitledBorder(p.getIconName().toUpperCase());
-            title.setTitleColor(Color.decode(themeColour.textColour));
+            title.setTitleColor(Color.decode(ThemeColour.BACKGROUND.textColour));
             playerPanel.setBorder(title);
             playerLabels.put(p, playerLabel);
             playerStatusPanels.put(p, playerPanel);
 
-            playerLabel.setForeground(Color.decode(themeColour.textColour));
+            playerLabel.setForeground(Color.decode(ThemeColour.BACKGROUND.textColour));
 
             updatePlayerStatusPanel(p);
 
@@ -451,8 +435,8 @@ public class BoardFrame extends JFrame implements BoardView  {
         newStatus.append("</html>");
 
         JLabel statusLabel = new JLabel(newStatus.toString());
-        statusLabel.setForeground(Color.decode(themeColour.textColour));
-        panel.setBackground(Color.decode(themeColour.backgroundColour));
+        statusLabel.setForeground(Color.decode(ThemeColour.BACKGROUND.textColour));
+        panel.setBackground(Color.decode(ThemeColour.BACKGROUND.backgroundColour));
         panel.add(statusLabel);
     }
 
@@ -463,7 +447,7 @@ public class BoardFrame extends JFrame implements BoardView  {
     private void buildLogoDisplay(){
         logoPanel = new JPanel();
         logoPanel.setBounds(BOARD_WIDTH/2 - LOGO_WIDTH/2, BOARD_HEIGHT/2, LOGO_WIDTH, LOGO_HEIGHT);
-        logoPanel.setBackground(Color.decode(themeColour.backgroundColour));
+        logoPanel.setBackground(Color.decode(ThemeColour.BACKGROUND.backgroundColour));
 
         try {
             BufferedImage image = ImageIO.read(Objects.requireNonNull(getClass().getResource
@@ -472,7 +456,7 @@ public class BoardFrame extends JFrame implements BoardView  {
 
             Image newImage = image.getScaledInstance(LOGO_WIDTH, LOGO_HEIGHT, Image.SCALE_DEFAULT);
             JLabel label = new JLabel(new ImageIcon(newImage));
-            label.setForeground(Color.decode(themeColour.textColour));
+            label.setForeground(Color.decode(ThemeColour.BACKGROUND.textColour));
             logoPanel.removeAll();
             logoPanel.add(label);
         }  catch(Exception e){
@@ -489,7 +473,7 @@ public class BoardFrame extends JFrame implements BoardView  {
         cashPanel.setBounds(CELL_HEIGHT + 2 * PANEL_GAP, BOARD_SHIFT_Y + CELL_HEIGHT + 3 * PANEL_GAP,
                 CASH_WIDTH/4 + CASH_WIDTH, CASH_HEIGHT);
 
-        cashPanel.setBackground(Color.decode(themeColour.backgroundColour));
+        cashPanel.setBackground(Color.decode(ThemeColour.BACKGROUND.backgroundColour));
         try {
             BufferedImage image = ImageIO.read(Objects.requireNonNull(getClass().getResource("images/money.png")));
 
@@ -498,8 +482,8 @@ public class BoardFrame extends JFrame implements BoardView  {
             JLabel label = new JLabel(new ImageIcon(newImage));
             JLabel cashAmount = new JLabel("$" + model.getBankMoney());
 
-            label.setForeground(Color.decode(themeColour.textColour));
-            cashAmount.setForeground(Color.decode(themeColour.textColour));
+            label.setForeground(Color.decode(ThemeColour.BACKGROUND.textColour));
+            cashAmount.setForeground(Color.decode(ThemeColour.BACKGROUND.textColour));
 
             cashPanel.removeAll();
             cashPanel.add(label, BorderLayout.WEST);
@@ -532,10 +516,10 @@ public class BoardFrame extends JFrame implements BoardView  {
         // Creating the dice panels.
         dicePanels = new JPanel[2];
         dicePanels[0] = new JPanel(new BorderLayout());
-        dicePanels[0].setBackground(Color.decode(themeColour.backgroundColour));
+        dicePanels[0].setBackground(Color.decode(ThemeColour.BACKGROUND.backgroundColour));
 
         dicePanels[1] = new JPanel(new BorderLayout());
-        dicePanels[1].setBackground(Color.decode(themeColour.backgroundColour));
+        dicePanels[1].setBackground(Color.decode(ThemeColour.BACKGROUND.backgroundColour));
 
         mainPanel.add(dicePanels[0], die1_constraint);
         mainPanel.add(dicePanels[1], die2_constraint);
@@ -645,7 +629,7 @@ public class BoardFrame extends JFrame implements BoardView  {
         }
 
         TitledBorder title = BorderFactory.createTitledBorder("Current Turn: " + player.getIconName().toUpperCase());
-        title.setTitleColor(Color.decode(themeColour.textColour));
+        title.setTitleColor(Color.decode(ThemeColour.BACKGROUND.textColour));
         statusLabel.setBorder(title);
 
         updatePlayerStatusPanel(player);
@@ -776,6 +760,9 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @param cells the list of the board cells, List<BoardCell>
      */
     private void constructBoard(List<BoardCell> cells) {
+        layeredPane.setBackground(Color.decode(ThemeColour.BACKGROUND.backgroundColour));
+        mainPanel.setBackground(Color.decode(ThemeColour.BACKGROUND.backgroundColour));
+
         // Command buttons
         JPanel commandsPanel = new JPanel(new GridLayout(2,4, PANEL_GAP, PANEL_GAP));
         commandsPanel.setBounds(PANEL_GAP, COMMAND_SHIFT_Y,BOARD_WIDTH - 2 * PANEL_GAP,
@@ -785,7 +772,7 @@ public class BoardFrame extends JFrame implements BoardView  {
                 BoardModel.Command.FORFEIT, BoardModel.Command.BUY, BoardModel.Command.SELL,
                 BoardModel.Command.PAY_FEES, BoardModel.Command.BUILD, BoardModel.Command.CELL_STATUS};
 
-        commandsPanel.setBackground(Color.decode(themeColour.backgroundColour));
+        commandsPanel.setBackground(Color.decode(ThemeColour.BACKGROUND.backgroundColour));
 
         for (BoardModel.Command c : buttons) {
             String s = c.getStringCommand();
@@ -843,7 +830,7 @@ public class BoardFrame extends JFrame implements BoardView  {
 
             // Places the cell in a panel.
             JPanel panel = new JPanel(new BorderLayout());
-            panel.setBackground(Color.decode(themeColour.backgroundColour));
+            panel.setBackground(Color.decode(ThemeColour.BACKGROUND.backgroundColour));
 
             constructCell(cell, panel, direction);
 
@@ -857,6 +844,19 @@ public class BoardFrame extends JFrame implements BoardView  {
             row += row_step;
             col += col_step;
         }
+
+        // Creating the dice panel.
+        createDiceLayout();
+
+        // Creating the logo panel.
+        buildLogoDisplay();
+
+        // Creating the cash panel.
+        buildCashDisplay();
+
+        // Adding the panels to board.
+        layeredPane.add(logoPanel,1);
+        layeredPane.moveToFront(logoPanel);
 
         // adding all the components to the frame
         this.pack();
@@ -1353,6 +1353,6 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @param args args
      */
     public static void main(String[] args) {
-        new BoardFrame(ThemeColour.ORIGINAL);
+        new BoardFrame();
     }
 }

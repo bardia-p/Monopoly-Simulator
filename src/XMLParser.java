@@ -166,8 +166,10 @@ public class XMLParser extends DefaultHandler {
         }
         else if (qName.equals("colour")){
             switch(backgroundColour){
-                case("#cbe4d0") -> BoardFrame.themeColour = BoardFrame.ThemeColour.ORIGINAL;
-                case("#131929") -> BoardFrame.themeColour = BoardFrame.ThemeColour.RICK_MORTY;
+                case("#cbe4d0") -> BoardFrame.ThemeColour.BACKGROUND.setColorPair("#cbe4d0",
+                        "#000000");
+                case("#131929") -> BoardFrame.ThemeColour.BACKGROUND.setColorPair("#131929",
+                        "#FFFFFF");
             }
         }
     }
