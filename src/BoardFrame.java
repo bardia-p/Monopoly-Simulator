@@ -291,7 +291,7 @@ public class BoardFrame extends JFrame implements BoardView {
             case GO_TO_JAIL -> handleGoToJail(player);
             case EXIT_JAIL -> handleExitJail(player);
             case FORCE_PAY_JAIL -> handleForceExitJail(player);
-            case UPDATE_MODEL -> updateModel(source);
+            case UPDATE_MODEL -> updateBoard();
         }
     }
 
@@ -1343,17 +1343,11 @@ public class BoardFrame extends JFrame implements BoardView {
     /**
      * Updates the board model when loading a board from a save state.
      * @author Bardia Parmoun 10113006
-     * @param model the new model to be used for the board
      */
-    public void updateModel(BoardModel model){
+    public void updateBoard(){
         clearBoard();
-
-        this.model = model;
-        controller.updateModel(model);
-
         createBoard(model);
         populateBoard(model);
-
         this.revalidate();
     }
 
