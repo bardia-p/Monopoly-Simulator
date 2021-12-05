@@ -1324,53 +1324,81 @@ public class BoardFrame extends JFrame implements BoardView {
         displayStatus(message, player.isPlayerAI());
     }
 
+    /**
+     * Handling players saving a board in text format.
+     * @author Bardia Parmoun 101143006
+     */
     private void handleSave(){
         displayStatus("Game saved as text.ser !", false);
     }
 
+    /**
+     * Handling players loading a board in text format.
+     * @author Bardia Parmoun 101143006
+     */
     private void handleLoad(){
         displayStatus("Game loaded!", false);
     }
 
+    /**
+     * Updates the board model when loading a board from a save state.
+     * @author Bardia Parmoun 10113006
+     * @param model the new model to be used for the board
+     */
     public void updateModel(BoardModel model){
-        getContentPane().removeAll();
-        layeredPane.removeAll();
-        playerLabels.clear();
-        playerStatusPanels.clear();
+        clearBoard();
 
         this.model = model;
-
         controller.updateModel(model);
 
-        createGUI();
-        this.constructBoard(model.getCells());
-        this.createPlayers(model.getPlayers());
-
-        for (Player p: model.getPlayers()){
-            this.showCurrentCell(p, p.getPosition());
-        }
-
-        for (BoardCell b: model.getCells()){
-            if(b instanceof Property){
-                helpUpdateHouse((Property) b);
-            }
-        }
+        createBoard(model);
+        populateBoard(model);
 
         this.revalidate();
     }
 
     /**
-     * Helps update model rerender houses on each of the properties
-     * in the correct positions.
-     * @param p the property having houses rendered
+     * Removes all elements from the board
+     * @author Owen VanDusen 101152022
      */
-    void helpUpdateHouse(Property p){
-        int totalHouses = p.getNumHouses();
-        p.setNumHouses(0);
+    public void clearBoard(){
+        getContentPane().removeAll();
+        layeredPane.removeAll();
+        playerLabels.clear();
+        playerStatusPanels.clear();
+    }
 
-        for(int i = 0; i < totalHouses; i++){
-            p.addHouse();
-            this.paintHouse(p);
+    /**
+     * Remakes an empty board
+     * @author Owen VanDusen 101152022
+     * @param model the model to be created
+     */
+    public void createBoard(BoardModel model){
+        createGUI();
+        this.constructBoard(model.getCells());
+        this.createPlayers(model.getPlayers());
+    }
+
+    /**
+     * Adding all the player icons and house/hotel icons to the board
+     * @author Owen VanDusen 101152022
+     * @param model the model to be populated
+     */
+    public void populateBoard(BoardModel model){
+        for(Player p: model.getPlayers()){
+            this.showCurrentCell(p, p.getPosition());
+        }
+
+        for(BoardCell b: model.getCells()){
+            if(b instanceof Property) {
+                int totalHouses = ((Property) b).getNumHouses();
+                ((Property) b).setNumHouses(0);
+
+                for (int i = 0; i < totalHouses; i++) {
+                    ((Property) b).addHouse();
+                    this.paintHouse(b);
+                }
+            }
         }
     }
 
