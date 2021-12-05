@@ -928,18 +928,7 @@ public class BoardModel {
     }
 
     public void setBackgroundColour(String hex){
-
-        BoardFrame.ThemeColour themeColour;
-
-        if (hex.equals(BoardFrame.ThemeColour.ORIGINAL.getBackgroundColour())){
-            themeColour = BoardFrame.ThemeColour.ORIGINAL;
-        }
-        else{
-            themeColour = BoardFrame.ThemeColour.RICK_MORTY;
-        }
-
-
-        sendBoardUpdate(new BoardEvent(this, Status.BACKGROUND_COLOUR, themeColour));
+        sendBoardUpdate(new BoardEvent(this, Status.BACKGROUND_COLOUR, hex));
     }
 
     /**
@@ -985,7 +974,7 @@ public class BoardModel {
      * @author Kyra Lothrop 101145872
      */
     public void play() {
-        constructBoard("rickAndMortyBoard.xml"); //for debug
+        constructBoard("rickAndMortyBoardImages.xml"); //for debug
         initializeMonopoly();
         getNumPlayers();
         initiatePlayers();

@@ -27,7 +27,7 @@ public class BoardEvent extends MonopolyEvent {
      */
     private Player player;
 
-    private BoardFrame.ThemeColour themeColour;
+    private String str;
 
     /**
      * The main constructor for the BoardEvent class.
@@ -52,9 +52,9 @@ public class BoardEvent extends MonopolyEvent {
         this.player = player;
     }
 
-    public BoardEvent(BoardModel model, BoardModel.Status status, BoardFrame.ThemeColour themeColour){
+    public BoardEvent(BoardModel model, BoardModel.Status status, String str){
         this(model, status);
-        this.themeColour = themeColour;
+        this.str = str;
     }
 
     /**
@@ -87,7 +87,7 @@ public class BoardEvent extends MonopolyEvent {
         return player;
     }
 
-    public BoardFrame.ThemeColour getThemeColour() {
-        return themeColour;
+    public String getStr() {
+        return str;
     }
 }

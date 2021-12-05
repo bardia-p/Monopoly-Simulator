@@ -311,7 +311,7 @@ public class BoardFrame extends JFrame implements BoardView  {
             case GO_TO_JAIL -> handleGoToJail(player);
             case EXIT_JAIL -> handleExitJail(player);
             case FORCE_PAY_JAIL -> handleForceExitJail(player);
-            case BACKGROUND_COLOUR -> handleBackgroundColour(((BoardEvent) e).getThemeColour());
+            case BACKGROUND_COLOUR -> handleBackgroundColour(((BoardEvent) e).getStr());
         }
     }
 
@@ -1351,8 +1351,15 @@ public class BoardFrame extends JFrame implements BoardView  {
         displayStatus(message, player.isPlayerAI());
     }
 
-    private void handleBackgroundColour(ThemeColour themeColour){
-        this.themeColour = themeColour;
+    private void handleBackgroundColour(String hex){
+
+        if (hex.equals(BoardFrame.ThemeColour.ORIGINAL.getBackgroundColour())){
+            themeColour = BoardFrame.ThemeColour.ORIGINAL;
+        }
+        else{
+            themeColour = BoardFrame.ThemeColour.RICK_MORTY;
+        }
+
         createGUI();
     }
 
