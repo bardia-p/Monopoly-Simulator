@@ -41,6 +41,10 @@ public class BoardModel {
      * Keeps track of the number of AI players.
      */
     private int numAIPlayer;
+
+
+    private String filename;
+
     /**
      * Keeps track of the size of the board.
      */
@@ -120,24 +124,39 @@ public class BoardModel {
      * Keeps track of the player icons
      */
     public enum Icon {
-        BOOT("boot", "images/icons/boot.png"),
-        IRON("iron", "images/icons/iron.png"),
-        SCOTTIE_DOG("scottie dog", "images/icons/scottie_dog.png"),
-        BATTLESHIP("battleship", "images/icons/battleship.png"),
-        TOP_HAT("top hat", "images/icons/top_hat.png"),
-        WHEELBARROW("wheelbarrow", "images/icons/wheelbarrow.png"),
-        THIMBLE("thimble", "images/icons/thimble.png"),
-        RACING_CAR("racing car", "images/icons/racing_car.png"),
+//        BOOT("boot", "images/rick_morty/icons/council_of_ricks_badge.png"),
+//        IRON("iron", "images/original/icons/iron.png"),
+//        SCOTTIE_DOG("scottie dog", "images/original/icons/scottie_dog.png"),
+//        BATTLESHIP("battleship", "images/original/icons/battleship.png"),
+//        TOP_HAT("top hat", "images/original/icons/top_hat.png"),
+//        WHEELBARROW("wheelbarrow", "images/original/icons/wheelbarrow.png"),
+//        THIMBLE("thimble", "images/original/icons/thimble.png"),
+//        RACING_CAR("racing car", "images/original/icons/racing_car.png"),
+//        BANK("bank", "");
+
+        ICON1("boot", "images/original/icons/boot.png"),
+        ICON2("iron", "images/original/icons/iron.png"),
+        ICON3("scottie dog", "images/original/icons/scottie_dog.png"),
+        ICON4("battleship", "images/original/icons/battleship.png"),
+        ICON5("top hat", "images/original/icons/top_hat.png"),
+        ICON6("wheelbarrow", "images/original/icons/wheelbarrow.png"),
+        ICON7("thimble", "images/original/icons/thimble.png"),
+        ICON8("racing car", "images/original/icons/racing_car.png"),
         BANK("bank", "");
 
-        private final String name;
-        private final String imgPath;
+        private String name;
+        private String imgPath;
         private boolean used;
 
         Icon(String name, String imgPath) {
             this.name = name;
             this.imgPath = imgPath;
             this.used = false;
+        }
+
+        public void setIcon(String name, String imgPath){
+            this.name = name;
+            this.imgPath = imgPath;
         }
 
         public String getImgPath() {
@@ -176,6 +195,7 @@ public class BoardModel {
         numPlayers = 0;
         checkDoubleRoll = false;
         animationRunning = false;
+        filename = "";
     }
 
     /**
@@ -221,7 +241,7 @@ public class BoardModel {
      */
     public void constructBoard(String filename) {
         try {
-            //File f = new File("board_config/rickAndMortyBoard.xml");
+            //File f = new File("board_config/rick_morty_board.xml");
             File f = new File(CONFIG_DIR + "/" + filename);
 
             readSAX(f, new XMLParser(this, bank));
@@ -961,6 +981,10 @@ public class BoardModel {
         s.parse(f, handler);
     }
 
+    public void setFilename(String filename){
+        this.filename = filename;
+    }
+
     /**
      * Primary loop of the program. Alternates the active players based on the list generated
      * and gets the actions they are able to take. Once there is only one player remaining finishes
@@ -969,8 +993,8 @@ public class BoardModel {
      * @author Kyra Lothrop 101145872
      */
     public void play() {
-        constructBoard("rickAndMortyBoard.xml"); //for debug
         initializeMonopoly();
+        constructBoard("rick_morty_board_images.xml");
         getNumPlayers();
         initiatePlayers();
 
