@@ -67,6 +67,13 @@ public class BoardFrame extends JFrame implements BoardView  {
      * Keeps track of the turn label.
      */
     private JLabel statusLabel;
+
+
+    public static String moneyImg;
+
+    public static String houseImg;
+    public static String hotelImg;
+
     /**
      * Keeps track of the size of the board on each side.
      */
@@ -182,15 +189,27 @@ public class BoardFrame extends JFrame implements BoardView  {
         private String backgroundColour;
         private String textColour;
 
+        private final String ORIGINAL_BG = "#cbe4d0";
+        private final String ORIGINAL_TEXT = "#000000";
+
+        private final String RICK_MORTY_BG = "#131929";
+        private final String RICK_MORTY_TEXT = "#FFFFFF";
+
 
         ThemeColour(String backgroundColour, String textColour){
             this.backgroundColour = backgroundColour;
             this.textColour = textColour;
         }
 
-        public void setColorPair(String backgroundColour, String textColour){
+        public void setColorPair(String backgroundColour){
             this.backgroundColour = backgroundColour;
-            this.textColour = textColour;
+
+            if (this.backgroundColour.equals(ORIGINAL_BG)){
+                this.textColour = ORIGINAL_TEXT;
+            }
+            else if (this.backgroundColour.equals(RICK_MORTY_BG)){
+                this.textColour = RICK_MORTY_TEXT;
+            }
         }
     }
 
@@ -211,6 +230,10 @@ public class BoardFrame extends JFrame implements BoardView  {
         playerStatusPanels = new HashMap<>();
         boardCells = new ArrayList<>();
         commandButtons = new ArrayList<>();
+
+        moneyImg = "";
+        houseImg = "";
+        hotelImg = "";
 
         // Adding the frame to the model.
         model = new BoardModel();
@@ -475,7 +498,7 @@ public class BoardFrame extends JFrame implements BoardView  {
 
         cashPanel.setBackground(Color.decode(ThemeColour.BACKGROUND.backgroundColour));
         try {
-            BufferedImage image = ImageIO.read(Objects.requireNonNull(getClass().getResource("images/money.png")));
+            BufferedImage image = ImageIO.read(Objects.requireNonNull(getClass().getResource(moneyImg)));
 
 
             Image newImage = image.getScaledInstance(CASH_WIDTH, CASH_HEIGHT, Image.SCALE_DEFAULT);
@@ -1270,7 +1293,7 @@ public class BoardFrame extends JFrame implements BoardView  {
         }
 
         try {
-            String imgPath = isHotel? "images/houses/Hotel.png" : "images/houses/monopoly house.png";
+            String imgPath = isHotel? hotelImg : houseImg;
             BufferedImage houseImg = ImageIO.read(Objects.requireNonNull(getClass().getResource(imgPath)));
             Image dimg = houseImg.getScaledInstance(HOUSE_SIZE,HOUSE_SIZE, Image.SCALE_SMOOTH);
 

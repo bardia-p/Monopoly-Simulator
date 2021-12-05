@@ -9,37 +9,49 @@ Sarah Chow
     <players>
         <icon>
             <name>battleship</name>
-            <image>images/original_icons/battleship.png</image>
+            <image>images/original/icons/battleship.png</image>
         </icon>
         <icon>
             <name>boot</name>
-            <image>images/original_icons/boot.png</image>
+            <image>images/original/icons/boot.png</image>
         </icon>
         <icon>
             <name>iron</name>
-            <image>images/original_icons/iron.png</image>
+            <image>images/original/icons/iron.png</image>
         </icon>
         <icon>
             <name>racing car</name>
-            <image>images/original_icons/racing_car.png</image>
+            <image>images/original/icons/racing_car.png</image>
         </icon>
         <icon>
             <name>scottie dog</name>
-            <image>images/original_icons/scottie_dog.png</image>
+            <image>images/original/icons/scottie_dog.png</image>
         </icon>
         <icon>
             <name>thimble</name>
-            <image>images/original_icons/thimble.png</image>
+            <image>images/original/icons/thimble.png</image>
         </icon>
         <icon>
             <name>top hat</name>
-            <image>images/original_icons/top_hat.png</image>
+            <image>images/original/icons/top_hat.png</image>
         </icon>
         <icon>
             <name>wheelbarrow</name>
-            <image>images/original_icons/wheelbarrow.png</image>
+            <image>images/original/icons/wheelbarrow.png</image>
         </icon>
     </players>
+
+    <money>
+        <image>images/original/money.png</image>
+    </money>
+
+    <house>
+        <image>images/original/houses/house.png</image>
+    </house>
+
+    <hotel>
+        <image>images/original/houses/hotel.png</image>
+    </hotel>
 
     <boardcells>
         <cell>
@@ -47,7 +59,7 @@ Sarah Chow
             <rent>
                 <fee>200</fee>
             </rent>
-            <image>images/original_board/go.jpg</image>
+            <image>images/original/board/go.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -62,13 +74,13 @@ Sarah Chow
                 <fee>250</fee>
             </rent>
             <neighbourhood>brown</neighbourhood>
-            <image>images/original_board/mediterranean.jpg</image>
+            <image>images/original/board/mediterranean.jpg</image>
         </cell>
         <cell>
             <type>EmptyCell</type>
             <name>Community Chest</name>
             <cellType>chance and chest</cellType>
-            <image>images/original_board/chest_1.jpg</image>
+            <image>images/original/board/chest_1.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -83,7 +95,7 @@ Sarah Chow
                 <fee>450</fee>
             </rent>
             <neighbourhood>brown</neighbourhood>
-            <image>images/original_board/baltic.jpg</image>
+            <image>images/original/board/baltic.jpg</image>
         </cell>
         <cell>
             <type>Tax</type>
@@ -92,7 +104,7 @@ Sarah Chow
                 <fee>200</fee>
             </rent>
             <owner>bank</owner>
-            <image>images/original_board/income_tax.jpg</image>
+            <image>images/original/board/income_tax.jpg</image>
         </cell>
         <cell>
             <type>Railroad</type>
@@ -104,7 +116,7 @@ Sarah Chow
                 <fee>100</fee>
                 <fee>200</fee>
             </rent>
-            <image>images/original_board/railroad_1.jpg</image>
+            <image>images/original/board/railroad_1.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -119,13 +131,13 @@ Sarah Chow
                 <fee>550</fee>
             </rent>
             <neighbourhood>sky</neighbourhood>
-            <image>images/original_board/oriental.jpg</image>
+            <image>images/original/board/oriental.jpg</image>
         </cell>
         <cell>
             <type>EmptyCell</type>
             <name>Chance Card</name>
             <cellType>chance and chest</cellType>
-            <image>images/original_board/chance_1.jpg</image>
+            <image>images/original/board/chance_1.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -140,7 +152,7 @@ Sarah Chow
                 <fee>550</fee>
             </rent>
             <neighbourhood>sky</neighbourhood>
-            <image>images/original_board/vermont.jpg</image>
+            <image>images/original/board/vermont.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -155,13 +167,13 @@ Sarah Chow
                 <fee>600</fee>
             </rent>
             <neighbourhood>sky</neighbourhood>
-            <image>images/original_board/connecticut.jpg</image>
+            <image>images/original/board/connecticut.jpg</image>
         </cell>
         <cell>
             <type>Jail</type>
             <name>Jail</name>
             <owner>bank</owner>
-            <image>images/original_board/jail.jpg</image>
+            <image>images/original/board/jail.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -176,7 +188,7 @@ Sarah Chow
                 <fee>750</fee>
             </rent>
             <neighbourhood>magenta</neighbourhood>
-            <image>images/original_board/st_charles.jpg</image>
+            <image>images/original/board/st_charles.jpg</image>
         </cell>
         <cell>
             <type>Utility</type>
@@ -186,7 +198,7 @@ Sarah Chow
                 <fee>4</fee>
                 <fee>10</fee>
             </rent>
-            <image>images/original_board/electric.jpg</image>
+            <image>images/original/board/electric.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -201,7 +213,7 @@ Sarah Chow
                 <fee>750</fee>
             </rent>
             <neighbourhood>magenta</neighbourhood>
-            <image>images/original_board/states_avenue.jpg</image>
+            <image>images/original/board/states_avenue.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -216,7 +228,7 @@ Sarah Chow
                 <fee>900</fee>
             </rent>
             <neighbourhood>magenta</neighbourhood>
-            <image>images/original_board/virginia.jpg</image>
+            <image>images/original/board/virginia.jpg</image>
         </cell>
         <cell>
             <type>Railroad</type>
@@ -228,7 +240,7 @@ Sarah Chow
                 <fee>100</fee>
                 <fee>200</fee>
             </rent>
-            <image>images/original_board/railroad_2.jpg</image>
+            <image>images/original/board/railroad_2.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -243,13 +255,13 @@ Sarah Chow
                 <fee>950</fee>
             </rent>
             <neighbourhood>orange</neighbourhood>
-            <image>images/original_board/st_james.jpg</image>
+            <image>images/original/board/st_james.jpg</image>
         </cell>
         <cell>
             <type>EmptyCell</type>
             <name>Community Chest</name>
             <cellType>chance and chest</cellType>
-            <image>images/original_board/chest_2.jpg</image>
+            <image>images/original/board/chest_2.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -264,7 +276,7 @@ Sarah Chow
                 <fee>950</fee>
             </rent>
             <neighbourhood>orange</neighbourhood>
-            <image>images/original_board/tennessee.jpg</image>
+            <image>images/original/board/tennessee.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -279,11 +291,11 @@ Sarah Chow
                 <fee>1000</fee>
             </rent>
             <neighbourhood>orange</neighbourhood>
-            <image>images/original_board/new_york.jpg</image>
+            <image>images/original/board/new_york.jpg</image>
         </cell>
         <cell>
             <type>Free Parking</type>
-            <image>images/original_board/free_parking.jpg</image>
+            <image>images/original/board/free_parking.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -298,13 +310,13 @@ Sarah Chow
                 <fee>1050</fee>
             </rent>
             <neighbourhood>red</neighbourhood>
-            <image>images/original_board/kentucky.jpg</image>
+            <image>images/original/board/kentucky.jpg</image>
         </cell>
         <cell>
             <type>EmptyCell</type>
             <name>Chance Card</name>
             <cellType>chance and chest</cellType>
-            <image>images/original_board/chance_2.jpg</image>
+            <image>images/original/board/chance_2.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -319,7 +331,7 @@ Sarah Chow
                 <fee>1050</fee>
             </rent>
             <neighbourhood>red</neighbourhood>
-            <image>images/original_board/indiana.jpg</image>
+            <image>images/original/board/indiana.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -334,7 +346,7 @@ Sarah Chow
                 <fee>1100</fee>
             </rent>
             <neighbourhood>red</neighbourhood>
-            <image>images/original_board/illinois.jpg</image>
+            <image>images/original/board/illinois.jpg</image>
         </cell>
         <cell>
             <type>Railroad</type>
@@ -346,7 +358,7 @@ Sarah Chow
                 <fee>100</fee>
                 <fee>200</fee>
             </rent>
-            <image>images/original_board/railroad_3.jpg</image>
+            <image>images/original/board/railroad_3.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -361,7 +373,7 @@ Sarah Chow
                 <fee>1150</fee>
             </rent>
             <neighbourhood>yellow</neighbourhood>
-            <image>images/original_board/atlantic.jpg</image>
+            <image>images/original/board/atlantic.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -376,7 +388,7 @@ Sarah Chow
                 <fee>1150</fee>
             </rent>
             <neighbourhood>yellow</neighbourhood>
-            <image>images/original_board/ventnor.jpg</image>
+            <image>images/original/board/ventnor.jpg</image>
         </cell>
         <cell>
             <type>Utility</type>
@@ -386,7 +398,7 @@ Sarah Chow
                 <fee>4</fee>
                 <fee>10</fee>
             </rent>
-            <image>images/original_board/water_works.jpg</image>
+            <image>images/original/board/water_works.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -401,12 +413,12 @@ Sarah Chow
                 <fee>1200</fee>
             </rent>
             <neighbourhood>yellow</neighbourhood>
-            <image>images/original_board/marvin.jpg</image>
+            <image>images/original/board/marvin.jpg</image>
         </cell>
         <cell>
             <type>Go To Jail</type>
             <name>GO TO JAIL</name>
-            <image>images/original_board/go_to_jail.jpg</image>
+            <image>images/original/board/go_to_jail.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -421,7 +433,7 @@ Sarah Chow
                 <fee>1275</fee>
             </rent>
             <neighbourhood>green</neighbourhood>
-            <image>images/original_board/pacific.jpg</image>
+            <image>images/original/board/pacific.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -436,13 +448,13 @@ Sarah Chow
                 <fee>1275</fee>
             </rent>
             <neighbourhood>green</neighbourhood>
-            <image>images/original_board/north_carolina.jpg</image>
+            <image>images/original/board/north_carolina.jpg</image>
         </cell>
         <cell>
             <type>EmptyCell</type>
             <name>Community Chest</name>
             <cellType>chance and chest</cellType>
-            <image>images/original_board/chest_3.jpg</image>
+            <image>images/original/board/chest_3.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -457,7 +469,7 @@ Sarah Chow
                 <fee>1400</fee>
             </rent>
             <neighbourhood>green</neighbourhood>
-            <image>images/original_board/pennsylvania.jpg</image>
+            <image>images/original/board/pennsylvania.jpg</image>
         </cell>
         <cell>
             <type>Railroad</type>
@@ -469,13 +481,13 @@ Sarah Chow
                 <fee>100</fee>
                 <fee>200</fee>
             </rent>
-            <image>images/original_board/railroad_4.jpg</image>
+            <image>images/original/board/railroad_4.jpg</image>
         </cell>
         <cell>
             <type>EmptyCell</type>
             <name>Chance Card</name>
             <cellType>chance and chest</cellType>
-            <image>images/original_board/chance_3.jpg</image>
+            <image>images/original/board/chance_3.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -490,7 +502,7 @@ Sarah Chow
                 <fee>1500</fee>
             </rent>
             <neighbourhood>indigo</neighbourhood>
-            <image>images/original_board/park_place.jpg</image>
+            <image>images/original/board/park_place.jpg</image>
         </cell>
         <cell>
             <type>Tax</type>
@@ -499,7 +511,7 @@ Sarah Chow
                 <fee>100</fee>
             </rent>
             <owner>bank</owner>
-            <image>images/original_board/luxury_tax.jpg</image>
+            <image>images/original/board/luxury_tax.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -514,7 +526,7 @@ Sarah Chow
                 <fee>2000</fee>
             </rent>
             <neighbourhood>indigo</neighbourhood>
-            <image>images/original_board/boardwalk.jpg</image>
+            <image>images/original/board/boardwalk.jpg</image>
         </cell>
     </boardcells>
 </board>

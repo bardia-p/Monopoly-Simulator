@@ -468,7 +468,7 @@ public class Player {
         StringBuilder playerInfo;
 
         playerInfo = new StringBuilder("\tname='" + name + '\'' +
-                "\n\ticon='" + icon + '\'' +
+                "\n\ticon='" + icon.getName() + '\'' +
                 "\n\tcash='" + cash + '\'' +
                 "\n\tposition='" + currentCell.getName() + '\'' +
                 "\n\tbankrupt=" + bankrupt +

@@ -11,29 +11,41 @@ Sarah Chow
     <players>
         <icon>
             <name>council of ricks badge</name>
-            <image>images/rick_morty_icons/council_of_ricks_badge.png</image>
+            <image>images/rick_morty/icons/council_of_ricks_badge.png</image>
         </icon>
         <icon>
-            <name>me_seeks_box</name>
-            <image>images/rick_morty_icons/me_seeks_box.png</image>
+            <name>me seeks box</name>
+            <image>images/rick_morty/icons/me_seeks_box.png</image>
         </icon>
         <icon>
             <name>plumbus</name>
-            <image>images/rick_morty_icons/plumbus.png</image>
+            <image>images/rick_morty/icons/plumbus.png</image>
         </icon>
         <icon>
             <name>portal gun</name>
-            <image>images/rick_morty_icons/portal_gun.png</image>
+            <image>images/rick_morty/icons/portal_gun.png</image>
         </icon>
         <icon>
             <name>rick's car</name>
-            <image>images/rick_morty_icons/ricks_car.png</image>
+            <image>images/rick_morty/icons/ricks_car.png</image>
         </icon>
         <icon>
             <name>snuffle's helmet</name>
-            <image>images/rick_morty_icons/snuffles_helmet.png</image>
+            <image>images/rick_morty/icons/snuffles_helmet.png</image>
         </icon>
     </players>
+
+    <money>
+        <image>images/rick_morty/money.png</image>
+    </money>
+
+    <house>
+        <image>images/rick_morty/houses/house.png</image>
+    </house>
+
+    <hotel>
+        <image>images/rick_morty/houses/hotel.png</image>
+    </hotel>
 
     <boardcells>
         <cell>
@@ -41,7 +53,7 @@ Sarah Chow
             <rent>
                 <fee>200</fee>
             </rent>
-            <image>images/original_board/go.jpg</image>
+            <image>images/original/board/go.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -146,7 +158,7 @@ Sarah Chow
             <type>Jail</type>
             <name>Jail</name>
             <owner>bank</owner>
-            <image>images/original_board/jail.jpg</image>
+            <image>images/original/board/jail.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -259,7 +271,7 @@ Sarah Chow
         </cell>
         <cell>
             <type>Free Parking</type>
-            <image>images/original_board/free_parking.jpg</image>
+            <image>images/original/board/free_parking.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
@@ -373,7 +385,7 @@ Sarah Chow
         <cell>
             <type>Go To Jail</type>
             <name>GO TO JAIL</name>
-            <image>images/original_board/go_to_jail.jpg</image>
+            <image>images/original/board/go_to_jail.jpg</image>
         </cell>
         <cell>
             <type>Property</type>
