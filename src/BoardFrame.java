@@ -215,7 +215,7 @@ public class BoardFrame extends JFrame implements BoardView  {
 
         createGUI();
 
-        //model.play("originalBoard");
+        model.start();
     }
 
     /**
@@ -249,7 +249,7 @@ public class BoardFrame extends JFrame implements BoardView  {
         loadGame.setActionCommand(BoardModel.Command.LOAD_BOARD.getStringCommand());
         loadGame.addActionListener(controller);
 
-        saveGame.setEnabled(false);
+        saveGame.setEnabled(true); //change this or kyra will be angry ;(
         saveGame.setActionCommand(BoardModel.Command.SAVE_BOARD.getStringCommand());
         saveGame.addActionListener(controller);
 
@@ -334,6 +334,8 @@ public class BoardFrame extends JFrame implements BoardView  {
             case GO_TO_JAIL -> handleGoToJail(player);
             case EXIT_JAIL -> handleExitJail(player);
             case FORCE_PAY_JAIL -> handleForceExitJail(player);
+            case UPDATE_MODEL -> updateBoard();
+            case NEW_GAME -> makeNewBoard();
         }
     }
 
@@ -698,7 +700,7 @@ public class BoardFrame extends JFrame implements BoardView  {
                     "Select the Monopoly board", "SELECT BOARD",
                     JOptionPane.QUESTION_MESSAGE, null, stringFileNames.toArray(), stringFileNames.get(0));
 
-            model.play(selectedBoard);
+            model.startNewGame(true);
         }catch(IOException e){
             System.out.println(e);
         }
@@ -1390,6 +1392,36 @@ public class BoardFrame extends JFrame implements BoardView  {
     private void handlePassGo(Player player) {
         String message = "Player " + player.getIconName().toUpperCase() +  " passed go!";
         displayStatus(message, player.isPlayerAI());
+    }
+
+    public void updateBoard(){
+        clearBoard();
+
+        this.constructBoard(model.getCells());
+        this.createPlayers(model.getPlayers());
+
+        for (Player p: model.getPlayers()){
+            this.showCurrentCell(p, p.getPosition());
+        }
+
+        this.revalidate();
+    }
+
+    private void clearBoard(){
+        getContentPane().removeAll();
+        layeredPane.removeAll();
+        playerLabels.clear();
+        playerStatusPanels.clear();
+
+        createGUI();
+    }
+
+    private void makeNewBoard(){
+        clearBoard();
+
+        model.constructBoard("originalBoard.xml");
+        model.getNumPlayers();
+        model.initiatePlayers();
     }
 
     /**
