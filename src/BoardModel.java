@@ -850,7 +850,6 @@ public class BoardModel implements Serializable {
     public void forfeit(Player player) {
         player.setBankrupt();
         player.setRank(numPlayers--);
-        System.out.println(numPlayers);
         sendBoardUpdate(new PlayerEvent(this, Command.FORFEIT, player));
         passTurn(player);
     }
@@ -1113,7 +1112,7 @@ public class BoardModel implements Serializable {
     }
 
     private void handleNewGame(){
-        constructBoard("rickAndMortyBoard.xml"); //for debug
+        constructBoard("originalBoard.xml"); //for debug
         initializeMonopoly();
         getNumPlayers();
         initiatePlayers();

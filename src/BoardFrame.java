@@ -291,7 +291,7 @@ public class BoardFrame extends JFrame implements BoardView {
             case GO_TO_JAIL -> handleGoToJail(player);
             case EXIT_JAIL -> handleExitJail(player);
             case FORCE_PAY_JAIL -> handleForceExitJail(player);
-            case UPDATE_MODEL -> updateModel(source);
+            case UPDATE_MODEL -> updateBoard();
         }
     }
 
@@ -1332,15 +1332,11 @@ public class BoardFrame extends JFrame implements BoardView {
         displayStatus("Game loaded!", false);
     }
 
-    public void updateModel(BoardModel model){
+    public void updateBoard(){
         getContentPane().removeAll();
         layeredPane.removeAll();
         playerLabels.clear();
         playerStatusPanels.clear();
-
-        this.model = model;
-
-        controller.updateModel(model);
 
         createGUI();
         this.constructBoard(model.getCells());
