@@ -84,7 +84,8 @@ public class BoardModel {
      */
     public enum Status {
         GET_NUM_PLAYERS, CREATE_PLAYER_ICONS, INITIALIZE_BOARD, INITIALIZE_MONOPOLY, INITIALIZE_PLAYERS,
-        GET_COMMAND, GO_TO_JAIL, EXIT_JAIL, FORCE_PAY_JAIL, GAME_OVER, PASS_GO, FREE_PARKING, PLAYER_INPUT
+        GET_COMMAND, GO_TO_JAIL, EXIT_JAIL, FORCE_PAY_JAIL, GAME_OVER, PASS_GO, FREE_PARKING, PLAYER_INPUT,
+        BACKGROUND_COLOUR
     }
 
     /**
@@ -120,14 +121,14 @@ public class BoardModel {
      * Keeps track of the player icons
      */
     public enum Icon {
-        BOOT("boot", "images/icons/boot.png"),
-        IRON("iron", "images/icons/iron.png"),
-        SCOTTIE_DOG("scottie dog", "images/icons/scottie_dog.png"),
-        BATTLESHIP("battleship", "images/icons/battleship.png"),
-        TOP_HAT("top hat", "images/icons/top_hat.png"),
-        WHEELBARROW("wheelbarrow", "images/icons/wheelbarrow.png"),
-        THIMBLE("thimble", "images/icons/thimble.png"),
-        RACING_CAR("racing car", "images/icons/racing_car.png"),
+        BOOT("boot", "images/rick_morty_icons/council_of_ricks_badge.png"),
+        IRON("iron", "images/original_icons/iron.png"),
+        SCOTTIE_DOG("scottie dog", "images/original_icons/scottie_dog.png"),
+        BATTLESHIP("battleship", "images/original_icons/battleship.png"),
+        TOP_HAT("top hat", "images/original_icons/top_hat.png"),
+        WHEELBARROW("wheelbarrow", "images/original_icons/wheelbarrow.png"),
+        THIMBLE("thimble", "images/original_icons/thimble.png"),
+        RACING_CAR("racing car", "images/original_icons/racing_car.png"),
         BANK("bank", "");
 
         private final String name;
@@ -926,6 +927,10 @@ public class BoardModel {
         dice[1] = dice2;
     }
 
+    public void setBackgroundColour(String hex){
+        sendBoardUpdate(new BoardEvent(this, Status.BACKGROUND_COLOUR, hex));
+    }
+
     /**
      * Accessor method to get the current turn.
      *
@@ -969,7 +974,7 @@ public class BoardModel {
      * @author Kyra Lothrop 101145872
      */
     public void play() {
-        constructBoard("rickAndMortyBoard.xml"); //for debug
+        constructBoard("rickAndMortyBoardImages.xml"); //for debug
         initializeMonopoly();
         getNumPlayers();
         initiatePlayers();

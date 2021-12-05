@@ -27,6 +27,8 @@ public class BoardEvent extends MonopolyEvent {
      */
     private Player player;
 
+    private String str;
+
     /**
      * The main constructor for the BoardEvent class.
      * @author Bardia Parmoun, 101143006
@@ -48,6 +50,11 @@ public class BoardEvent extends MonopolyEvent {
     public BoardEvent(BoardModel model, BoardModel.Status status, Player player){
         this(model, status);
         this.player = player;
+    }
+
+    public BoardEvent(BoardModel model, BoardModel.Status status, String str){
+        this(model, status);
+        this.str = str;
     }
 
     /**
@@ -78,5 +85,9 @@ public class BoardEvent extends MonopolyEvent {
      */
     public Player getPlayer(){
         return player;
+    }
+
+    public String getStr() {
+        return str;
     }
 }
