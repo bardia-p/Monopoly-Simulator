@@ -176,7 +176,7 @@ public class BoardFrame extends JFrame implements BoardView  {
      */
     public static final int GOTOJAIL_LOCATION = 30;
 
-    private ThemeColour themeColour;
+    public static ThemeColour themeColour;
 
     public enum ThemeColour {
         ORIGINAL("#cbe4d0", "#000000"),
@@ -191,9 +191,6 @@ public class BoardFrame extends JFrame implements BoardView  {
             this.textColour = textColour;
         }
 
-        public String getBackgroundColour() {
-            return backgroundColour;
-        }
     }
 
 
@@ -311,7 +308,6 @@ public class BoardFrame extends JFrame implements BoardView  {
             case GO_TO_JAIL -> handleGoToJail(player);
             case EXIT_JAIL -> handleExitJail(player);
             case FORCE_PAY_JAIL -> handleForceExitJail(player);
-            case BACKGROUND_COLOUR -> handleBackgroundColour(((BoardEvent) e).getStr());
         }
     }
 
@@ -1349,18 +1345,6 @@ public class BoardFrame extends JFrame implements BoardView  {
     private void handlePassGo(Player player) {
         String message = "Player " + player.getIconName().toUpperCase() +  " passed go!";
         displayStatus(message, player.isPlayerAI());
-    }
-
-    private void handleBackgroundColour(String hex){
-
-        if (hex.equals(BoardFrame.ThemeColour.ORIGINAL.getBackgroundColour())){
-            themeColour = BoardFrame.ThemeColour.ORIGINAL;
-        }
-        else{
-            themeColour = BoardFrame.ThemeColour.RICK_MORTY;
-        }
-
-        createGUI();
     }
 
     /**

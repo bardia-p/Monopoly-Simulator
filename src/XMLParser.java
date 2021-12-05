@@ -165,7 +165,10 @@ public class XMLParser extends DefaultHandler {
             }
         }
         else if (qName.equals("colour")){
-            model.setBackgroundColour(backgroundColour);
+            switch(backgroundColour){
+                case("#cbe4d0") -> BoardFrame.themeColour = BoardFrame.ThemeColour.ORIGINAL;
+                case("#131929") -> BoardFrame.themeColour = BoardFrame.ThemeColour.RICK_MORTY;
+            }
         }
     }
 
