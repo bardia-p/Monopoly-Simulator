@@ -84,8 +84,7 @@ public class BoardModel {
      */
     public enum Status {
         GET_NUM_PLAYERS, CREATE_PLAYER_ICONS, INITIALIZE_BOARD, INITIALIZE_MONOPOLY, INITIALIZE_PLAYERS,
-        GET_COMMAND, GO_TO_JAIL, EXIT_JAIL, FORCE_PAY_JAIL, GAME_OVER, PASS_GO, FREE_PARKING, PLAYER_INPUT,
-        BACKGROUND_COLOUR
+        GET_COMMAND, GO_TO_JAIL, EXIT_JAIL, FORCE_PAY_JAIL, GAME_OVER, PASS_GO, FREE_PARKING, PLAYER_INPUT
     }
 
     /**
@@ -925,10 +924,6 @@ public class BoardModel {
     public void setDice(int dice1, int dice2) {
         dice[0] = dice1;
         dice[1] = dice2;
-    }
-
-    public void setBackgroundColour(String hex){
-        sendBoardUpdate(new BoardEvent(this, Status.BACKGROUND_COLOUR, hex));
     }
 
     /**
