@@ -249,7 +249,7 @@ public class BoardFrame extends JFrame implements BoardView  {
         loadGame.setActionCommand(BoardModel.Command.LOAD_BOARD.getStringCommand());
         loadGame.addActionListener(controller);
 
-        saveGame.setEnabled(true); //change this or kyra will be angry ;(
+        saveGame.setEnabled(true);
         saveGame.setActionCommand(BoardModel.Command.SAVE_BOARD.getStringCommand());
         saveGame.addActionListener(controller);
 
@@ -321,6 +321,8 @@ public class BoardFrame extends JFrame implements BoardView  {
         Player player = be.getPlayer();
         switch (e.getStatus()) {
             case CHOOSE_BOARD -> handleChooseBoard();
+            case SAVE_GAME -> handleNameSaveGameFile();
+            case LOAD_GAME -> handleLoadGameFromFile();
             case INITIALIZE_MONOPOLY -> handleWelcomeMonopoly();
             case GAME_OVER -> handleWinner(source.getPlayers());
             case INITIALIZE_BOARD -> constructBoard(source.getCells());
@@ -668,10 +670,10 @@ public class BoardFrame extends JFrame implements BoardView  {
         updatePlayerStatusPanel(player);
     }
 
-    private void updateAvailableMenuOptions(){
-        //here1
-
-    }
+//    private void updateAvailableMenuOptions(){
+//        //here1
+//
+//    }
 
     /**
      * Method to cancel the player initialization process.
@@ -685,7 +687,7 @@ public class BoardFrame extends JFrame implements BoardView  {
     private void handleChooseBoard(){
         List<File> boardFileOptions = new ArrayList<>();
         try{
-            boardFileOptions = Files.walk(Paths.get("board_config"))
+            boardFileOptions = Files.walk(Paths.get(BoardModel.CONFIG_DIR))
                     .filter(Files::isRegularFile)
                     .map(Path::toFile)
                     .collect(Collectors.toList());
@@ -704,6 +706,56 @@ public class BoardFrame extends JFrame implements BoardView  {
             System.out.println(e);
         }
 
+    }
+
+    private void handleNameSaveGameFile(){
+        JTextField saveFileName = new JTextField();
+
+        Object[] message = {
+                "Name the save game file:", saveFileName,
+        };
+
+        int ans = JOptionPane.showConfirmDialog(null, message, "SAVE GAME",
+                JOptionPane.OK_CANCEL_OPTION);
+
+        if (ans != JOptionPane.OK_OPTION){
+            JOptionPane.showMessageDialog(null, "Save Cancelled!");
+        }
+        else if(saveFileName.toString().contains(".txt")){
+            JOptionPane.showMessageDialog(null, "Please do not include the file type in the " +
+                    "name. \nSave Cancelled");
+        }
+        else{
+            JOptionPane.showMessageDialog(null, "Saving the game to file" +
+                    saveFileName.getText()+".txt ...!");
+            model.serializationSave(saveFileName.getText()+".txt");
+        }
+    }
+
+    private void handleLoadGameFromFile(){
+        List<File> boardFileOptions = new ArrayList<>();
+        try{
+            boardFileOptions = Files.walk(Paths.get(BoardModel.SAVED_GAMES_DIR))
+                    .filter(Files::isRegularFile)
+                    .map(Path::toFile)
+                    .collect(Collectors.toList());
+
+            List<String> stringFileNames = new ArrayList<>();
+            for(File f: boardFileOptions){
+                stringFileNames.add(f.getName());
+            }
+
+            String selectedBoard = (String) JOptionPane.showInputDialog(null,
+                    "Select the saved game to load", "SELECT SAVED GAME",
+                    JOptionPane.QUESTION_MESSAGE, null, stringFileNames.toArray(), stringFileNames.get(0));
+
+            JOptionPane.showMessageDialog(null, "Loading the game from the file" +
+                    selectedBoard +" ...!");
+
+            model.serializationLoad(selectedBoard);
+        }catch(IOException e){
+            System.out.println(e);
+        }
     }
 
     /**

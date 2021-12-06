@@ -77,7 +77,9 @@ public class BoardModel implements Serializable{
     /**
      * Keeps track of the board_config directory to read the XML files.
      */
-    private final static String CONFIG_DIR = "board_config";
+    public final static String CONFIG_DIR = "board_config";
+
+    public final static String SAVED_GAMES_DIR = "saved_games";
 
     private volatile boolean loadGame;
 
@@ -89,7 +91,7 @@ public class BoardModel implements Serializable{
      * Keeps track of the possible board statuses.
      */
     public enum Status {
-        GET_NUM_PLAYERS, CREATE_PLAYER_ICONS, CHOOSE_BOARD, INITIALIZE_BOARD, INITIALIZE_MONOPOLY, INITIALIZE_PLAYERS,
+        GET_NUM_PLAYERS, CREATE_PLAYER_ICONS, CHOOSE_BOARD, SAVE_GAME, LOAD_GAME, INITIALIZE_BOARD, INITIALIZE_MONOPOLY, INITIALIZE_PLAYERS,
         GET_COMMAND, GO_TO_JAIL, EXIT_JAIL, FORCE_PAY_JAIL, GAME_OVER, PASS_GO, FREE_PARKING, PLAYER_INPUT, UPDATE_MODEL,
         NEW_GAME
     }
@@ -219,9 +221,11 @@ public class BoardModel implements Serializable{
         } else if(command.equals((Command.NEW_BOARD.getStringCommand()))){
             chooseBoard();
         } else if(command.equals((Command.LOAD_BOARD.getStringCommand()))){
-            serializationLoad();
+            selectFileToLoad();
+            //serializationLoad();
         } else if(command.equals((Command.SAVE_BOARD.getStringCommand()))){
-            serializationSave();
+            selectFileToSaveGame();
+            //serializationSave();
         }
 
         // Avoids race conditions.
@@ -233,6 +237,14 @@ public class BoardModel implements Serializable{
 
     public void chooseBoard(){
         sendBoardUpdate(new BoardEvent(this, Status.CHOOSE_BOARD));
+    }
+
+    private void selectFileToSaveGame(){
+        sendBoardUpdate(new BoardEvent(this, Status.SAVE_GAME));
+    }
+
+    private void selectFileToLoad(){
+        sendBoardUpdate(new BoardEvent(this, Status.LOAD_GAME));
     }
 
     /**
@@ -607,7 +619,7 @@ public class BoardModel implements Serializable{
 
         for (int i = 1; i <= amountToMove; i++) {
             if (cells.get((originalPosition + i) % SIZE_OF_BOARD).getType() == BoardCell.CellType.GO) {
-                sendBoardUpdate(new BoardEvent(this, Status.PASS_GO, player));  //here
+                sendBoardUpdate(new BoardEvent(this, Status.PASS_GO, player));
                 player.setCash(player.getCash() + ((Go) cells.get(0)).getReward());
             }
         }
@@ -1005,9 +1017,10 @@ public class BoardModel implements Serializable{
         s.parse(f, handler);
     }
 
-    private void serializationLoad(){
+    public void serializationLoad(String fileToLoad){
         try{
-            FileInputStream fileIn = new FileInputStream("test.txt");
+            File f = new File(SAVED_GAMES_DIR + "/" + fileToLoad);
+            FileInputStream fileIn = new FileInputStream(f);
             ObjectInputStream in = new ObjectInputStream(fileIn);
 
             BoardModel bmTemp = (BoardModel) in.readObject();
@@ -1043,9 +1056,10 @@ public class BoardModel implements Serializable{
 
     }
 
-    private void serializationSave(){
+    public void serializationSave(String fileNameToSave){
         try{
-            FileOutputStream fileOut = new FileOutputStream("test.txt");
+            File f = new File(SAVED_GAMES_DIR + "/" + fileNameToSave);
+            FileOutputStream fileOut = new FileOutputStream(f);
 
             ObjectOutputStream out = new ObjectOutputStream((fileOut));
 
