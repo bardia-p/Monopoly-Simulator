@@ -34,6 +34,10 @@ public class XMLParser extends DefaultHandler {
      */
     private String imgPath;
     /**
+     * Keeps track of the audioPath.
+     */
+    private String audioPath;
+    /**
      * The neighborhood of the cell.
      */
     private String neighborhood;
@@ -85,8 +89,7 @@ public class XMLParser extends DefaultHandler {
             case "fee" -> attributeSelector = 3;
             case "neighbourhood" -> attributeSelector = 4;
             case "image" -> attributeSelector = 5;
-            case "colour" -> attributeSelector = 6;
-            case "icons" -> attributeSelector = 7;
+            case "audioPath" -> attributeSelector = 6;
             default -> attributeSelector = -1; // The other tags are ignored.
         }
     }
@@ -161,6 +164,8 @@ public class XMLParser extends DefaultHandler {
                     model.addCell(property);
                 }
             }
+        } else if (qName.equals("audioPath")){
+            model.setMusicFileName(audioPath);
         }
     }
 
@@ -178,6 +183,7 @@ public class XMLParser extends DefaultHandler {
             case 3 -> fees.add(Integer.parseInt(new String(ch, start, length)));
             case 4 -> neighborhood = new String(ch, start, length);
             case 5 -> imgPath = new String(ch, start, length);
+            case 6 -> audioPath = new String(ch, start, length);
         }
 
         attributeSelector = -1;

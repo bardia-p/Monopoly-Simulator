@@ -4,18 +4,15 @@ import java.net.URL;
 
 public class Sound implements Runnable {
 
-    private String soundName = "audio/rick_morty_music.wav";
-    private boolean playCompleted = false;
-    static Thread th;
+    private String soundName;
+    private static Thread th;
 
-    public void newThread(){
-        th =new Thread(this);
-        th.start();
-
+    public Sound(String soundName){
+        this.soundName = soundName;
+        th = new Thread(this);
     }
 
     public void monopolyMusic(){
-
         try {
             URL url = this.getClass().getResource(soundName);
             AudioInputStream audioStream = AudioSystem.getAudioInputStream(url);
@@ -45,5 +42,13 @@ public class Sound implements Runnable {
     @Override
     public void run() {
         monopolyMusic();
+    }
+
+    public void play(){
+        th.start();
+    }
+
+    public void setSoundName(String soundName){
+        this.soundName = soundName;
     }
 }

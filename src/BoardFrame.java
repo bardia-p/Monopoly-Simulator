@@ -31,7 +31,7 @@ public class BoardFrame extends JFrame implements BoardView {
     /**
      * Keeps track of the board model.
      */
-    private BoardModel model;
+    private final BoardModel model;
     /**
      * Keeps track of the board controller.
      */
@@ -72,28 +72,34 @@ public class BoardFrame extends JFrame implements BoardView {
      * Keeps track of the turn label.
      */
     private JLabel statusLabel;
-
-
-    private final static String moneyImg = "images/original/money.png";
-
-    private final static String houseImg = "images/original/houses/house.png";
-    private final static String hotelImg = "images/original/houses/hotel.png";
-
-    /**
-     * The Menu bar.
-     */
-    private JMenuBar menuBar;
-
     /**
      * The fileMenu which has menu items.
      */
     private JMenu fileMenu;
-
     /**
-     * The menu items that are available.
+     * The save menu item used for saving the board.
      */
-    private JMenuItem newGame, loadGame, saveGame;
-
+    private JMenuItem saveGame;
+    /**
+     * Keeps track the sound class.
+     */
+    private Sound s;
+    /**
+     * Keeps track of the money image path.
+     */
+    private final static String MONEY_IMAGE = "images/original/money.png";
+    /**
+     * Keeps track of the house image path.
+     */
+    private final static String HOUSE_IMAGE = "images/original/houses/house.png";
+    /**
+     * Keeps track of the hotel image path.
+     */
+    private final static String HOTEL_IMAGE = "images/original/houses/hotel.png";
+    /**
+     * Keeps track of the audio file.
+     */
+    private final static String ORIGINAL_THEME = "audio/monopoly_music.wav";
     /**
      * Keeps track of the size of the board on each side.
      */
@@ -202,19 +208,20 @@ public class BoardFrame extends JFrame implements BoardView {
      * Keeps track of location of Jail square.
      */
     public static final int GOTOJAIL_LOCATION = 30;
-
+    /**
+     * Keeps track of the enum for background and text color.
+     */
     public enum ThemeColour {
         BACKGROUND("#cbe4d0", "#000000");
 
-        private String backgroundColour;
-        private String textColour;
+        private final String backgroundColour;
+        private final String textColour;
 
         ThemeColour(String backgroundColour, String textColour){
             this.backgroundColour = backgroundColour;
             this.textColour = textColour;
         }
     }
-
 
     /**
      * Constructor for the Board listener, creates the board model, adds the board listener to the board model,
@@ -243,13 +250,10 @@ public class BoardFrame extends JFrame implements BoardView {
 
         this.setVisible(true);
 
-        Sound s = new Sound();
-        s.newThread();
+        s = new Sound(ORIGINAL_THEME);
 
         model.start();
     }
-
-
 
 
     /**
@@ -257,13 +261,13 @@ public class BoardFrame extends JFrame implements BoardView {
      */
     private void createGUI(){
         // Creating JMenu
-        this.menuBar = new JMenuBar();
+        JMenuBar menuBar = new JMenuBar();
 
         this.fileMenu = new JMenu("File");
 
-        this.newGame = new JMenuItem("New Board");
+        JMenuItem newGame = new JMenuItem("New Board");
         this.saveGame = new JMenuItem("Save Board");
-        this.loadGame = new JMenuItem("Load Board");
+        JMenuItem loadGame = new JMenuItem("Load Board");
 
         this.fileMenu.add(newGame);
         this.fileMenu.add(saveGame);
@@ -538,7 +542,7 @@ public class BoardFrame extends JFrame implements BoardView {
 
         cashPanel.setBackground(Color.decode(ThemeColour.BACKGROUND.backgroundColour));
         try {
-            BufferedImage image = ImageIO.read(Objects.requireNonNull(getClass().getResource(moneyImg)));
+            BufferedImage image = ImageIO.read(Objects.requireNonNull(getClass().getResource(MONEY_IMAGE)));
 
 
             Image newImage = image.getScaledInstance(CASH_WIDTH, CASH_HEIGHT, Image.SCALE_DEFAULT);
@@ -718,7 +722,7 @@ public class BoardFrame extends JFrame implements BoardView {
     private void handleChooseBoard(){
 
         List<File> boardFileOptions = new ArrayList<>();
-        String selectedBoard = "";
+        String selectedBoard;
         
         try{
             boardFileOptions = Files.walk(Paths.get(BoardModel.CONFIG_DIR))
@@ -727,7 +731,7 @@ public class BoardFrame extends JFrame implements BoardView {
                     .collect(Collectors.toList());
 
         }catch(IOException e){
-            System.out.println(e);
+            System.out.println(e.getMessage());
         }
 
         if(boardFileOptions.size() == 0){
@@ -745,6 +749,8 @@ public class BoardFrame extends JFrame implements BoardView {
                     JOptionPane.QUESTION_MESSAGE, null, stringFileNames.toArray(), stringFileNames.get(0));
 
             if (selectedBoard != null){
+                s.setSoundName(model.getMusicFileName());
+                s.play();
                 model.startNewGame(selectedBoard);
             }else{
                 initializationCancel();
@@ -786,7 +792,7 @@ public class BoardFrame extends JFrame implements BoardView {
      * @author Kyra Lothrop 101145872
      */
     private void handleLoadGameFromFile(){
-        List<File> boardFileOptions = new ArrayList<>();
+        List<File> boardFileOptions;
         try{
             boardFileOptions = Files.walk(Paths.get(BoardModel.SAVED_GAMES_DIR))
                     .filter(Files::isRegularFile)
@@ -819,7 +825,7 @@ public class BoardFrame extends JFrame implements BoardView {
             }
 
         }catch(IOException e){
-            System.out.println(e);
+            System.out.println(e.getMessage());
         }
     }
 
@@ -1053,6 +1059,7 @@ public class BoardFrame extends JFrame implements BoardView {
      * @param cell the cell, BoardCell
      * @param panel the panel, JPanel
      * @param direction the direction of the cell, int
+     * @author Bardia Parmoun 101143006
      */
     private void constructCell(BoardCell cell, JPanel panel, int direction){
         // Loads the cell image.
@@ -1077,6 +1084,7 @@ public class BoardFrame extends JFrame implements BoardView {
      * @param cell the cell, BoardCell
      * @param panel the panel, JPanel
      * @param direction the direction of the cell, int
+     * @author Bardia Parmoun 101143006
      */
     private void createCellManually(BoardCell cell, JPanel panel, int direction){
         JLabel nameLabel; // Displays the name of the cell
@@ -1166,7 +1174,6 @@ public class BoardFrame extends JFrame implements BoardView {
             }
         }
     }
-
 
     /**
      * Displays whether the current player can afford the property they attempted to buy or not.
@@ -1458,7 +1465,7 @@ public class BoardFrame extends JFrame implements BoardView {
         }
 
         try {
-            String imgPath = isHotel? hotelImg : houseImg;
+            String imgPath = isHotel? HOTEL_IMAGE : HOUSE_IMAGE;
             BufferedImage houseImg = ImageIO.read(Objects.requireNonNull(getClass().getResource(imgPath)));
             Image dimg = houseImg.getScaledInstance(HOUSE_SIZE,HOUSE_SIZE, Image.SCALE_SMOOTH);
 
@@ -1518,6 +1525,7 @@ public class BoardFrame extends JFrame implements BoardView {
 
     /**
      * Handles landing on free parking.
+     * @author Bardia Parmoun 101143006
      * @param player landed on parking, Player
      */
     private void handleFreeParking(Player player) {
@@ -1537,6 +1545,10 @@ public class BoardFrame extends JFrame implements BoardView {
         displayStatus(message, player.isPlayerAI());
     }
 
+    /**
+     * Handles updating the board.
+     * @author Owen VanDusen 101152022
+     */
     public void updateBoard(){
         clearBoard();
 
@@ -1550,6 +1562,10 @@ public class BoardFrame extends JFrame implements BoardView {
         this.pack();
     }
 
+    /**
+     * Handles clearing the board.
+     * @author Owen VanDusen 101152022
+     */
     private void clearBoard(){
         getContentPane().removeAll();
         layeredPane.removeAll();
@@ -1559,6 +1575,10 @@ public class BoardFrame extends JFrame implements BoardView {
         createGUI();
     }
 
+    /**
+     * Handles making a new board.
+     * @author Owen VanDusen 101152022
+     */
     private void makeNewBoard(){
         clearBoard();
     }
