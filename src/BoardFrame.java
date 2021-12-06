@@ -4,10 +4,15 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * Group 3
@@ -26,7 +31,7 @@ public class BoardFrame extends JFrame implements BoardView {
     /**
      * Keeps track of the board model.
      */
-    private BoardModel model;
+    private final BoardModel model;
     /**
      * Keeps track of the board controller.
      */
@@ -67,7 +72,34 @@ public class BoardFrame extends JFrame implements BoardView {
      * Keeps track of the turn label.
      */
     private JLabel statusLabel;
-
+    /**
+     * The fileMenu which has menu items.
+     */
+    private JMenu fileMenu;
+    /**
+     * The save menu item used for saving the board.
+     */
+    private JMenuItem saveGame;
+    /**
+     * Keeps track the sound class.
+     */
+    private Sound s;
+    /**
+     * Keeps track of the money image path.
+     */
+    private final static String MONEY_IMAGE = "images/original/money.png";
+    /**
+     * Keeps track of the house image path.
+     */
+    private final static String HOUSE_IMAGE = "images/original/houses/house.png";
+    /**
+     * Keeps track of the hotel image path.
+     */
+    private final static String HOTEL_IMAGE = "images/original/houses/hotel.png";
+    /**
+     * Keeps track of the audio file.
+     */
+    private final static String SONG_THEME = "audio/rick_morty_music.wav";
     /**
      * Keeps track of the size of the board on each side.
      */
@@ -88,10 +120,6 @@ public class BoardFrame extends JFrame implements BoardView {
      * Keeps track of the board height.
      */
     private static final int BOARD_HEIGHT = 750;
-    /**
-     * The background color of the board.
-     */
-    private static final String BACKGROUND_COLOR = "#cbe4d0";
     /**
      * Keeps track of how much the board should be shifted down based on the buttons above it.
      */
@@ -180,6 +208,20 @@ public class BoardFrame extends JFrame implements BoardView {
      * Keeps track of location of Jail square.
      */
     public static final int GOTOJAIL_LOCATION = 30;
+    /**
+     * Keeps track of the enum for background and text color.
+     */
+    public enum ThemeColour {
+        BACKGROUND("#cbe4d0", "#000000");
+
+        private final String backgroundColour;
+        private final String textColour;
+
+        ThemeColour(String backgroundColour, String textColour){
+            this.backgroundColour = backgroundColour;
+            this.textColour = textColour;
+        }
+    }
 
     /**
      * Constructor for the Board listener, creates the board model, adds the board listener to the board model,
@@ -208,13 +250,48 @@ public class BoardFrame extends JFrame implements BoardView {
 
         this.setVisible(true);
 
+        s = new Sound(SONG_THEME);
+        s.play();
+
         model.start();
     }
+
 
     /**
      * Creating the basic GUI of the monopoly.
      */
     private void createGUI(){
+        // Creating JMenu
+        JMenuBar menuBar = new JMenuBar();
+
+        this.fileMenu = new JMenu("File");
+
+        JMenuItem newGame = new JMenuItem("New Board");
+        this.saveGame = new JMenuItem("Save Board");
+        JMenuItem loadGame = new JMenuItem("Load Board");
+
+        this.fileMenu.add(newGame);
+        this.fileMenu.add(saveGame);
+        this.fileMenu.add(loadGame);
+
+        menuBar.add(fileMenu);
+
+        this.add(menuBar);
+        this.setJMenuBar(menuBar);
+
+        // JMenu
+        newGame.setEnabled(true);
+        newGame.setActionCommand(BoardModel.Command.NEW_BOARD.getStringCommand());
+        newGame.addActionListener(controller);
+
+        loadGame.setEnabled(true);
+        loadGame.setActionCommand(BoardModel.Command.LOAD_BOARD.getStringCommand());
+        loadGame.addActionListener(controller);
+
+        saveGame.setEnabled(false);
+        saveGame.setActionCommand(BoardModel.Command.SAVE_BOARD.getStringCommand());
+        saveGame.addActionListener(controller);
+
         // Setting the frame settings.
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setResizable(false);
@@ -223,12 +300,10 @@ public class BoardFrame extends JFrame implements BoardView {
         layeredPane = new JLayeredPane();
         layeredPane.setOpaque(true);
         layeredPane.setPreferredSize(new Dimension(WINDOW_WIDTH,WINDOW_HEIGHT + 100));
-        layeredPane.setBackground(Color.decode(BACKGROUND_COLOR));
 
         // The main panel that keeps track of all the cells
         mainPanel = new JPanel();
         mainPanel.setLayout(new GridBagLayout());
-        mainPanel.setBackground(Color.decode(BACKGROUND_COLOR));
         mainPanel.setBounds(0, BOARD_SHIFT_Y + PANEL_GAP, BOARD_WIDTH, BOARD_HEIGHT);
 
         layeredPane.add(mainPanel,0);
@@ -237,24 +312,12 @@ public class BoardFrame extends JFrame implements BoardView {
 
         // Creating the turn label.
         statusLabel = new JLabel();
-        statusLabel.setBackground(Color.decode(BACKGROUND_COLOR));
+        statusLabel.setForeground(Color.decode(ThemeColour.BACKGROUND.textColour));
+        statusLabel.setBackground(Color.decode(ThemeColour.BACKGROUND.backgroundColour));
         statusLabel.setBounds(BOARD_WIDTH, PANEL_GAP,
                 WINDOW_WIDTH - BOARD_WIDTH, BOARD_SHIFT_Y);
 
         layeredPane.add(statusLabel,0);
-
-        // Creating the dice panel.
-        createDiceLayout();
-
-        // Creating the logo panel.
-        buildLogoDisplay();
-
-        // Creating the cash panel.
-        buildCashDisplay();
-
-        // Adding the panels to board.
-        layeredPane.add(logoPanel,1);
-        layeredPane.moveToFront(logoPanel);
 
         add(layeredPane);
 
@@ -279,19 +342,23 @@ public class BoardFrame extends JFrame implements BoardView {
         BoardEvent be = (BoardEvent) e;
         Player player = be.getPlayer();
         switch (e.getStatus()) {
+            case CHOOSE_BOARD -> handleChooseBoard();
+            case SAVE_GAME -> handleNameSaveGameFile();
+            case LOAD_GAME -> handleLoadGameFromFile();
             case INITIALIZE_MONOPOLY -> handleWelcomeMonopoly();
             case GAME_OVER -> handleWinner(source.getPlayers());
             case INITIALIZE_BOARD -> constructBoard(source.getCells());
             case CREATE_PLAYER_ICONS -> createPlayers(source.getPlayers());
             case GET_NUM_PLAYERS -> getNumPlayers();
             case INITIALIZE_PLAYERS -> initializePlayers(source.getPlayerCount());
-            case GET_COMMAND -> updateAvailableCommands(player, be.getCommands());
+            case GET_COMMAND -> updateAvailableCommandsAndJMenu(player, be.getCommands());
             case PASS_GO -> handlePassGo(player);
             case FREE_PARKING -> handleFreeParking(player);
             case GO_TO_JAIL -> handleGoToJail(player);
             case EXIT_JAIL -> handleExitJail(player);
             case FORCE_PAY_JAIL -> handleForceExitJail(player);
             case UPDATE_MODEL -> updateBoard();
+            case NEW_GAME -> makeNewBoard();
         }
     }
 
@@ -318,8 +385,6 @@ public class BoardFrame extends JFrame implements BoardView {
             case ROLL_AGAIN -> handleRoll(source.getDice());
             case BUILD -> handlePropertyToBuildOn(player, player.getBuildableProperties());
             case PAINT_HOUSE -> paintHouse(pe.getCell());
-            case SAVE -> handleSave();
-            case LOAD -> handleLoad();
         }
     }
 
@@ -328,7 +393,7 @@ public class BoardFrame extends JFrame implements BoardView {
      * @author Bardia Parmoun, 101143006
      */
     private void handlePassingTurn() {
-        disableButtons();
+        disableButtonsAndJMenu();
     }
 
     /**
@@ -340,6 +405,7 @@ public class BoardFrame extends JFrame implements BoardView {
     private void displayStatus(String msg, boolean textMode){
         if (textMode){
             statusLabel.setText(msg);
+            statusLabel.setForeground(Color.decode(ThemeColour.BACKGROUND.textColour));
         } else {
             JOptionPane.showMessageDialog(null, msg);
         }
@@ -364,7 +430,7 @@ public class BoardFrame extends JFrame implements BoardView {
      * @param originalPos the original position of the player, int
      */
     private void handlePlayerGUIMove(Player player, int amountToMove, int originalPos){
-        disableButtons();
+        disableButtonsAndJMenu();
         for (int i = originalPos; i < originalPos + amountToMove + 1; i++){
             int newPlayerPosition =  i % BoardModel.SIZE_OF_BOARD;
             showCurrentCell(player, newPlayerPosition);
@@ -385,15 +451,18 @@ public class BoardFrame extends JFrame implements BoardView {
     private void createPlayers(List<Player> players) {
         JPanel statusPanel = new JPanel();
         statusPanel.setLayout(new GridLayout(players.size(), 1));
-        statusPanel.setBackground(Color.decode(BACKGROUND_COLOR));
+        statusPanel.setBackground(Color.decode(ThemeColour.BACKGROUND.backgroundColour));
 
         for (Player p: players){
             JLabel playerLabel = new JLabel();
             JPanel playerPanel = new JPanel();
             TitledBorder title = BorderFactory.createTitledBorder(p.getIconName().toUpperCase());
+            title.setTitleColor(Color.decode(ThemeColour.BACKGROUND.textColour));
             playerPanel.setBorder(title);
             playerLabels.put(p, playerLabel);
             playerStatusPanels.put(p, playerPanel);
+
+            playerLabel.setForeground(Color.decode(ThemeColour.BACKGROUND.textColour));
 
             updatePlayerStatusPanel(p);
 
@@ -434,7 +503,8 @@ public class BoardFrame extends JFrame implements BoardView {
         newStatus.append("</html>");
 
         JLabel statusLabel = new JLabel(newStatus.toString());
-        panel.setBackground(Color.decode(BACKGROUND_COLOR));
+        statusLabel.setForeground(Color.decode(ThemeColour.BACKGROUND.textColour));
+        panel.setBackground(Color.decode(ThemeColour.BACKGROUND.backgroundColour));
         panel.add(statusLabel);
     }
 
@@ -445,7 +515,7 @@ public class BoardFrame extends JFrame implements BoardView {
     private void buildLogoDisplay(){
         logoPanel = new JPanel();
         logoPanel.setBounds(BOARD_WIDTH/2 - LOGO_WIDTH/2, BOARD_HEIGHT/2, LOGO_WIDTH, LOGO_HEIGHT);
-        logoPanel.setBackground(Color.decode(BACKGROUND_COLOR));
+        logoPanel.setBackground(Color.decode(ThemeColour.BACKGROUND.backgroundColour));
 
         try {
             BufferedImage image = ImageIO.read(Objects.requireNonNull(getClass().getResource
@@ -454,6 +524,7 @@ public class BoardFrame extends JFrame implements BoardView {
 
             Image newImage = image.getScaledInstance(LOGO_WIDTH, LOGO_HEIGHT, Image.SCALE_DEFAULT);
             JLabel label = new JLabel(new ImageIcon(newImage));
+            label.setForeground(Color.decode(ThemeColour.BACKGROUND.textColour));
             logoPanel.removeAll();
             logoPanel.add(label);
         }  catch(Exception e){
@@ -470,14 +541,18 @@ public class BoardFrame extends JFrame implements BoardView {
         cashPanel.setBounds(CELL_HEIGHT + 2 * PANEL_GAP, BOARD_SHIFT_Y + CELL_HEIGHT + 3 * PANEL_GAP,
                 CASH_WIDTH/4 + CASH_WIDTH, CASH_HEIGHT);
 
-        cashPanel.setBackground(Color.decode(BACKGROUND_COLOR));
+        cashPanel.setBackground(Color.decode(ThemeColour.BACKGROUND.backgroundColour));
         try {
-            BufferedImage image = ImageIO.read(Objects.requireNonNull(getClass().getResource("images/money.png")));
+            BufferedImage image = ImageIO.read(Objects.requireNonNull(getClass().getResource(MONEY_IMAGE)));
 
 
             Image newImage = image.getScaledInstance(CASH_WIDTH, CASH_HEIGHT, Image.SCALE_DEFAULT);
             JLabel label = new JLabel(new ImageIcon(newImage));
             JLabel cashAmount = new JLabel("$" + model.getBankMoney());
+
+            label.setForeground(Color.decode(ThemeColour.BACKGROUND.textColour));
+            cashAmount.setForeground(Color.decode(ThemeColour.BACKGROUND.textColour));
+
             cashPanel.removeAll();
             cashPanel.add(label, BorderLayout.WEST);
             cashPanel.add(cashAmount, BorderLayout.EAST);
@@ -509,10 +584,10 @@ public class BoardFrame extends JFrame implements BoardView {
         // Creating the dice panels.
         dicePanels = new JPanel[2];
         dicePanels[0] = new JPanel(new BorderLayout());
-        dicePanels[0].setBackground(Color.decode(BACKGROUND_COLOR));
+        dicePanels[0].setBackground(Color.decode(ThemeColour.BACKGROUND.backgroundColour));
 
         dicePanels[1] = new JPanel(new BorderLayout());
-        dicePanels[1].setBackground(Color.decode(BACKGROUND_COLOR));
+        dicePanels[1].setBackground(Color.decode(ThemeColour.BACKGROUND.backgroundColour));
 
         mainPanel.add(dicePanels[0], die1_constraint);
         mainPanel.add(dicePanels[1], die2_constraint);
@@ -567,7 +642,7 @@ public class BoardFrame extends JFrame implements BoardView {
      * @param dice value of the dice, int[]
      */
     private void handleRoll(int[] dice) {
-        disableButtons();
+        disableButtonsAndJMenu();
         int die1 = dice[0];
         int die2 = dice[1];
 
@@ -608,7 +683,10 @@ public class BoardFrame extends JFrame implements BoardView {
      * @author Kyra Lothrop 101145872
      * @param commands keeps track of the list of the commands, List<BoardModel.Command>
      */
-    private void updateAvailableCommands(Player player, List<BoardModel.Command> commands){
+    private void updateAvailableCommandsAndJMenu(Player player, List<BoardModel.Command> commands){
+        fileMenu.setEnabled(true);
+        saveGame.setEnabled(true);
+
         StringBuilder availableCommands = new StringBuilder();
 
         for (BoardModel.Command command: commands){
@@ -622,6 +700,7 @@ public class BoardFrame extends JFrame implements BoardView {
         }
 
         TitledBorder title = BorderFactory.createTitledBorder("Current Turn: " + player.getIconName().toUpperCase());
+        title.setTitleColor(Color.decode(ThemeColour.BACKGROUND.textColour));
         statusLabel.setBorder(title);
 
         updatePlayerStatusPanel(player);
@@ -634,6 +713,119 @@ public class BoardFrame extends JFrame implements BoardView {
     private void initializationCancel(){
         JOptionPane.showMessageDialog(null, "Game initialization is cancelled!");
         System.exit(0);
+    }
+
+    /**
+     * Method to allow the user to select which monopoly board to initialize by reading
+     * the possible xml files
+     * @author Kyra Lothrop 101145872
+     */
+    private void handleChooseBoard(){
+
+        List<File> boardFileOptions = new ArrayList<>();
+        String selectedBoard;
+        
+        try{
+            boardFileOptions = Files.walk(Paths.get(BoardModel.CONFIG_DIR))
+                    .filter(Files::isRegularFile)
+                    .map(Path::toFile)
+                    .collect(Collectors.toList());
+
+        }catch(IOException e){
+            System.out.println(e.getMessage());
+        }
+
+        if(boardFileOptions.size() == 0){
+            JOptionPane.showMessageDialog(null, "Sorry, you currently do not have any " +
+                    "board templates.");
+        }
+        else{
+            List<String> stringFileNames = new ArrayList<>();
+            for(File f: boardFileOptions){
+                stringFileNames.add(f.getName());
+            }
+
+            selectedBoard = (String) JOptionPane.showInputDialog(null,
+                    "Select the Monopoly board", "SELECT BOARD",
+                    JOptionPane.QUESTION_MESSAGE, null, stringFileNames.toArray(), stringFileNames.get(0));
+
+            if (selectedBoard != null){
+                model.startNewGame(selectedBoard);
+            }else{
+                initializationCancel();
+            }
+        }
+    }
+
+    /**
+     * Method to allow the user to name the file that will save the current game
+     * @author Kyra Lothrop 101145872
+     */
+    private void handleNameSaveGameFile(){
+        JTextField saveFileName = new JTextField();
+
+        Object[] message = {
+                "Name the save game file\nPlease do not include the file type in the name", saveFileName,
+        };
+
+        int ans = JOptionPane.showConfirmDialog(null, message, "SAVE GAME",
+                JOptionPane.OK_CANCEL_OPTION);
+
+        if (ans != JOptionPane.OK_OPTION){
+            JOptionPane.showMessageDialog(null, "Save Cancelled!");
+        }
+        else if(saveFileName.getText().contains(".txt") || saveFileName.getText().length() == 0){
+            JOptionPane.showMessageDialog(null, "Save cancelled. Please format the " +
+                    "filename properly");
+        }
+        else{
+            JOptionPane.showMessageDialog(null, "Saving the game to file " +
+                    saveFileName.getText()+".txt!");
+            model.serializationSave(saveFileName.getText()+".txt");
+        }
+    }
+
+    /**
+     * Method to allow the user to select which saved game to load by reading the
+     * possible txt files
+     * @author Kyra Lothrop 101145872
+     */
+    private void handleLoadGameFromFile(){
+        List<File> boardFileOptions;
+        try{
+            boardFileOptions = Files.walk(Paths.get(BoardModel.SAVED_GAMES_DIR))
+                    .filter(Files::isRegularFile)
+                    .map(Path::toFile)
+                    .collect(Collectors.toList());
+
+            if(boardFileOptions.size() ==0){
+                JOptionPane.showMessageDialog(null, "Sorry, you do not have any saved games.\n" +
+                        "You can save a game in File>Save Board");
+            }
+            else{
+                List<String> stringFileNames = new ArrayList<>();
+                for(File f: boardFileOptions){
+                    stringFileNames.add(f.getName());
+                }
+
+                String selectedBoard = (String) JOptionPane.showInputDialog(null,
+                        "Select the saved game to load", "SELECT SAVED GAME",
+                        JOptionPane.QUESTION_MESSAGE, null, stringFileNames.toArray(), stringFileNames.get(0));
+
+                if(selectedBoard != null){
+                    JOptionPane.showMessageDialog(null, "Loading the game from the file " +
+                            selectedBoard +"!");
+
+                    model.serializationLoad(selectedBoard);
+                }
+                else{
+                    JOptionPane.showMessageDialog(null, "Load cancelled!");
+                }
+            }
+
+        }catch(IOException e){
+            System.out.println(e.getMessage());
+        }
     }
 
     /**
@@ -669,6 +861,11 @@ public class BoardFrame extends JFrame implements BoardView {
      * @param numPlayers keeps track of the number of player, int
      */
     private void initializePlayers(int numPlayers){
+        // Resetting all the icons when making a new icon.
+        for (BoardModel.Icon icon: BoardModel.Icon.values()){
+            icon.setUsed(false);
+        }
+
         String[] namesAI = {"GOOGLE", "SIRI", "ALEXA", "BIXBY", "BAYMAX", "WALL-E", "EVA", "TOBIO"};
 
         for (int i = 0; i < numPlayers; i++){
@@ -711,6 +908,8 @@ public class BoardFrame extends JFrame implements BoardView {
                 model.addPlayer(new AIPlayer(model, playerName.getText(), findPlayerIcon(playerIcon.toLowerCase())));
             }
         }
+
+        saveGame.setEnabled(true);
     }
 
     /**
@@ -738,7 +937,7 @@ public class BoardFrame extends JFrame implements BoardView {
     private BoardModel.Icon findPlayerIcon(String icon) {
         for (BoardModel.Icon ic: BoardModel.Icon.values()){
             if (ic.getName().equals(icon)) {
-                ic.setUsed();
+                ic.setUsed(true);
                 return ic;
             }
         }
@@ -752,6 +951,9 @@ public class BoardFrame extends JFrame implements BoardView {
      * @param cells the list of the board cells, List<BoardCell>
      */
     private void constructBoard(List<BoardCell> cells) {
+        layeredPane.setBackground(Color.decode(ThemeColour.BACKGROUND.backgroundColour));
+        mainPanel.setBackground(Color.decode(ThemeColour.BACKGROUND.backgroundColour));
+
         // Command buttons
         JPanel commandsPanel = new JPanel(new GridLayout(2,4, PANEL_GAP, PANEL_GAP));
         commandsPanel.setBounds(PANEL_GAP, COMMAND_SHIFT_Y,BOARD_WIDTH - 2 * PANEL_GAP,
@@ -759,10 +961,9 @@ public class BoardFrame extends JFrame implements BoardView {
 
         BoardModel.Command[] buttons = {BoardModel.Command.ROLL_AGAIN, BoardModel.Command.PASS,
                 BoardModel.Command.FORFEIT, BoardModel.Command.BUY, BoardModel.Command.SELL,
-                BoardModel.Command.PAY_FEES, BoardModel.Command.BUILD, BoardModel.Command.CELL_STATUS,
-                BoardModel.Command.SAVE, BoardModel.Command.LOAD};
+                BoardModel.Command.PAY_FEES, BoardModel.Command.BUILD, BoardModel.Command.CELL_STATUS};
 
-        commandsPanel.setBackground(Color.decode(BACKGROUND_COLOR));
+        commandsPanel.setBackground(Color.decode(ThemeColour.BACKGROUND.backgroundColour));
 
         for (BoardModel.Command c : buttons) {
             String s = c.getStringCommand();
@@ -820,7 +1021,7 @@ public class BoardFrame extends JFrame implements BoardView {
 
             // Places the cell in a panel.
             JPanel panel = new JPanel(new BorderLayout());
-            panel.setBackground(Color.decode(BACKGROUND_COLOR));
+            panel.setBackground(Color.decode(ThemeColour.BACKGROUND.backgroundColour));
 
             constructCell(cell, panel, direction);
 
@@ -835,6 +1036,19 @@ public class BoardFrame extends JFrame implements BoardView {
             col += col_step;
         }
 
+        // Creating the dice panel.
+        createDiceLayout();
+
+        // Creating the logo panel.
+        buildLogoDisplay();
+
+        // Creating the cash panel.
+        buildCashDisplay();
+
+        // Adding the panels to board.
+        layeredPane.add(logoPanel,1);
+        layeredPane.moveToFront(logoPanel);
+
         // adding all the components to the frame
         this.pack();
     }
@@ -844,6 +1058,7 @@ public class BoardFrame extends JFrame implements BoardView {
      * @param cell the cell, BoardCell
      * @param panel the panel, JPanel
      * @param direction the direction of the cell, int
+     * @author Bardia Parmoun 101143006
      */
     private void constructCell(BoardCell cell, JPanel panel, int direction){
         // Loads the cell image.
@@ -868,6 +1083,7 @@ public class BoardFrame extends JFrame implements BoardView {
      * @param cell the cell, BoardCell
      * @param panel the panel, JPanel
      * @param direction the direction of the cell, int
+     * @author Bardia Parmoun 101143006
      */
     private void createCellManually(BoardCell cell, JPanel panel, int direction){
         JLabel nameLabel; // Displays the name of the cell
@@ -957,7 +1173,6 @@ public class BoardFrame extends JFrame implements BoardView {
             }
         }
     }
-
 
     /**
      * Displays whether the current player can afford the property they attempted to buy or not.
@@ -1119,10 +1334,12 @@ public class BoardFrame extends JFrame implements BoardView {
      * Displays a breaker to indicate change of turn.
      * @author Owen VanDusen 101152022
      */
-    private void disableButtons() {
+    private void disableButtonsAndJMenu() {
         for(JButton b: commandButtons){
             b.setEnabled(false);
         }
+
+        fileMenu.setEnabled(false);
     }
 
     /**
@@ -1247,7 +1464,7 @@ public class BoardFrame extends JFrame implements BoardView {
         }
 
         try {
-            String imgPath = isHotel? "images/houses/Hotel.png" : "images/houses/monopoly house.png";
+            String imgPath = isHotel? HOTEL_IMAGE : HOUSE_IMAGE;
             BufferedImage houseImg = ImageIO.read(Objects.requireNonNull(getClass().getResource(imgPath)));
             Image dimg = houseImg.getScaledInstance(HOUSE_SIZE,HOUSE_SIZE, Image.SCALE_SMOOTH);
 
@@ -1289,6 +1506,8 @@ public class BoardFrame extends JFrame implements BoardView {
             b.setEnabled(false);
         }
 
+        saveGame.setEnabled(false);
+
         StringBuilder gameOverMessage = new StringBuilder();
         players.sort(Comparator.comparingInt(Player::getRank));
 
@@ -1305,6 +1524,7 @@ public class BoardFrame extends JFrame implements BoardView {
 
     /**
      * Handles landing on free parking.
+     * @author Bardia Parmoun 101143006
      * @param player landed on parking, Player
      */
     private void handleFreeParking(Player player) {
@@ -1325,50 +1545,11 @@ public class BoardFrame extends JFrame implements BoardView {
     }
 
     /**
-     * Handling players saving a board in text format.
-     * @author Bardia Parmoun 101143006
-     */
-    private void handleSave(){
-        displayStatus("Game saved as text.ser !", false);
-    }
-
-    /**
-     * Handling players loading a board in text format.
-     * @author Bardia Parmoun 101143006
-     */
-    private void handleLoad(){
-        displayStatus("Game loaded!", false);
-    }
-
-    /**
-     * Updates the board model when loading a board from a save state.
-     * @author Bardia Parmoun 10113006
-     */
-    public void updateBoard(){
-        clearBoard();
-        createBoard(model);
-        populateBoard(model);
-        this.revalidate();
-    }
-
-    /**
-     * Removes all elements from the board
-     * @author Owen VanDusen 101152022
-     */
-    public void clearBoard(){
-        getContentPane().removeAll();
-        layeredPane.removeAll();
-        playerLabels.clear();
-        playerStatusPanels.clear();
-    }
-
-    /**
      * Remakes an empty board
      * @author Owen VanDusen 101152022
      * @param model the model to be created
      */
     public void createBoard(BoardModel model){
-        createGUI();
         this.constructBoard(model.getCells());
         this.createPlayers(model.getPlayers());
     }
@@ -1394,6 +1575,40 @@ public class BoardFrame extends JFrame implements BoardView {
                 }
             }
         }
+    }
+
+    /**
+     * Handles updating the board.
+     * @author Owen VanDusen 101152022
+     */
+    public void updateBoard(){
+        clearBoard();
+        createGUI();
+
+        createBoard(model);
+        populateBoard(model);
+
+        this.pack();
+    }
+
+    /**
+     * Handles clearing the board.
+     * @author Owen VanDusen 101152022
+     */
+    private void clearBoard(){
+        getContentPane().removeAll();
+        layeredPane.removeAll();
+        playerLabels.clear();
+        playerStatusPanels.clear();
+    }
+
+    /**
+     * Handles making a new board.
+     * @author Owen VanDusen 101152022
+     */
+    private void makeNewBoard(){
+        clearBoard();
+        createGUI();
     }
 
     /**

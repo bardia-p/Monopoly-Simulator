@@ -1,0 +1,492 @@
+<!--
+Sarah Chow
+101143033
+-->
+
+<!-- 6 players -->
+
+<board>
+    <colour>#cbe4d0</colour>
+
+    <players>
+        <icon>
+            <name>council of ricks badge</name>
+            <image>images/rick_morty/icons/council_of_ricks_badge.png</image>
+        </icon>
+        <icon>
+            <name>me seeks box</name>
+            <image>images/rick_morty/icons/me_seeks_box.png</image>
+        </icon>
+        <icon>
+            <name>plumbus</name>
+            <image>images/rick_morty/icons/plumbus.png</image>
+        </icon>
+        <icon>
+            <name>portal gun</name>
+            <image>images/rick_morty/icons/portal_gun.png</image>
+        </icon>
+        <icon>
+            <name>rick's car</name>
+            <image>images/rick_morty/icons/ricks_car.png</image>
+        </icon>
+        <icon>
+            <name>snuffle's helmet</name>
+            <image>images/rick_morty/icons/snuffles_helmet.png</image>
+        </icon>
+    </players>
+
+    <money>
+        <image>images/rick_morty/money.png</image>
+    </money>
+
+    <house>
+        <image>images/rick_morty/houses/house.png</image>
+    </house>
+
+    <hotel>
+        <image>images/rick_morty/houses/hotel.png</image>
+    </hotel>
+
+    <boardcells>
+        <cell>
+            <type>Go</type>
+            <rent>
+                <fee>200</fee>
+            </rent>
+            <image>images/original/board/go.jpg</image>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>Harry Herpson High school</name>
+            <price>60</price>
+            <rent>
+                <fee>2</fee>
+                <fee>10</fee>
+                <fee>30</fee>
+                <fee>90</fee>
+                <fee>160</fee>
+                <fee>250</fee>
+            </rent>
+            <neighbourhood>brown</neighbourhood>
+        </cell>
+        <cell>
+            <type>EmptyCell</type>
+            <name>Inter-Dimensional Cable TV</name>
+            <cellType>chance and chest</cellType>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>Needful Things</name>
+            <price>60</price>
+            <rent>
+                <fee>4</fee>
+                <fee>20</fee>
+                <fee>60</fee>
+                <fee>180</fee>
+                <fee>320</fee>
+                <fee>450</fee>
+            </rent>
+            <neighbourhood>brown</neighbourhood>
+        </cell>
+        <cell>
+            <type>Tax</type>
+            <name>Parasites</name>
+            <rent>
+                <fee>200</fee>
+            </rent>
+            <owner>bank</owner>
+        </cell>
+        <cell>
+            <type>Railroad</type>
+            <name>Bone Train</name>
+            <price>200</price>
+            <rent>
+                <fee>25</fee>
+                <fee>50</fee>
+                <fee>100</fee>
+                <fee>200</fee>
+            </rent>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>Anatomy Park</name>
+            <price>100</price>
+            <rent>
+                <fee>6</fee>
+                <fee>30</fee>
+                <fee>90</fee>
+                <fee>270</fee>
+                <fee>400</fee>
+                <fee>550</fee>
+            </rent>
+            <neighbourhood>sky</neighbourhood>
+        </cell>
+        <cell>
+            <type>EmptyCell</type>
+            <name>Get Schwifty!</name>
+            <cellType>chance and chest</cellType>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>Earth C-137</name>
+            <price>100</price>
+            <rent>
+                <fee>6</fee>
+                <fee>30</fee>
+                <fee>90</fee>
+                <fee>270</fee>
+                <fee>400</fee>
+                <fee>550</fee>
+            </rent>
+            <neighbourhood>sky</neighbourhood>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>Gazorpazorp</name>
+            <price>120</price>
+            <rent>
+                <fee>8</fee>
+                <fee>40</fee>
+                <fee>100</fee>
+                <fee>300</fee>
+                <fee>450</fee>
+                <fee>600</fee>
+            </rent>
+            <neighbourhood>sky</neighbourhood>
+        </cell>
+        <cell>
+            <type>Jail</type>
+            <name>Jail</name>
+            <owner>bank</owner>
+            <image>images/original/board/jail.jpg</image>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>Blips And Chitz</name>
+            <price>140</price>
+            <rent>
+                <fee>10</fee>
+                <fee>50</fee>
+                <fee>150</fee>
+                <fee>450</fee>
+                <fee>625</fee>
+                <fee>750</fee>
+            </rent>
+            <neighbourhood>magenta</neighbourhood>
+        </cell>
+        <cell>
+            <type>Utility</type>
+            <name>Microverse</name>
+            <price>150</price>
+            <rent>
+                <fee>4</fee>
+                <fee>10</fee>
+            </rent>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>Gear World</name>
+            <price>140</price>
+            <rent>
+                <fee>10</fee>
+                <fee>50</fee>
+                <fee>150</fee>
+                <fee>450</fee>
+                <fee>625</fee>
+                <fee>750</fee>
+            </rent>
+            <neighbourhood>magenta</neighbourhood>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>Jerryboree</name>
+            <price>160</price>
+            <rent>
+                <fee>12</fee>
+                <fee>60</fee>
+                <fee>180</fee>
+                <fee>500</fee>
+                <fee>700</fee>
+                <fee>900</fee>
+            </rent>
+            <neighbourhood>magenta</neighbourhood>
+        </cell>
+        <cell>
+            <type>Railroad</type>
+            <name>Zigerion Ship</name>
+            <price>200</price>
+            <rent>
+                <fee>25</fee>
+                <fee>50</fee>
+                <fee>100</fee>
+                <fee>200</fee>
+            </rent>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>Fantasy World</name>
+            <price>180</price>
+            <rent>
+                <fee>14</fee>
+                <fee>70</fee>
+                <fee>200</fee>
+                <fee>550</fee>
+                <fee>750</fee>
+                <fee>950</fee>
+            </rent>
+            <neighbourhood>orange</neighbourhood>
+        </cell>
+        <cell>
+            <type>EmptyCell</type>
+            <name>Inter-Dimensional Cable TV</name>
+            <cellType>chance and chest</cellType>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>Pluto</name>
+            <price>180</price>
+            <rent>
+                <fee>14</fee>
+                <fee>70</fee>
+                <fee>200</fee>
+                <fee>550</fee>
+                <fee>750</fee>
+                <fee>950</fee>
+            </rent>
+            <neighbourhood>orange</neighbourhood>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>Purge Planet</name>
+            <price>200</price>
+            <rent>
+                <fee>16</fee>
+                <fee>80</fee>
+                <fee>220</fee>
+                <fee>600</fee>
+                <fee>800</fee>
+                <fee>1000</fee>
+            </rent>
+            <neighbourhood>orange</neighbourhood>
+        </cell>
+        <cell>
+            <type>Free Parking</type>
+            <image>images/original/board/free_parking.jpg</image>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>Nuptia 4</name>
+            <price>220</price>
+            <rent>
+                <fee>18</fee>
+                <fee>90</fee>
+                <fee>250</fee>
+                <fee>700</fee>
+                <fee>875</fee>
+                <fee>1050</fee>
+            </rent>
+            <neighbourhood>red</neighbourhood>
+        </cell>
+        <cell>
+            <type>EmptyCell</type>
+            <name>Get Schwifty!</name>
+            <cellType>chance and chest</cellType>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>Pawn Shop Planet</name>
+            <price>220</price>
+            <rent>
+                <fee>18</fee>
+                <fee>90</fee>
+                <fee>250</fee>
+                <fee>700</fee>
+                <fee>875</fee>
+                <fee>1050</fee>
+            </rent>
+            <neighbourhood>red</neighbourhood>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>Unity's Planet</name>
+            <price>240</price>
+            <rent>
+                <fee>20</fee>
+                <fee>100</fee>
+                <fee>300</fee>
+                <fee>750</fee>
+                <fee>925</fee>
+                <fee>1100</fee>
+            </rent>
+            <neighbourhood>red</neighbourhood>
+        </cell>
+        <cell>
+            <type>Railroad</type>
+            <name>S.S. Independence</name>
+            <price>200</price>
+            <rent>
+                <fee>25</fee>
+                <fee>50</fee>
+                <fee>100</fee>
+                <fee>200</fee>
+            </rent>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>St. Gloopy Noops Hospital</name>
+            <price>260</price>
+            <rent>
+                <fee>22</fee>
+                <fee>110</fee>
+                <fee>330</fee>
+                <fee>800</fee>
+                <fee>975</fee>
+                <fee>1150</fee>
+            </rent>
+            <neighbourhood>yellow</neighbourhood>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>Cromulon Dimension</name>
+            <price>260</price>
+            <rent>
+                <fee>22</fee>
+                <fee>110</fee>
+                <fee>330</fee>
+                <fee>800</fee>
+                <fee>975</fee>
+                <fee>1150</fee>
+            </rent>
+            <neighbourhood>yellow</neighbourhood>
+        </cell>
+        <cell>
+            <type>Utility</type>
+            <name>Miniverse</name>
+            <price>150</price>
+            <rent>
+                <fee>4</fee>
+                <fee>10</fee>
+            </rent>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>Citadel Of Ricks</name>
+            <price>280</price>
+            <rent>
+                <fee>24</fee>
+                <fee>120</fee>
+                <fee>360</fee>
+                <fee>850</fee>
+                <fee>1025</fee>
+                <fee>1200</fee>
+            </rent>
+            <neighbourhood>yellow</neighbourhood>
+        </cell>
+        <cell>
+            <type>Go To Jail</type>
+            <name>GO TO JAIL</name>
+            <image>images/original/board/go_to_jail.jpg</image>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>Birdperson Planet</name>
+            <price>300</price>
+            <rent>
+                <fee>26</fee>
+                <fee>130</fee>
+                <fee>390</fee>
+                <fee>900</fee>
+                <fee>1100</fee>
+                <fee>1275</fee>
+            </rent>
+            <neighbourhood>green</neighbourhood>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>Planet Squanch</name>
+            <price>300</price>
+            <rent>
+                <fee>26</fee>
+                <fee>130</fee>
+                <fee>390</fee>
+                <fee>900</fee>
+                <fee>1100</fee>
+                <fee>1275</fee>
+            </rent>
+            <neighbourhood>green</neighbourhood>
+        </cell>
+        <cell>
+            <type>EmptyCell</type>
+            <name>Inter-Dimensional Cable TV</name>
+            <cellType>chance and chest</cellType>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>Dwarf Terrace 9</name>
+            <price>320</price>
+            <rent>
+                <fee>28</fee>
+                <fee>150</fee>
+                <fee>450</fee>
+                <fee>1000</fee>
+                <fee>1200</fee>
+                <fee>1400</fee>
+            </rent>
+            <neighbourhood>green</neighbourhood>
+        </cell>
+        <cell>
+            <type>Railroad</type>
+            <name>Beta 7 Ship</name>
+            <price>200</price>
+            <rent>
+                <fee>25</fee>
+                <fee>50</fee>
+                <fee>100</fee>
+                <fee>200</fee>
+            </rent>
+        </cell>
+        <cell>
+            <type>EmptyCell</type>
+            <name>Get Schwifty!</name>
+            <cellType>chance and chest</cellType>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>Morty's Bedroom</name>
+            <price>350</price>
+            <rent>
+                <fee>35</fee>
+                <fee>175</fee>
+                <fee>500</fee>
+                <fee>1100</fee>
+                <fee>1300</fee>
+                <fee>1500</fee>
+            </rent>
+            <neighbourhood>indigo</neighbourhood>
+        </cell>
+        <cell>
+            <type>Tax</type>
+            <name>Morty Insurance</name>
+            <rent>
+                <fee>100</fee>
+            </rent>
+            <owner>bank</owner>
+        </cell>
+        <cell>
+            <type>Property</type>
+            <name>Rick's Garage</name>
+            <price>500</price>
+            <rent>
+                <fee>50</fee>
+                <fee>200</fee>
+                <fee>600</fee>
+                <fee>1400</fee>
+                <fee>1700</fee>
+                <fee>2000</fee>
+            </rent>
+            <neighbourhood>indigo</neighbourhood>
+        </cell>
+    </boardcells>
+</board>
+
+

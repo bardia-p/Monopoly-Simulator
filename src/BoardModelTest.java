@@ -32,8 +32,8 @@ public class BoardModelTest {
     public void initialize(){
         boardModel = new BoardModel();
         boardModel.constructBoard("originalBoard.xml");
-        p1 = new Player("Owen", BoardModel.Icon.BATTLESHIP);
-        p2 = new Player("Also Owen", BoardModel.Icon.THIMBLE);
+        p1 = new Player("Owen", BoardModel.Icon.ICON3);
+        p2 = new Player("Also Owen", BoardModel.Icon.ICON7);
 
         boardModel.addPlayer(p1);
         boardModel.addPlayer(p2);

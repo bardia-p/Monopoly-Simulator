@@ -18,9 +18,9 @@ import java.util.ArrayList;
  */
 public class XMLParser extends DefaultHandler {
     /**
-     * The name of the cell.
+     * The name of the object.
      */
-    private String cellName;
+    private String name;
     /**
      * The type of the cell.
      */
@@ -52,7 +52,7 @@ public class XMLParser extends DefaultHandler {
     /**
      * Keeps track of the tag that was selected.
      */
-    private int attributeSelector = -1;
+    private int attributeSelector;
 
     /**
      * The constructor for the parser.
@@ -63,6 +63,8 @@ public class XMLParser extends DefaultHandler {
         super();
         this.model = model;
         this.bank = bank;
+        this.name = "";
+        this.attributeSelector = -1;
     }
 
     /**
@@ -72,7 +74,6 @@ public class XMLParser extends DefaultHandler {
     public void startElement(String u, String ln, String qName, Attributes a){
         switch (qName) {
             case "cell" -> {
-                this.cellName = "";
                 this.cellType = "";
                 this.price = 0;
                 this.imgPath = "";
@@ -98,16 +99,16 @@ public class XMLParser extends DefaultHandler {
             switch (cellType) {
                 case "Go" -> model.addCell(new Go(fees.get(0), imgPath));
 
-                case "Jail" -> model.addCell(new Jail(cellName, bank, imgPath));
+                case "Jail" -> model.addCell(new Jail(name, bank, imgPath));
 
                 case "Free Parking" -> model.addCell(new FreeParking(imgPath));
 
-                case "Go To Jail" -> model.addCell(new GoToJail(cellName, imgPath));
+                case "Go To Jail" -> model.addCell(new GoToJail(name, imgPath));
 
                 case "EmptyCell" -> {
                     EmptyCell emptyCell = !imgPath.equals("") ?
-                            new EmptyCell(cellName, imgPath) :
-                            new EmptyCell(cellName);
+                            new EmptyCell(name, imgPath) :
+                            new EmptyCell(name);
                     model.addCell(emptyCell);
                 }
 
@@ -115,8 +116,8 @@ public class XMLParser extends DefaultHandler {
                     Integer[] feeArr = new Integer[fees.size()];
                     feeArr = fees.toArray(feeArr);
                     Utility utility = !imgPath.equals("") ?
-                            new Utility(cellName, price, feeArr, imgPath) :
-                            new Utility(cellName, price, feeArr);
+                            new Utility(name, price, feeArr, imgPath) :
+                            new Utility(name, price, feeArr);
                     model.addCell(utility);
                 }
 
@@ -125,14 +126,14 @@ public class XMLParser extends DefaultHandler {
                     feeArr = fees.toArray(feeArr);
 
                     Railroad railroad = !imgPath.equals("") ?
-                            new Railroad(cellName, price, feeArr, imgPath) :
-                            new Railroad(cellName, price, feeArr);
+                            new Railroad(name, price, feeArr, imgPath) :
+                            new Railroad(name, price, feeArr);
                     model.addCell(railroad);
                 }
 
                 case "Tax" -> {
-                    Tax tax = !imgPath.equals("") ? new Tax(cellName, fees.get(0), bank,  imgPath) :
-                            new Tax(cellName, fees.get(0), bank);
+                    Tax tax = !imgPath.equals("") ? new Tax(name, fees.get(0), bank,  imgPath) :
+                            new Tax(name, fees.get(0), bank);
                     model.addCell(tax);
                 }
 
@@ -154,8 +155,8 @@ public class XMLParser extends DefaultHandler {
                     feeArr = fees.toArray(feeArr);
 
                     Property property = !imgPath.equals("") ?
-                            new Property(cellName, price, feeArr, neighborhoodEnum, imgPath) :
-                            new Property(cellName, price, feeArr, neighborhoodEnum);
+                            new Property(name, price, feeArr, neighborhoodEnum, imgPath) :
+                            new Property(name, price, feeArr, neighborhoodEnum);
                     model.addCell(property);
                 }
             }
@@ -171,7 +172,7 @@ public class XMLParser extends DefaultHandler {
     public void characters(char[] ch, int start, int length){
         switch (attributeSelector){
             case 0 -> cellType = new String(ch, start, length);
-            case 1 -> cellName = new String(ch, start, length);
+            case 1 -> name = new String(ch, start, length);
             case 2 -> price = Integer.parseInt(new String(ch, start, length));
             case 3 -> fees.add(Integer.parseInt(new String(ch, start, length)));
             case 4 -> neighborhood = new String(ch, start, length);

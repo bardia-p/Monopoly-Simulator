@@ -17,12 +17,11 @@ import java.io.Serializable;
  * @author Owen VanDusen 101152022
  * @version 2.0
  */
-
-public class BoardController extends WindowAdapter implements ActionListener, Serializable{
+public class BoardController extends WindowAdapter implements ActionListener, Serializable {
     /**
      * Keeps track of the board model.
      */
-    private BoardModel boardModel;
+    private final BoardModel boardModel;
 
     /**
      * Constructor for the BoardController, populates the array list with all possible icons.
@@ -33,10 +32,6 @@ public class BoardController extends WindowAdapter implements ActionListener, Se
      */
     public BoardController(BoardModel bm){
         boardModel = bm;
-    }
-
-    public void updateModel(BoardModel model){
-        this.boardModel = model;
     }
 
     /**
