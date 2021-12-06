@@ -249,7 +249,7 @@ public class BoardFrame extends JFrame implements BoardView  {
         loadGame.setActionCommand(BoardModel.Command.LOAD_BOARD.getStringCommand());
         loadGame.addActionListener(controller);
 
-        saveGame.setEnabled(true);
+        saveGame.setEnabled(false);
         saveGame.setActionCommand(BoardModel.Command.SAVE_BOARD.getStringCommand());
         saveGame.addActionListener(controller);
 
@@ -329,7 +329,7 @@ public class BoardFrame extends JFrame implements BoardView  {
             case CREATE_PLAYER_ICONS -> createPlayers(source.getPlayers());
             case GET_NUM_PLAYERS -> getNumPlayers();
             case INITIALIZE_PLAYERS -> initializePlayers(source.getPlayerCount());
-            case GET_COMMAND -> updateAvailableCommands(player, be.getCommands());
+            case GET_COMMAND -> updateAvailableCommandsAndJMenu(player, be.getCommands());
             case PASS_GO -> handlePassGo(player);
             case FREE_PARKING -> handleFreeParking(player);
             case GO_TO_JAIL -> handleGoToJail(player);
@@ -371,7 +371,7 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @author Bardia Parmoun, 101143006
      */
     private void handlePassingTurn() {
-        disableButtons();
+        disableButtonsAndJMenu();
     }
 
     /**
@@ -407,7 +407,7 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @param originalPos the original position of the player, int
      */
     private void handlePlayerGUIMove(Player player, int amountToMove, int originalPos){
-        disableButtons();
+        disableButtonsAndJMenu();
         for (int i = originalPos; i < originalPos + amountToMove + 1; i++){
             int newPlayerPosition =  i % BoardModel.SIZE_OF_BOARD;
             showCurrentCell(player, newPlayerPosition);
@@ -610,7 +610,7 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @param dice value of the dice, int[]
      */
     private void handleRoll(int[] dice) {
-        disableButtons();
+        disableButtonsAndJMenu();
         int die1 = dice[0];
         int die2 = dice[1];
 
@@ -651,7 +651,10 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @author Kyra Lothrop 101145872
      * @param commands keeps track of the list of the commands, List<BoardModel.Command>
      */
-    private void updateAvailableCommands(Player player, List<BoardModel.Command> commands){
+    private void updateAvailableCommandsAndJMenu(Player player, List<BoardModel.Command> commands){
+        fileMenu.setEnabled(true);
+        saveGame.setEnabled(true);
+
         StringBuilder availableCommands = new StringBuilder();
 
         for (BoardModel.Command command: commands){
@@ -670,11 +673,6 @@ public class BoardFrame extends JFrame implements BoardView  {
         updatePlayerStatusPanel(player);
     }
 
-//    private void updateAvailableMenuOptions(){
-//        //here1
-//
-//    }
-
     /**
      * Method to cancel the player initialization process.
      * @author Sarah Chow 101143033
@@ -685,34 +683,47 @@ public class BoardFrame extends JFrame implements BoardView  {
     }
 
     private void handleChooseBoard(){
+
         List<File> boardFileOptions = new ArrayList<>();
+        String selectedBoard = "";
+        
         try{
             boardFileOptions = Files.walk(Paths.get(BoardModel.CONFIG_DIR))
                     .filter(Files::isRegularFile)
                     .map(Path::toFile)
                     .collect(Collectors.toList());
 
+        }catch(IOException e){
+            System.out.println(e);
+        }
+
+        if(boardFileOptions.size() == 0){
+            JOptionPane.showMessageDialog(null, "Sorry, you currently do not have any " +
+                    "board templates.");
+        }
+        else{
             List<String> stringFileNames = new ArrayList<>();
             for(File f: boardFileOptions){
                 stringFileNames.add(f.getName());
             }
 
-            String selectedBoard = (String) JOptionPane.showInputDialog(null,
+            selectedBoard = (String) JOptionPane.showInputDialog(null,
                     "Select the Monopoly board", "SELECT BOARD",
                     JOptionPane.QUESTION_MESSAGE, null, stringFileNames.toArray(), stringFileNames.get(0));
 
-            model.startNewGame(selectedBoard);
-        }catch(IOException e){
-            System.out.println(e);
+            if (selectedBoard != null){
+                model.startNewGame(selectedBoard);
+            }else{
+                initializationCancel();
+            }
         }
-
     }
 
     private void handleNameSaveGameFile(){
         JTextField saveFileName = new JTextField();
 
         Object[] message = {
-                "Name the save game file:", saveFileName,
+                "Name the save game file\nPlease do not include the file type in the name", saveFileName,
         };
 
         int ans = JOptionPane.showConfirmDialog(null, message, "SAVE GAME",
@@ -721,13 +732,13 @@ public class BoardFrame extends JFrame implements BoardView  {
         if (ans != JOptionPane.OK_OPTION){
             JOptionPane.showMessageDialog(null, "Save Cancelled!");
         }
-        else if(saveFileName.toString().contains(".txt")){
-            JOptionPane.showMessageDialog(null, "Please do not include the file type in the " +
-                    "name. \nSave Cancelled");
+        else if(saveFileName.toString().contains(".txt") || saveFileName.toString().length() == 0){
+            JOptionPane.showMessageDialog(null, "Save cancelled. Please format the " +
+                    "filename properly");
         }
         else{
-            JOptionPane.showMessageDialog(null, "Saving the game to file" +
-                    saveFileName.getText()+".txt ...!");
+            JOptionPane.showMessageDialog(null, "Saving the game to file " +
+                    saveFileName.getText()+".txt!");
             model.serializationSave(saveFileName.getText()+".txt");
         }
     }
@@ -740,19 +751,31 @@ public class BoardFrame extends JFrame implements BoardView  {
                     .map(Path::toFile)
                     .collect(Collectors.toList());
 
-            List<String> stringFileNames = new ArrayList<>();
-            for(File f: boardFileOptions){
-                stringFileNames.add(f.getName());
+            if(boardFileOptions.size() ==0){
+                JOptionPane.showMessageDialog(null, "Sorry, you do not have any saved games.\n" +
+                        "You can save a game in File>Save Board");
+            }
+            else{
+                List<String> stringFileNames = new ArrayList<>();
+                for(File f: boardFileOptions){
+                    stringFileNames.add(f.getName());
+                }
+
+                try{
+                    String selectedBoard = (String) JOptionPane.showInputDialog(null,
+                            "Select the saved game to load", "SELECT SAVED GAME",
+                            JOptionPane.QUESTION_MESSAGE, null, stringFileNames.toArray(), stringFileNames.get(0));
+
+                    JOptionPane.showMessageDialog(null, "Loading the game from the file " +
+                            selectedBoard +"!");
+
+                    model.serializationLoad(selectedBoard);
+                }catch(Exception e){
+                    initializationCancel();
+                }
+
             }
 
-            String selectedBoard = (String) JOptionPane.showInputDialog(null,
-                    "Select the saved game to load", "SELECT SAVED GAME",
-                    JOptionPane.QUESTION_MESSAGE, null, stringFileNames.toArray(), stringFileNames.get(0));
-
-            JOptionPane.showMessageDialog(null, "Loading the game from the file" +
-                    selectedBoard +" ...!");
-
-            model.serializationLoad(selectedBoard);
         }catch(IOException e){
             System.out.println(e);
         }
@@ -838,6 +861,8 @@ public class BoardFrame extends JFrame implements BoardView  {
                 model.addPlayer(new AIPlayer(model, playerName.getText(), findPlayerIcon(playerIcon.toLowerCase())));
             }
         }
+
+        saveGame.setEnabled(true);
     }
 
     /**
@@ -1245,10 +1270,12 @@ public class BoardFrame extends JFrame implements BoardView  {
      * Displays a breaker to indicate change of turn.
      * @author Owen VanDusen 101152022
      */
-    private void disableButtons() {
+    private void disableButtonsAndJMenu() {
         for(JButton b: commandButtons){
             b.setEnabled(false);
         }
+
+        fileMenu.setEnabled(false);
     }
 
     /**
@@ -1414,6 +1441,8 @@ public class BoardFrame extends JFrame implements BoardView  {
         for(JButton b: commandButtons){
             b.setEnabled(false);
         }
+
+        saveGame.setEnabled(false);
 
         StringBuilder gameOverMessage = new StringBuilder();
         players.sort(Comparator.comparingInt(Player::getRank));
