@@ -1089,6 +1089,12 @@ public class BoardModel implements Serializable{
 
     public void serializationSave(String fileNameToSave) {
         try {
+            File theDir = new File(SAVED_GAMES_DIR);
+
+            if (!theDir.exists()){
+                theDir.mkdirs();
+            }
+
             File f = new File(SAVED_GAMES_DIR + "/" + fileNameToSave);
             FileOutputStream fileOut = new FileOutputStream(f);
 
@@ -1178,6 +1184,8 @@ public class BoardModel implements Serializable{
     }
 
     public void start(){
+        initializeMonopoly();
+
         while (true){
             if (loadGame){
                 if (newGame){
