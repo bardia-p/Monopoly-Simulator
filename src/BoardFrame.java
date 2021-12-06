@@ -99,7 +99,7 @@ public class BoardFrame extends JFrame implements BoardView {
     /**
      * Keeps track of the audio file.
      */
-    private final static String ORIGINAL_THEME = "audio/monopoly_music.wav";
+    private final static String SONG_THEME = "audio/rick_morty_music.wav";
     /**
      * Keeps track of the size of the board on each side.
      */
@@ -250,7 +250,8 @@ public class BoardFrame extends JFrame implements BoardView {
 
         this.setVisible(true);
 
-        s = new Sound(ORIGINAL_THEME);
+        s = new Sound(SONG_THEME);
+        s.play();
 
         model.start();
     }
@@ -749,8 +750,6 @@ public class BoardFrame extends JFrame implements BoardView {
                     JOptionPane.QUESTION_MESSAGE, null, stringFileNames.toArray(), stringFileNames.get(0));
 
             if (selectedBoard != null){
-                s.setSoundName(model.getMusicFileName());
-                s.play();
                 model.startNewGame(selectedBoard);
             }else{
                 initializationCancel();
@@ -775,7 +774,7 @@ public class BoardFrame extends JFrame implements BoardView {
         if (ans != JOptionPane.OK_OPTION){
             JOptionPane.showMessageDialog(null, "Save Cancelled!");
         }
-        else if(saveFileName.toString().contains(".txt") || saveFileName.toString().length() == 0){
+        else if(saveFileName.getText().contains(".txt") || saveFileName.getText().length() == 0){
             JOptionPane.showMessageDialog(null, "Save cancelled. Please format the " +
                     "filename properly");
         }

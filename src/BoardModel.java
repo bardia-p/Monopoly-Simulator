@@ -329,16 +329,6 @@ public class BoardModel implements Serializable{
     }
 
     /**
-     * Sets the name of the music file.
-     *
-     * @param musicFileName
-     * @author Kyra Lothrop 101145872
-     */
-    public void setMusicFileName(String musicFileName){
-        this.musicFileName = musicFileName;
-    }
-
-    /**
      * Accessor to add a player to the board, starting on GO space.
      *
      * @param player the current player, Player
@@ -1061,13 +1051,6 @@ public class BoardModel implements Serializable{
     public boolean getAnimationRunning(){
         return animationRunning;
     }
-
-    /**
-     * Returns the name of the music file.
-     * @return the name of the music file, String
-     * @author Sarah Chow 101143033
-     */
-    public String getMusicFileName(){return musicFileName;}
 
     /**
      * It parses the file with a parser
