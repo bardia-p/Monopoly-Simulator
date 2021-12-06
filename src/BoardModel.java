@@ -79,12 +79,24 @@ public class BoardModel implements Serializable{
      */
     public final static String CONFIG_DIR = "board_config";
 
+    /**
+     * Keeps track of the saved_games directory to save the txt files.
+     */
     public final static String SAVED_GAMES_DIR = "saved_games";
 
+    /**
+     * Boolean value if the game is load.
+     */
     private volatile boolean loadGame;
 
+    /**
+     * Boolean value if the game is new.
+     */
     private volatile boolean newGame;
 
+    /**
+     * Contains the name of the selected board.
+     */
     private String filename;
 
     /**
@@ -235,14 +247,26 @@ public class BoardModel implements Serializable{
         }
     }
 
+    /**
+     * Method to send board update to choose a board
+     * @author Kyra Lothrop 101145872
+     */
     public void chooseBoard(){
         sendBoardUpdate(new BoardEvent(this, Status.CHOOSE_BOARD));
     }
 
+    /**
+     * Method to send board update to save the game
+     * @author Kyra Lothrop 101145872
+     */
     private void selectFileToSaveGame(){
         sendBoardUpdate(new BoardEvent(this, Status.SAVE_GAME));
     }
 
+    /**
+     * Method to send board update to select a game file to load
+     * @author Kyra Lothrop 101145872
+     */
     private void selectFileToLoad(){
         sendBoardUpdate(new BoardEvent(this, Status.LOAD_GAME));
     }
@@ -257,7 +281,6 @@ public class BoardModel implements Serializable{
      */
     public void constructBoard(String filename) {
         try {
-            //File f = new File("board_config/rickAndMortyBoard.xml");
             File f = new File(CONFIG_DIR + "/" + filename);
 
             readSAX(f, new XMLParser(this, bank));

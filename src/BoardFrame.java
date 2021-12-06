@@ -73,8 +73,19 @@ public class BoardFrame extends JFrame implements BoardView  {
      */
     private JLabel statusLabel;
 
+    /**
+     * The Menu bar.
+     */
     private JMenuBar menuBar;
+
+    /**
+     * The fileMenu which has menu items.
+     */
     private JMenu fileMenu;
+
+    /**
+     * The menu items that are available.
+     */
     private JMenuItem newGame, loadGame, saveGame;
 
     /**
@@ -682,6 +693,11 @@ public class BoardFrame extends JFrame implements BoardView  {
         System.exit(0);
     }
 
+    /**
+     * Method to allow the user to select which monopoly board to initialize by reading
+     * the possible xml files
+     * @author Kyra Lothrop 101145872
+     */
     private void handleChooseBoard(){
 
         List<File> boardFileOptions = new ArrayList<>();
@@ -719,6 +735,10 @@ public class BoardFrame extends JFrame implements BoardView  {
         }
     }
 
+    /**
+     * Method to allow the user to name the file that will save the current game
+     * @author Kyra Lothrop 101145872
+     */
     private void handleNameSaveGameFile(){
         JTextField saveFileName = new JTextField();
 
@@ -743,6 +763,11 @@ public class BoardFrame extends JFrame implements BoardView  {
         }
     }
 
+    /**
+     * Method to allow the user to select which saved game to load by reading the
+     * possible txt files
+     * @author Kyra Lothrop 101145872
+     */
     private void handleLoadGameFromFile(){
         List<File> boardFileOptions = new ArrayList<>();
         try{
@@ -761,19 +786,19 @@ public class BoardFrame extends JFrame implements BoardView  {
                     stringFileNames.add(f.getName());
                 }
 
-                try{
-                    String selectedBoard = (String) JOptionPane.showInputDialog(null,
-                            "Select the saved game to load", "SELECT SAVED GAME",
-                            JOptionPane.QUESTION_MESSAGE, null, stringFileNames.toArray(), stringFileNames.get(0));
+                String selectedBoard = (String) JOptionPane.showInputDialog(null,
+                        "Select the saved game to load", "SELECT SAVED GAME",
+                        JOptionPane.QUESTION_MESSAGE, null, stringFileNames.toArray(), stringFileNames.get(0));
 
+                if(selectedBoard != null){
                     JOptionPane.showMessageDialog(null, "Loading the game from the file " +
                             selectedBoard +"!");
 
                     model.serializationLoad(selectedBoard);
-                }catch(Exception e){
-                    initializationCancel();
                 }
-
+                else{
+                    JOptionPane.showMessageDialog(null, "Load cancelled!");
+                }
             }
 
         }catch(IOException e){
