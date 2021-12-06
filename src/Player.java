@@ -459,6 +459,19 @@ public class Player implements Serializable {
         this.numUtilitiesOwned = numUtilitiesOwned;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Player player = (Player) o;
+        return icon.getName() == player.getIconName();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, icon);
+    }
+
     /**
      * Accessor method to package relevant information into a string.
      * @author Bardia Parmoun 101143006

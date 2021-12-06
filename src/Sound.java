@@ -1,21 +1,46 @@
 import javax.sound.sampled.*;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URL;
 
-public class Sound implements Runnable {
+/**
+ * Group 3
+ * SYSC 3110 - Milestone 3 Sound
+ *
+ * This document is the Sound. This class handles playing music.
+ *
+ * @author Sarah Chow 101143033
+ * @author Kyra Lothrop 101145872
+ * @author Bardia Parmoun 101143006
+ * @author Owen VanDusen 101152022
+ * @version 1.0
+ *
+ */
+public class Sound implements Runnable, Serializable {
+    /**
+     * Keeps track of sound filename.
+     */
+    private final String soundName;
+    /**
+     * Keeps track of the thread object.
+     */
+    private static Thread th;
 
-    private String soundName = "audio/rick_morty_music.wav";
-    private boolean playCompleted = false;
-    static Thread th;
-
-    public void newThread(){
-        th =new Thread(this);
-        th.start();
-
+    /**
+     * The main constructor of the Sound class.
+     * @param soundName the name of the file, String.
+     * @author Sarah Chow 101143033
+     */
+    public Sound(String soundName){
+        this.soundName = soundName;
+        th = new Thread(this);
     }
 
+    /**
+     * Plays a music file.
+     * @author Sarah Chow 101143033
+     */
     public void monopolyMusic(){
-
         try {
             URL url = this.getClass().getResource(soundName);
             AudioInputStream audioStream = AudioSystem.getAudioInputStream(url);
@@ -42,8 +67,20 @@ public class Sound implements Runnable {
         }
     }
 
+    /**
+     * Starts the thread for playing music.
+     * @author Sarah Chow 101143033
+     */
     @Override
     public void run() {
         monopolyMusic();
+    }
+
+    /**
+     * Plays music.
+     * @author Sarah Chow 101143033
+     */
+    public void play(){
+        th.start();
     }
 }

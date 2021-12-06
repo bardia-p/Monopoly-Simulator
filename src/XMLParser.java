@@ -54,12 +54,6 @@ public class XMLParser extends DefaultHandler {
      */
     private int attributeSelector = -1;
 
-    private String backgroundColour;
-
-    private String iconAttribute;
-
-    private int iconCounter;
-
     /**
      * The constructor for the parser.
      * @param model the board model, BoardModel.
@@ -69,10 +63,7 @@ public class XMLParser extends DefaultHandler {
         super();
         this.model = model;
         this.bank = bank;
-        this.backgroundColour = "";
-        this.iconAttribute = "";
         this.name = "";
-        this.iconCounter = 1;
     }
 
     /**
@@ -87,7 +78,6 @@ public class XMLParser extends DefaultHandler {
                 this.imgPath = "";
                 this.neighborhood = "";
                 this.fees = new ArrayList<>();
-                this.backgroundColour = "";
             }
             case "type" -> attributeSelector = 0;
             case "name" -> attributeSelector = 1;
@@ -95,8 +85,6 @@ public class XMLParser extends DefaultHandler {
             case "fee" -> attributeSelector = 3;
             case "neighbourhood" -> attributeSelector = 4;
             case "image" -> attributeSelector = 5;
-            case "colour" -> attributeSelector = 6;
-            case "icons" -> attributeSelector = 7;
             default -> attributeSelector = -1; // The other tags are ignored.
         }
     }
@@ -172,29 +160,6 @@ public class XMLParser extends DefaultHandler {
                 }
             }
         }
-        else if (qName.equals("icon")){
-            switch(iconCounter){
-                case(1) -> BoardModel.Icon.ICON1.setIcon(name, imgPath);
-                case(2) -> BoardModel.Icon.ICON2.setIcon(name, imgPath);
-                case(3) -> BoardModel.Icon.ICON3.setIcon(name, imgPath);
-                case(4) -> BoardModel.Icon.ICON4.setIcon(name, imgPath);
-                case(5) -> BoardModel.Icon.ICON5.setIcon(name, imgPath);
-                case(6) -> BoardModel.Icon.ICON6.setIcon(name, imgPath);
-            }
-            iconCounter++;
-        }
-        else if (qName.equals("colour")){
-            BoardFrame.ThemeColour.BACKGROUND.setColorPair(backgroundColour);
-        }
-        else if (qName.equals("money")){
-            BoardFrame.moneyImg = imgPath;
-        }
-        else if (qName.equals("house")){
-            BoardFrame.houseImg = imgPath;
-        }
-        else if (qName.equals("hotel")){
-            BoardFrame.hotelImg = imgPath;
-        }
     }
 
     /**
@@ -211,8 +176,6 @@ public class XMLParser extends DefaultHandler {
             case 3 -> fees.add(Integer.parseInt(new String(ch, start, length)));
             case 4 -> neighborhood = new String(ch, start, length);
             case 5 -> imgPath = new String(ch, start, length);
-            case 6 -> backgroundColour = new String(ch, start, length);
-            case 7 -> iconAttribute = new String(ch, start, length);
         }
 
         attributeSelector = -1;

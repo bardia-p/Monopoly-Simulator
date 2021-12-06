@@ -41,7 +41,6 @@ public class BoardModel implements Serializable{
      * Keeps track of the number of AI players.
      */
     private int numAIPlayer;
-
     /**
      * Keeps track of the size of the board.
      */
@@ -61,7 +60,7 @@ public class BoardModel implements Serializable{
     /**
      * Keeps track of the current player turn.
      */
-    private Player turn;
+    private volatile Player turn;
     /**
      * Keeps track of the bank player.
      */
@@ -69,12 +68,36 @@ public class BoardModel implements Serializable{
     /**
      * Checks to see if the roll button was pressed.
      */
-    private boolean checkDoubleRoll;
+    private volatile boolean checkDoubleRoll;
     /**
      * Checks to see if the animation is running.
      */
-    private boolean animationRunning;
+    private volatile boolean animationRunning;
+    /**
+     * Boolean value if the game is load.
+     */
+    private volatile boolean loadGame;
+    /**
+     * Boolean value if the game is new.
+     */
+    private volatile boolean newGame;
+    /**
+     * Contains the name of the selected board.
+     */
+    private String filename;
+    /**
+     * Keeps track of the name of the music file.
+     */
+    private String musicFileName;
 
+    /**
+     * Keeps track of the possible board statuses.
+     */
+    public enum Status {
+        GET_NUM_PLAYERS, CREATE_PLAYER_ICONS, CHOOSE_BOARD, SAVE_GAME, LOAD_GAME, INITIALIZE_BOARD, INITIALIZE_MONOPOLY,
+        INITIALIZE_PLAYERS, GET_COMMAND, GO_TO_JAIL, EXIT_JAIL, FORCE_PAY_JAIL, GAME_OVER, PASS_GO, FREE_PARKING,
+        PLAYER_INPUT, UPDATE_MODEL, NEW_GAME
+    }
     /**
      * Keeps track of the board_config directory to read the XML files.
      */
@@ -84,30 +107,6 @@ public class BoardModel implements Serializable{
      * Keeps track of the saved_games directory to save the txt files.
      */
     public final static String SAVED_GAMES_DIR = "saved_games";
-
-    /**
-     * Boolean value if the game is load.
-     */
-    private volatile boolean loadGame;
-
-    /**
-     * Boolean value if the game is new.
-     */
-    private volatile boolean newGame;
-
-    /**
-     * Contains the name of the selected board.
-     */
-    private String filename;
-
-    /**
-     * Keeps track of the possible board statuses.
-     */
-    public enum Status {
-        GET_NUM_PLAYERS, CREATE_PLAYER_ICONS, CHOOSE_BOARD, SAVE_GAME, LOAD_GAME, INITIALIZE_BOARD, INITIALIZE_MONOPOLY, INITIALIZE_PLAYERS,
-        GET_COMMAND, GO_TO_JAIL, EXIT_JAIL, FORCE_PAY_JAIL, GAME_OVER, PASS_GO, FREE_PARKING, PLAYER_INPUT, UPDATE_MODEL,
-        NEW_GAME
-    }
 
     /**
      * Keeps track of the possible player commands.
@@ -145,16 +144,6 @@ public class BoardModel implements Serializable{
      * Keeps track of the player icons
      */
     public enum Icon {
-//        BOOT("boot", "images/rick_morty/icons/council_of_ricks_badge.png"),
-//        IRON("iron", "images/original/icons/iron.png"),
-//        SCOTTIE_DOG("scottie dog", "images/original/icons/scottie_dog.png"),
-//        BATTLESHIP("battleship", "images/original/icons/battleship.png"),
-//        TOP_HAT("top hat", "images/original/icons/top_hat.png"),
-//        WHEELBARROW("wheelbarrow", "images/original/icons/wheelbarrow.png"),
-//        THIMBLE("thimble", "images/original/icons/thimble.png"),
-//        RACING_CAR("racing car", "images/original/icons/racing_car.png"),
-//        BANK("bank", "");
-
         ICON1("boot", "images/original/icons/boot.png"),
         ICON2("iron", "images/original/icons/iron.png"),
         ICON3("scottie dog", "images/original/icons/scottie_dog.png"),
@@ -165,19 +154,14 @@ public class BoardModel implements Serializable{
         ICON8("racing car", "images/original/icons/racing_car.png"),
         BANK("bank", "");
 
-        private String name;
-        private String imgPath;
+        private final String name;
+        private final String imgPath;
         private boolean used;
 
         Icon(String name, String imgPath) {
             this.name = name;
             this.imgPath = imgPath;
             this.used = false;
-        }
-
-        public void setIcon(String name, String imgPath){
-            this.name = name;
-            this.imgPath = imgPath;
         }
 
         public String getImgPath() {
@@ -211,7 +195,7 @@ public class BoardModel implements Serializable{
         players = new ArrayList<>();
         dice = new int[]{0, 0};
         bank = new Player("Bank", Icon.BANK, 0);
-        gameFinish = false;
+        gameFinish = true;
         turn = null;
         numPlayers = 0;
         loadGame = false;
@@ -250,10 +234,8 @@ public class BoardModel implements Serializable{
             chooseBoard();
         } else if(command.equals((Command.LOAD_BOARD.getStringCommand()))){
             selectFileToLoad();
-            //serializationLoad();
         } else if(command.equals((Command.SAVE_BOARD.getStringCommand()))){
             selectFileToSaveGame();
-            //serializationSave();
         }
 
         // Avoids race conditions.
@@ -465,7 +447,6 @@ public class BoardModel implements Serializable{
 
         // Handling forfeiting the game and declaring bankruptcy.
         commands.add(Command.FORFEIT);
-
 
         sendBoardUpdate(new BoardEvent(this, BoardModel.Status.GET_COMMAND, player, commands));
 
@@ -1021,24 +1002,54 @@ public class BoardModel implements Serializable{
         return bank.getCash();
     }
 
-    public List<BoardView> getViews() {
-        return views;
-    }
-
+    /**
+     * Returns true is the game is done.
+     *
+     * @return true if game is finished, boolean.
+     * @author Sarah Chow 101143033
+     */
     public boolean isGameFinish() {
         return gameFinish;
     }
 
+    /**
+     * Returns the current turn.
+     *
+     * @return the current turn, Player.
+     * @author Sarah Chow 101143033
+     */
     public Player getTurn() {
         return turn;
     }
 
+    /**
+     * Returns the bank player.
+     *
+     * @return bank, Player.
+     * @author Sarah Chow 101143033
+     */
     public Player getBank() {
         return bank;
     }
 
+    /**
+     * Returns true if the player has rolled double.
+     *
+     * @return true if the player has rolled doubled, boolean.
+     * @author Sarah Chow 101143033
+     */
     public boolean isCheckDoubleRoll() {
         return checkDoubleRoll;
+    }
+
+    /**
+     * Return true is the animation is running.
+     *
+     * @return true is animation is running, boolean.
+     * @author Sarah Chow 101143033
+     */
+    public boolean getAnimationRunning(){
+        return animationRunning;
     }
 
     /**
@@ -1056,6 +1067,12 @@ public class BoardModel implements Serializable{
         s.parse(f, handler);
     }
 
+    /**
+     * It loads the game from a saved file.
+     *
+     * @param fileToLoad the name of the file, String
+     * @author Sarah Chow 101143033
+     */
     public void serializationLoad(String fileToLoad){
         try{
             File f = new File(SAVED_GAMES_DIR + "/" + fileToLoad);
@@ -1084,10 +1101,16 @@ public class BoardModel implements Serializable{
 
             this.checkDoubleRoll = bmTemp.isCheckDoubleRoll();
 
+            this.animationRunning = bmTemp.getAnimationRunning();
+
+            for (Player p : players){
+                if (p.isPlayerAI()){
+                    ((AIPlayer)p).setModel(this);
+                }
+            }
             sendBoardUpdate(new BoardEvent(this, Status.UPDATE_MODEL));
 
             loadGame = true;
-
         }
         catch(Exception e){
             System.out.println(e.getMessage());
@@ -1095,24 +1118,68 @@ public class BoardModel implements Serializable{
 
     }
 
+    /**
+     * Saves the the game to a file based on the filename.
+     *
+     * @param fileNameToSave the name of the file, String.
+     * @author Sarah Chow 101143033
+     */
     public void serializationSave(String fileNameToSave) {
         try {
-            File f = new File(SAVED_GAMES_DIR + "/" + fileNameToSave);
-            FileOutputStream fileOut = new FileOutputStream(f);
+            File theDir = new File(SAVED_GAMES_DIR);
 
-            ObjectOutputStream out = new ObjectOutputStream((fileOut));
+            boolean res = true;
+            if (!theDir.exists()){
+                res = theDir.mkdirs();
+            }
 
-            out.writeObject(this);
+            if (res) {
+                File f = new File(SAVED_GAMES_DIR + "/" + fileNameToSave);
+                FileOutputStream fileOut = new FileOutputStream(f);
 
-            out.close();
-            fileOut.close();
+                ObjectOutputStream out = new ObjectOutputStream((fileOut));
+
+                out.writeObject(this);
+
+                out.close();
+                fileOut.close();
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void setFilename(String filename){
-        this.filename = filename;
+    /**
+     * Handles starting a new game.
+     * @author Bardia Parmoun, 101143006.
+     */
+    public void handleNewGame(){
+        sendBoardUpdate(new BoardEvent(this, Status.NEW_GAME));
+        constructBoard(filename);
+        getNumPlayers();
+        initiatePlayers();
+
+        loadGame = true;
+    }
+
+    /**
+     * Handles starting a game from the selected game.
+     * @param selectedBoard the name of the board, String.
+     */
+    public void startNewGame(String selectedBoard){
+        cells = new ArrayList<>();
+        players = new ArrayList<>();
+        dice = new int[]{0, 0};
+        bank = new Player("Bank", Icon.BANK, 0);
+        turn = null;
+        numPlayers = 0;
+        gameFinish = true;
+        loadGame = true;
+        newGame = true;
+        checkDoubleRoll = false;
+        animationRunning = false;
+        filename = selectedBoard;
     }
 
     /**
@@ -1125,16 +1192,13 @@ public class BoardModel implements Serializable{
     public void play() {
         gameFinish = false;
 
-//        initializeMonopoly();
-//        constructBoard("rick_morty_board_images.xml");
-//        getNumPlayers();
-//        initiatePlayers();
-
         while (!gameFinish) {
-            for (int i =0; i < players.size(); i++) {
+            boolean isNewTurn = false;
+            for (int i = 0; i < players.size(); i++) {
                 Player player = players.get(i);
 
-                if (turn == null){
+                if (turn == null) {
+                    isNewTurn = true;
                     turn = player;
                 }
 
@@ -1145,20 +1209,22 @@ public class BoardModel implements Serializable{
                         jail.incrementJailRound(player); // Pass their turn in jail
                     }
 
-                    roll(player);
+                    if (isNewTurn) {
+                        roll(player);
+                    }
+
                     getCommand(player);
 
                     // Keeps prompting the player for commands until their turn is over.
                     while (!gameFinish && turn != null) {
-                        if (turn.isPlayerAI()) {
-                            if (!animationRunning) {
-                                ((AIPlayer) turn).nextMove();
-                                try {
-                                    TimeUnit.MILLISECONDS.sleep(50);
-                                } catch (Exception e) {
-                                    System.out.println("wait failed");
-                                }
-                            }
+                        if (turn != null && !animationRunning && turn.isPlayerAI()) {
+                            ((AIPlayer) turn).nextMove();
+                        }
+
+                        try {
+                            TimeUnit.MILLISECONDS.sleep(50);
+                        } catch (Exception e) {
+                            System.out.println("wait failed");
                         }
 
                         if (checkDoubleRoll) {
@@ -1174,23 +1240,20 @@ public class BoardModel implements Serializable{
                     gameOver();
                 }
 
-                if (gameFinish){
+                if (gameFinish) {
                     break;
                 }
             }
         }
     }
 
-    public void handleNewGame(){
-        sendBoardUpdate(new BoardEvent(this, Status.NEW_GAME));
-        constructBoard(filename);
-        getNumPlayers();
-        initiatePlayers();
-
-        loadGame = true;
-    }
-
+    /**
+     * Handles starting the application
+     * @author Bardia Parmoun, 101143006.
+     */
     public void start(){
+        initializeMonopoly();
+
         while (true){
             if (loadGame){
                 if (newGame){
@@ -1201,20 +1264,5 @@ public class BoardModel implements Serializable{
                 play();
             }
         }
-    }
-
-    public void startNewGame(String selectedBoard){
-        cells = new ArrayList<>();
-        players = new ArrayList<>();
-        dice = new int[]{0, 0};
-        bank = new Player("Bank", Icon.BANK, 0);
-        turn = null;
-        numPlayers = 0;
-        gameFinish = true;
-        loadGame = true;
-        newGame = true;
-        checkDoubleRoll = false;
-        animationRunning = false;
-        filename = selectedBoard;
     }
 }

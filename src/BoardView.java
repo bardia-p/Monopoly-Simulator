@@ -11,6 +11,6 @@
  * @author Owen VanDusen 101152022
  * @version 2.0
  */
-public interface BoardView {
+public interface BoardView{
     void handleMonopolyUpdate(MonopolyEvent e);
 }

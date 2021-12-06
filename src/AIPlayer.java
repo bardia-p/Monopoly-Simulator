@@ -1,3 +1,4 @@
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -17,7 +18,7 @@ public class AIPlayer extends Player {
     /**
      * Keeps track of the model.
      */
-    private final BoardModel model;
+    private BoardModel model;
     /**
      * The limit of the number of houses the AI can build.
      */
@@ -141,5 +142,9 @@ public class AIPlayer extends Player {
      */
     private void handleRoll(){
         model.roll(this);
+    }
+
+    public void setModel(BoardModel model){
+        this.model = model;
     }
 }

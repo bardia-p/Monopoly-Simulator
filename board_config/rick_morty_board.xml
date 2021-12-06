@@ -7,8 +7,6 @@ Sarah Chow
 
 <board>
     <colour>#cbe4d0</colour>
-    <audioPath>audio/rick_morty_music.wav</audioPath>
-
 
     <players>
         <icon>

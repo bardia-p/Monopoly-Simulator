@@ -17,7 +17,6 @@ import java.io.Serializable;
  * @author Owen VanDusen 101152022
  * @version 2.0
  */
-
 public class BoardController extends WindowAdapter implements ActionListener, Serializable {
     /**
      * Keeps track of the board model.
