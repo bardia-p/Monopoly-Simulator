@@ -5,12 +5,16 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.net.URL;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
+import java.util.stream.Collectors;
 import java.io.File;
 
 /**
@@ -26,7 +30,7 @@ import java.io.File;
  * @author Owen VanDusen 101152022
  * @version 3.0
  */
-public class BoardFrame extends JFrame implements BoardView  {
+public class BoardFrame extends JFrame implements BoardView {
     /**
      * Keeps track of the board model.
      */
@@ -77,6 +81,21 @@ public class BoardFrame extends JFrame implements BoardView  {
 
     public static String houseImg;
     public static String hotelImg;
+
+    /**
+     * The Menu bar.
+     */
+    private JMenuBar menuBar;
+
+    /**
+     * The fileMenu which has menu items.
+     */
+    private JMenu fileMenu;
+
+    /**
+     * The menu items that are available.
+     */
+    private JMenuItem newGame, loadGame, saveGame;
 
     /**
      * Keeps track of the size of the board on each side.
@@ -273,7 +292,10 @@ public class BoardFrame extends JFrame implements BoardView  {
         Sound s = new Sound();
         s.newThread();
 
-        model.play();
+        //model.play();
+
+        model.start();
+
     }
 
 
@@ -283,6 +305,37 @@ public class BoardFrame extends JFrame implements BoardView  {
      * Creating the basic GUI of the monopoly.
      */
     private void createGUI(){
+        // Creating JMenu
+        this.menuBar = new JMenuBar();
+
+        this.fileMenu = new JMenu("File");
+
+        this.newGame = new JMenuItem("New Board");
+        this.saveGame = new JMenuItem("Save Board");
+        this.loadGame = new JMenuItem("Load Board");
+
+        this.fileMenu.add(newGame);
+        this.fileMenu.add(saveGame);
+        this.fileMenu.add(loadGame);
+
+        menuBar.add(fileMenu);
+
+        this.add(menuBar);
+        this.setJMenuBar(menuBar);
+
+        // JMenu
+        newGame.setEnabled(true);
+        newGame.setActionCommand(BoardModel.Command.NEW_BOARD.getStringCommand());
+        newGame.addActionListener(controller);
+
+        loadGame.setEnabled(true);
+        loadGame.setActionCommand(BoardModel.Command.LOAD_BOARD.getStringCommand());
+        loadGame.addActionListener(controller);
+
+        saveGame.setEnabled(false);
+        saveGame.setActionCommand(BoardModel.Command.SAVE_BOARD.getStringCommand());
+        saveGame.addActionListener(controller);
+
         // Setting the frame settings.
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setResizable(false);
@@ -313,7 +366,7 @@ public class BoardFrame extends JFrame implements BoardView  {
         add(layeredPane);
 
         pack();
-        //updateFrame();
+
         // Making the frame visible.
         this.setVisible(true);
     }
@@ -336,18 +389,23 @@ public class BoardFrame extends JFrame implements BoardView  {
         BoardEvent be = (BoardEvent) e;
         Player player = be.getPlayer();
         switch (e.getStatus()) {
+            case CHOOSE_BOARD -> handleChooseBoard();
+            case SAVE_GAME -> handleNameSaveGameFile();
+            case LOAD_GAME -> handleLoadGameFromFile();
             case INITIALIZE_MONOPOLY -> handleWelcomeMonopoly();
             case GAME_OVER -> handleWinner(source.getPlayers());
             case INITIALIZE_BOARD -> constructBoard(source.getCells());
             case CREATE_PLAYER_ICONS -> createPlayers(source.getPlayers());
             case GET_NUM_PLAYERS -> getNumPlayers();
             case INITIALIZE_PLAYERS -> initializePlayers(source.getPlayerCount());
-            case GET_COMMAND -> updateAvailableCommands(player, be.getCommands());
+            case GET_COMMAND -> updateAvailableCommandsAndJMenu(player, be.getCommands());
             case PASS_GO -> handlePassGo(player);
             case FREE_PARKING -> handleFreeParking(player);
             case GO_TO_JAIL -> handleGoToJail(player);
             case EXIT_JAIL -> handleExitJail(player);
             case FORCE_PAY_JAIL -> handleForceExitJail(player);
+            case UPDATE_MODEL -> updateBoard();
+            case NEW_GAME -> makeNewBoard();
         }
     }
 
@@ -382,7 +440,7 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @author Bardia Parmoun, 101143006
      */
     private void handlePassingTurn() {
-        disableButtons();
+        disableButtonsAndJMenu();
     }
 
     /**
@@ -419,7 +477,7 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @param originalPos the original position of the player, int
      */
     private void handlePlayerGUIMove(Player player, int amountToMove, int originalPos){
-        disableButtons();
+        disableButtonsAndJMenu();
         for (int i = originalPos; i < originalPos + amountToMove + 1; i++){
             int newPlayerPosition =  i % BoardModel.SIZE_OF_BOARD;
             showCurrentCell(player, newPlayerPosition);
@@ -631,7 +689,7 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @param dice value of the dice, int[]
      */
     private void handleRoll(int[] dice) {
-        disableButtons();
+        disableButtonsAndJMenu();
         int die1 = dice[0];
         int die2 = dice[1];
 
@@ -672,7 +730,10 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @author Kyra Lothrop 101145872
      * @param commands keeps track of the list of the commands, List<BoardModel.Command>
      */
-    private void updateAvailableCommands(Player player, List<BoardModel.Command> commands){
+    private void updateAvailableCommandsAndJMenu(Player player, List<BoardModel.Command> commands){
+        fileMenu.setEnabled(true);
+        saveGame.setEnabled(true);
+
         StringBuilder availableCommands = new StringBuilder();
 
         for (BoardModel.Command command: commands){
@@ -699,6 +760,119 @@ public class BoardFrame extends JFrame implements BoardView  {
     private void initializationCancel(){
         JOptionPane.showMessageDialog(null, "Game initialization is cancelled!");
         System.exit(0);
+    }
+
+    /**
+     * Method to allow the user to select which monopoly board to initialize by reading
+     * the possible xml files
+     * @author Kyra Lothrop 101145872
+     */
+    private void handleChooseBoard(){
+
+        List<File> boardFileOptions = new ArrayList<>();
+        String selectedBoard = "";
+        
+        try{
+            boardFileOptions = Files.walk(Paths.get(BoardModel.CONFIG_DIR))
+                    .filter(Files::isRegularFile)
+                    .map(Path::toFile)
+                    .collect(Collectors.toList());
+
+        }catch(IOException e){
+            System.out.println(e);
+        }
+
+        if(boardFileOptions.size() == 0){
+            JOptionPane.showMessageDialog(null, "Sorry, you currently do not have any " +
+                    "board templates.");
+        }
+        else{
+            List<String> stringFileNames = new ArrayList<>();
+            for(File f: boardFileOptions){
+                stringFileNames.add(f.getName());
+            }
+
+            selectedBoard = (String) JOptionPane.showInputDialog(null,
+                    "Select the Monopoly board", "SELECT BOARD",
+                    JOptionPane.QUESTION_MESSAGE, null, stringFileNames.toArray(), stringFileNames.get(0));
+
+            if (selectedBoard != null){
+                model.startNewGame(selectedBoard);
+            }else{
+                initializationCancel();
+            }
+        }
+    }
+
+    /**
+     * Method to allow the user to name the file that will save the current game
+     * @author Kyra Lothrop 101145872
+     */
+    private void handleNameSaveGameFile(){
+        JTextField saveFileName = new JTextField();
+
+        Object[] message = {
+                "Name the save game file\nPlease do not include the file type in the name", saveFileName,
+        };
+
+        int ans = JOptionPane.showConfirmDialog(null, message, "SAVE GAME",
+                JOptionPane.OK_CANCEL_OPTION);
+
+        if (ans != JOptionPane.OK_OPTION){
+            JOptionPane.showMessageDialog(null, "Save Cancelled!");
+        }
+        else if(saveFileName.toString().contains(".txt") || saveFileName.toString().length() == 0){
+            JOptionPane.showMessageDialog(null, "Save cancelled. Please format the " +
+                    "filename properly");
+        }
+        else{
+            JOptionPane.showMessageDialog(null, "Saving the game to file " +
+                    saveFileName.getText()+".txt!");
+            model.serializationSave(saveFileName.getText()+".txt");
+        }
+    }
+
+    /**
+     * Method to allow the user to select which saved game to load by reading the
+     * possible txt files
+     * @author Kyra Lothrop 101145872
+     */
+    private void handleLoadGameFromFile(){
+        List<File> boardFileOptions = new ArrayList<>();
+        try{
+            boardFileOptions = Files.walk(Paths.get(BoardModel.SAVED_GAMES_DIR))
+                    .filter(Files::isRegularFile)
+                    .map(Path::toFile)
+                    .collect(Collectors.toList());
+
+            if(boardFileOptions.size() ==0){
+                JOptionPane.showMessageDialog(null, "Sorry, you do not have any saved games.\n" +
+                        "You can save a game in File>Save Board");
+            }
+            else{
+                List<String> stringFileNames = new ArrayList<>();
+                for(File f: boardFileOptions){
+                    stringFileNames.add(f.getName());
+                }
+
+                String selectedBoard = (String) JOptionPane.showInputDialog(null,
+                        "Select the saved game to load", "SELECT SAVED GAME",
+                        JOptionPane.QUESTION_MESSAGE, null, stringFileNames.toArray(), stringFileNames.get(0));
+
+                if(selectedBoard != null){
+                    JOptionPane.showMessageDialog(null, "Loading the game from the file " +
+                            selectedBoard +"!");
+
+                    model.serializationLoad(selectedBoard);
+                }
+                else{
+                    JOptionPane.showMessageDialog(null, "Load cancelled!");
+                }
+            }
+
+        }catch(IOException e){
+            System.out.println(e);
+        }
     }
 
     /**
@@ -734,6 +908,11 @@ public class BoardFrame extends JFrame implements BoardView  {
      * @param numPlayers keeps track of the number of player, int
      */
     private void initializePlayers(int numPlayers){
+        // Resetting all the icons when making a new icon.
+        for (BoardModel.Icon icon: BoardModel.Icon.values()){
+            icon.setUsed(false);
+        }
+
         String[] namesAI = {"GOOGLE", "SIRI", "ALEXA", "BIXBY", "BAYMAX", "WALL-E", "EVA", "TOBIO"};
 
         for (int i = 0; i < numPlayers; i++){
@@ -776,6 +955,8 @@ public class BoardFrame extends JFrame implements BoardView  {
                 model.addPlayer(new AIPlayer(model, playerName.getText(), findPlayerIcon(playerIcon.toLowerCase())));
             }
         }
+
+        saveGame.setEnabled(true);
     }
 
     /**
@@ -803,7 +984,7 @@ public class BoardFrame extends JFrame implements BoardView  {
     private BoardModel.Icon findPlayerIcon(String icon) {
         for (BoardModel.Icon ic: BoardModel.Icon.values()){
             if (ic.getName().equals(icon)) {
-                ic.setUsed();
+                ic.setUsed(true);
                 return ic;
             }
         }
@@ -1199,10 +1380,12 @@ public class BoardFrame extends JFrame implements BoardView  {
      * Displays a breaker to indicate change of turn.
      * @author Owen VanDusen 101152022
      */
-    private void disableButtons() {
+    private void disableButtonsAndJMenu() {
         for(JButton b: commandButtons){
             b.setEnabled(false);
         }
+
+        fileMenu.setEnabled(false);
     }
 
     /**
@@ -1369,6 +1552,8 @@ public class BoardFrame extends JFrame implements BoardView  {
             b.setEnabled(false);
         }
 
+        saveGame.setEnabled(false);
+
         StringBuilder gameOverMessage = new StringBuilder();
         players.sort(Comparator.comparingInt(Player::getRank));
 
@@ -1402,6 +1587,32 @@ public class BoardFrame extends JFrame implements BoardView  {
     private void handlePassGo(Player player) {
         String message = "Player " + player.getIconName().toUpperCase() +  " passed go!";
         displayStatus(message, player.isPlayerAI());
+    }
+
+    public void updateBoard(){
+        clearBoard();
+
+        this.constructBoard(model.getCells());
+        this.createPlayers(model.getPlayers());
+
+        for (Player p: model.getPlayers()){
+            this.showCurrentCell(p, p.getPosition());
+        }
+
+        this.pack();
+    }
+
+    private void clearBoard(){
+        getContentPane().removeAll();
+        layeredPane.removeAll();
+        playerLabels.clear();
+        playerStatusPanels.clear();
+
+        createGUI();
+    }
+
+    private void makeNewBoard(){
+        clearBoard();
     }
 
     /**

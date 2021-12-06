@@ -1,3 +1,4 @@
+import java.io.Serializable;
 import java.util.*;
 import java.util.List;
 
@@ -15,7 +16,7 @@ import java.util.List;
  * @author Owen VanDusen 101152022
  * @version 3.0
  */
-public class Player {
+public class Player implements Serializable {
     /**
      * Keeps track of player name.
      */

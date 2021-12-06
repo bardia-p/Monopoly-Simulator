@@ -2,7 +2,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import java.io.File;
+import java.io.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -20,19 +20,19 @@ import java.util.concurrent.TimeUnit;
  * @author Owen VanDusen 101152022
  * @version 3.0
  */
-public class BoardModel {
+public class BoardModel implements Serializable{
     /**
      * Keeps track of the cells.
      */
-    private final List<BoardCell> cells;
+    private List<BoardCell> cells;
     /**
      * Keeps track of the players.
      */
-    private final List<Player> players;
+    private List<Player> players;
     /**
      * Keeps track of the dice rolls.
      */
-    private final int[] dice;
+    private int[] dice;
     /**
      * Keeps track of the number of players.
      */
@@ -41,9 +41,6 @@ public class BoardModel {
      * Keeps track of the number of AI players.
      */
     private int numAIPlayer;
-
-
-    private String filename;
 
     /**
      * Keeps track of the size of the board.
@@ -60,7 +57,7 @@ public class BoardModel {
     /**
      * Keeps track of when the game should end.
      */
-    private boolean gameFinish;
+    private volatile boolean gameFinish;
     /**
      * Keeps track of the current player turn.
      */
@@ -68,7 +65,7 @@ public class BoardModel {
     /**
      * Keeps track of the bank player.
      */
-    private final Player bank;
+    private Player bank;
     /**
      * Checks to see if the roll button was pressed.
      */
@@ -81,14 +78,35 @@ public class BoardModel {
     /**
      * Keeps track of the board_config directory to read the XML files.
      */
-    private final static String CONFIG_DIR = "board_config";
+    public final static String CONFIG_DIR = "board_config";
+
+    /**
+     * Keeps track of the saved_games directory to save the txt files.
+     */
+    public final static String SAVED_GAMES_DIR = "saved_games";
+
+    /**
+     * Boolean value if the game is load.
+     */
+    private volatile boolean loadGame;
+
+    /**
+     * Boolean value if the game is new.
+     */
+    private volatile boolean newGame;
+
+    /**
+     * Contains the name of the selected board.
+     */
+    private String filename;
 
     /**
      * Keeps track of the possible board statuses.
      */
     public enum Status {
-        GET_NUM_PLAYERS, CREATE_PLAYER_ICONS, INITIALIZE_BOARD, INITIALIZE_MONOPOLY, INITIALIZE_PLAYERS,
-        GET_COMMAND, GO_TO_JAIL, EXIT_JAIL, FORCE_PAY_JAIL, GAME_OVER, PASS_GO, FREE_PARKING, PLAYER_INPUT
+        GET_NUM_PLAYERS, CREATE_PLAYER_ICONS, CHOOSE_BOARD, SAVE_GAME, LOAD_GAME, INITIALIZE_BOARD, INITIALIZE_MONOPOLY, INITIALIZE_PLAYERS,
+        GET_COMMAND, GO_TO_JAIL, EXIT_JAIL, FORCE_PAY_JAIL, GAME_OVER, PASS_GO, FREE_PARKING, PLAYER_INPUT, UPDATE_MODEL,
+        NEW_GAME
     }
 
     /**
@@ -107,7 +125,10 @@ public class BoardModel {
         REQUEST_FORFEIT("Request Forfeit"),
         BUILD("Build"),
         PAINT_HOUSE("Paint House"),
-        CHANGE_WINDOW("Change Window");
+        CHANGE_WINDOW("Change Window"),
+        NEW_BOARD("New Board"),
+        LOAD_BOARD("Load Board"),
+        SAVE_BOARD("Save Board");
 
         private final String stringCommand;
 
@@ -171,8 +192,8 @@ public class BoardModel {
             return used;
         }
 
-        public void setUsed() {
-            used = true;
+        public void setUsed(boolean used) {
+            this.used = used;
         }
     }
 
@@ -193,6 +214,8 @@ public class BoardModel {
         gameFinish = false;
         turn = null;
         numPlayers = 0;
+        loadGame = false;
+        newGame = false;
         checkDoubleRoll = false;
         animationRunning = false;
         filename = "";
@@ -223,12 +246,45 @@ public class BoardModel {
             getBuildStatus();
         } else if (command.equals((Command.FORFEIT.getStringCommand()))) {
             request_forfeit(turn);
+        } else if(command.equals((Command.NEW_BOARD.getStringCommand()))){
+            chooseBoard();
+        } else if(command.equals((Command.LOAD_BOARD.getStringCommand()))){
+            selectFileToLoad();
+            //serializationLoad();
+        } else if(command.equals((Command.SAVE_BOARD.getStringCommand()))){
+            selectFileToSaveGame();
+            //serializationSave();
         }
+
         // Avoids race conditions.
         if (turn != null && !command.equals((Command.PASS.getStringCommand())) &&
                 !command.equals((Command.FORFEIT.getStringCommand()))) {
             getCommand(turn);
         }
+    }
+
+    /**
+     * Method to send board update to choose a board
+     * @author Kyra Lothrop 101145872
+     */
+    public void chooseBoard(){
+        sendBoardUpdate(new BoardEvent(this, Status.CHOOSE_BOARD));
+    }
+
+    /**
+     * Method to send board update to save the game
+     * @author Kyra Lothrop 101145872
+     */
+    private void selectFileToSaveGame(){
+        sendBoardUpdate(new BoardEvent(this, Status.SAVE_GAME));
+    }
+
+    /**
+     * Method to send board update to select a game file to load
+     * @author Kyra Lothrop 101145872
+     */
+    private void selectFileToLoad(){
+        sendBoardUpdate(new BoardEvent(this, Status.LOAD_GAME));
     }
 
     /**
@@ -241,7 +297,6 @@ public class BoardModel {
      */
     public void constructBoard(String filename) {
         try {
-            //File f = new File("board_config/rick_morty_board.xml");
             File f = new File(CONFIG_DIR + "/" + filename);
 
             readSAX(f, new XMLParser(this, bank));
@@ -339,7 +394,7 @@ public class BoardModel {
      *
      * @author Kyra Lothrop 101145872
      */
-    private void initiatePlayers() {
+    public void initiatePlayers() {
         sendBoardUpdate(new BoardEvent(this, Status.INITIALIZE_PLAYERS));
         sendBoardUpdate(new BoardEvent(this, Status.CREATE_PLAYER_ICONS));
 
@@ -603,7 +658,7 @@ public class BoardModel {
 
         for (int i = 1; i <= amountToMove; i++) {
             if (cells.get((originalPosition + i) % SIZE_OF_BOARD).getType() == BoardCell.CellType.GO) {
-                sendBoardUpdate(new BoardEvent(this, Status.PASS_GO, player));  //here
+                sendBoardUpdate(new BoardEvent(this, Status.PASS_GO, player));
                 player.setCash(player.getCash() + ((Go) cells.get(0)).getReward());
             }
         }
@@ -966,6 +1021,26 @@ public class BoardModel {
         return bank.getCash();
     }
 
+    public List<BoardView> getViews() {
+        return views;
+    }
+
+    public boolean isGameFinish() {
+        return gameFinish;
+    }
+
+    public Player getTurn() {
+        return turn;
+    }
+
+    public Player getBank() {
+        return bank;
+    }
+
+    public boolean isCheckDoubleRoll() {
+        return checkDoubleRoll;
+    }
+
     /**
      * It parses the file with a parser
      *
@@ -981,6 +1056,61 @@ public class BoardModel {
         s.parse(f, handler);
     }
 
+    public void serializationLoad(String fileToLoad){
+        try{
+            File f = new File(SAVED_GAMES_DIR + "/" + fileToLoad);
+            FileInputStream fileIn = new FileInputStream(f);
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+
+            BoardModel bmTemp = (BoardModel) in.readObject();
+
+            this.players.clear();
+            this.players.addAll(bmTemp.getPlayers());
+
+            this.cells.clear();
+            this.cells.addAll(bmTemp.getCells());
+
+            this.dice = getDice();
+
+            this.numPlayers = bmTemp.getPlayerCount();
+
+            this.numAIPlayer = bmTemp.getNumAIPlayer();
+
+            this.gameFinish = bmTemp.isGameFinish();
+
+            this.turn = bmTemp.getTurn();
+
+            this.bank = bmTemp.getBank();
+
+            this.checkDoubleRoll = bmTemp.isCheckDoubleRoll();
+
+            sendBoardUpdate(new BoardEvent(this, Status.UPDATE_MODEL));
+
+            loadGame = true;
+
+        }
+        catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+
+    }
+
+    public void serializationSave(String fileNameToSave) {
+        try {
+            File f = new File(SAVED_GAMES_DIR + "/" + fileNameToSave);
+            FileOutputStream fileOut = new FileOutputStream(f);
+
+            ObjectOutputStream out = new ObjectOutputStream((fileOut));
+
+            out.writeObject(this);
+
+            out.close();
+            fileOut.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void setFilename(String filename){
         this.filename = filename;
     }
@@ -993,16 +1123,22 @@ public class BoardModel {
      * @author Kyra Lothrop 101145872
      */
     public void play() {
-        initializeMonopoly();
-        constructBoard("rick_morty_board_images.xml");
-        getNumPlayers();
-        initiatePlayers();
+        gameFinish = false;
+
+//        initializeMonopoly();
+//        constructBoard("rick_morty_board_images.xml");
+//        getNumPlayers();
+//        initiatePlayers();
 
         while (!gameFinish) {
-            for (Player player : players) {
-                turn = player;
-                if (!player.isBankrupt()) {
+            for (int i =0; i < players.size(); i++) {
+                Player player = players.get(i);
 
+                if (turn == null){
+                    turn = player;
+                }
+
+                if (turn == player && !player.isBankrupt()) {
                     // Checks to see if the player is in jail.
                     if (player.getResortInJail()) {
                         Jail jail = (Jail) player.getCurrentCell();
@@ -1013,7 +1149,7 @@ public class BoardModel {
                     getCommand(player);
 
                     // Keeps prompting the player for commands until their turn is over.
-                    while (turn != null) {
+                    while (!gameFinish && turn != null) {
                         if (turn.isPlayerAI()) {
                             if (!animationRunning) {
                                 ((AIPlayer) turn).nextMove();
@@ -1035,11 +1171,50 @@ public class BoardModel {
                 // Checks to see if the game is over
                 if (numPlayers == 1) {
                     gameFinish = true;
+                    gameOver();
+                }
+
+                if (gameFinish){
                     break;
                 }
             }
         }
+    }
 
-        gameOver();
+    public void handleNewGame(){
+        sendBoardUpdate(new BoardEvent(this, Status.NEW_GAME));
+        constructBoard(filename);
+        getNumPlayers();
+        initiatePlayers();
+
+        loadGame = true;
+    }
+
+    public void start(){
+        while (true){
+            if (loadGame){
+                if (newGame){
+                    handleNewGame();
+                    newGame = false;
+                }
+                loadGame = false;
+                play();
+            }
+        }
+    }
+
+    public void startNewGame(String selectedBoard){
+        cells = new ArrayList<>();
+        players = new ArrayList<>();
+        dice = new int[]{0, 0};
+        bank = new Player("Bank", Icon.BANK, 0);
+        turn = null;
+        numPlayers = 0;
+        gameFinish = true;
+        loadGame = true;
+        newGame = true;
+        checkDoubleRoll = false;
+        animationRunning = false;
+        filename = selectedBoard;
     }
 }
