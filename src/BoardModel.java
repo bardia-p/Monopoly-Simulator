@@ -60,7 +60,7 @@ public class BoardModel implements Serializable {
     /**
      * Keeps track of the current player turn.
      */
-    private Player turn;
+    private volatile Player turn;
     /**
      * Keeps track of the bank player.
      */
@@ -68,11 +68,11 @@ public class BoardModel implements Serializable {
     /**
      * Checks to see if the roll button was pressed.
      */
-    private boolean checkDoubleRoll;
+    private volatile boolean checkDoubleRoll;
     /**
      * Checks to see if the animation is running.
      */
-    private boolean animationRunning;
+    private volatile boolean animationRunning;
 
     private volatile boolean loadNewGame;
     /**
@@ -1011,8 +1011,6 @@ public class BoardModel implements Serializable {
 
             this.numPlayers = bmTemp.getPlayerCount();
 
-            System.out.println(numPlayers);
-
             this.numAIPlayer = bmTemp.getNumAIPlayer();
 
             this.gameFinish = bmTemp.isGameFinish();
@@ -1023,6 +1021,11 @@ public class BoardModel implements Serializable {
 
             this.checkDoubleRoll = bmTemp.isCheckDoubleRoll();
 
+            for (Player p : players){
+                if (p.isPlayerAI()){
+                    ((AIPlayer)p).setModel(this);
+                }
+            }
             sendBoardUpdate(new BoardEvent(this, Status.UPDATE_MODEL));
 
             loadNewGame = true;
@@ -1061,10 +1064,12 @@ public class BoardModel implements Serializable {
         gameFinish = false;
 
         while (!gameFinish) {
+            boolean isNewTurn = false;
             for (int i =0; i < players.size(); i++) {
                 Player player = players.get(i);
 
                 if (turn == null){
+                    isNewTurn = true;
                     turn = player;
                 }
 
@@ -1075,12 +1080,15 @@ public class BoardModel implements Serializable {
                         jail.incrementJailRound(player); // Pass their turn in jail
                     }
 
-                    roll(player);
+                    if (isNewTurn){
+                        roll(player);
+                    }
+
                     getCommand(player);
 
                     // Keeps prompting the player for commands until their turn is over.
                     while (!gameFinish && turn != null) {
-                        if (turn.isPlayerAI()) {
+                        if (turn!=null && turn.isPlayerAI()) {
                             if (!animationRunning) {
                                 ((AIPlayer) turn).nextMove();
                                 try {

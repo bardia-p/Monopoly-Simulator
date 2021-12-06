@@ -1340,13 +1340,13 @@ public class BoardFrame extends JFrame implements BoardView {
 
         createGUI();
         this.constructBoard(model.getCells());
-        this.createPlayers(model.getPlayers());
+        this.createPlayers(model.getPlayers()) ;
 
         for (Player p: model.getPlayers()){
             this.showCurrentCell(p, p.getPosition());
         }
 
-        this.revalidate();
+        this.pack();
     }
 
     /**
