@@ -1545,18 +1545,48 @@ public class BoardFrame extends JFrame implements BoardView {
     }
 
     /**
+     * Remakes an empty board
+     * @author Owen VanDusen 101152022
+     * @param model the model to be created
+     */
+    public void createBoard(BoardModel model){
+        this.constructBoard(model.getCells());
+        this.createPlayers(model.getPlayers());
+    }
+
+    /**
+     * Adding all the player icons and house/hotel icons to the board
+     * @author Owen VanDusen 101152022
+     * @param model the model to be populated
+     */
+    public void populateBoard(BoardModel model){
+        for(Player p: model.getPlayers()){
+            this.showCurrentCell(p, p.getPosition());
+        }
+
+        for(BoardCell b: model.getCells()){
+            if(b instanceof Property) {
+                int totalHouses = ((Property) b).getNumHouses();
+                ((Property) b).setNumHouses(0);
+
+                for (int i = 0; i < totalHouses; i++) {
+                    ((Property) b).addHouse();
+                    this.paintHouse(b);
+                }
+            }
+        }
+    }
+
+    /**
      * Handles updating the board.
      * @author Owen VanDusen 101152022
      */
     public void updateBoard(){
         clearBoard();
+        createGUI();
 
-        this.constructBoard(model.getCells());
-        this.createPlayers(model.getPlayers());
-
-        for (Player p: model.getPlayers()){
-            this.showCurrentCell(p, p.getPosition());
-        }
+        createBoard(model);
+        populateBoard(model);
 
         this.pack();
     }
@@ -1570,8 +1600,6 @@ public class BoardFrame extends JFrame implements BoardView {
         layeredPane.removeAll();
         playerLabels.clear();
         playerStatusPanels.clear();
-
-        createGUI();
     }
 
     /**
@@ -1580,6 +1608,7 @@ public class BoardFrame extends JFrame implements BoardView {
      */
     private void makeNewBoard(){
         clearBoard();
+        createGUI();
     }
 
     /**

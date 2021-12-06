@@ -52,7 +52,7 @@ public class XMLParser extends DefaultHandler {
     /**
      * Keeps track of the tag that was selected.
      */
-    private int attributeSelector = -1;
+    private int attributeSelector;
 
     /**
      * The constructor for the parser.
@@ -64,6 +64,7 @@ public class XMLParser extends DefaultHandler {
         this.model = model;
         this.bank = bank;
         this.name = "";
+        this.attributeSelector = -1;
     }
 
     /**
