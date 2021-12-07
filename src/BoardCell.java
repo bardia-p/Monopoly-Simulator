@@ -1,3 +1,4 @@
+import java.io.Serializable;
 import java.util.Objects;
 /**
  * Group 3
@@ -12,7 +13,7 @@ import java.util.Objects;
  * @version 2.0
  *
  */
-public abstract class BoardCell {
+public abstract class BoardCell implements Serializable {
     /**
      * Keeps track of the cell name.
      */

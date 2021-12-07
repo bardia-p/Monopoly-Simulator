@@ -1,3 +1,4 @@
+import java.io.Serializable;
 import java.util.*;
 import java.util.List;
 
@@ -15,7 +16,7 @@ import java.util.List;
  * @author Owen VanDusen 101152022
  * @version 3.0
  */
-public class Player {
+public class Player implements Serializable {
     /**
      * Keeps track of player name.
      */
@@ -458,6 +459,19 @@ public class Player {
         this.numUtilitiesOwned = numUtilitiesOwned;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Player player = (Player) o;
+        return icon.getName() == player.getIconName();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, icon);
+    }
+
     /**
      * Accessor method to package relevant information into a string.
      * @author Bardia Parmoun 101143006
@@ -468,7 +482,7 @@ public class Player {
         StringBuilder playerInfo;
 
         playerInfo = new StringBuilder("\tname='" + name + '\'' +
-                "\n\ticon='" + icon + '\'' +
+                "\n\ticon='" + icon.getName() + '\'' +
                 "\n\tcash='" + cash + '\'' +
                 "\n\tposition='" + currentCell.getName() + '\'' +
                 "\n\tbankrupt=" + bankrupt +

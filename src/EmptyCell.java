@@ -19,11 +19,23 @@ public class EmptyCell extends BoardCell {
      * @author Bardia Parmoun 101143006
      * @author Owen VanDusen 101152022
      * @param name cell name, String
-     * @param type cell type, CellType
      * @param imgPath, the path to the image, String
      */
-    public EmptyCell(String name, CellType type, String imgPath){
-        super(name, null, type, imgPath);
+    public EmptyCell(String name, String imgPath){
+        super(name, null, CellType.CHANCE_AND_CHEST, imgPath);
+    }
+
+    /**
+     * The constructor for EmptyCell without imgName
+     * @author Sarah Chow 101143033
+     * @author Kyra Lothrop 101145872
+     * @author Bardia Parmoun 101143006
+     * @author Owen VanDusen 101152022
+     * @param name cell name, String
+     */
+    public EmptyCell(String name){
+
+        this(name, "");
     }
 
     /**
