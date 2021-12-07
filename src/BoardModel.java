@@ -85,10 +85,6 @@ public class BoardModel implements Serializable{
      * Contains the name of the selected board.
      */
     private String filename;
-    /**
-     * Keeps track of the name of the music file.
-     */
-    private String musicFileName;
 
     /**
      * Keeps track of the possible board statuses.
