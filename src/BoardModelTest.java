@@ -482,4 +482,49 @@ public class BoardModelTest {
         assertEquals(1500 - 20, p2.getCash());
 
     }
+
+    /**
+     * Test saving and loading a game. Confirms the saved attributes of the players.
+     * @author Sarah Chow 101143033
+     */
+    @Test
+    public void testSaveLoad(){
+
+        boardModel.setDice(1, 0);
+        boardModel.move(p1);
+        boardModel.buyLocation(p1.getCurrentCell(), p1);
+
+        boardModel.setDice(2, 0);
+        boardModel.move(p1);
+        boardModel.buyLocation(p1.getCurrentCell(), p1);
+
+        boardModel.buildHouse((Property) p1.getCurrentCell(), p1);
+
+        boardModel.setDice(6, 0);
+        boardModel.move(p2);
+        boardModel.buyLocation(p2.getCurrentCell(), p2);
+
+        boardModel.serializationSave("testCaseTesting.txt");
+
+        // Random moves
+        boardModel.setDice(2, 0);
+        boardModel.move(p2);
+
+
+        boardModel.serializationLoad("testCaseTesting.txt");
+
+        for (Player p : boardModel.getPlayers()){
+            if (p.getIconName().equals(BoardModel.Icon.ICON3.getName())){
+                p1 = p;
+            }
+            else if (p.getIconName().equals(BoardModel.Icon.ICON7.getName())){
+                p2 = p;
+            }
+        }
+
+        assertEquals(1, (((Property) p1.getCurrentCell()).getNumHouses()));
+        assertEquals(1, p2.getOwnedLocations(false).size());
+        assertEquals(6, p2.getPosition());
+
+    }
 }
