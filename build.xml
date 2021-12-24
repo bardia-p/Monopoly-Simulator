@@ -19,6 +19,7 @@
 
     <target name="clean">
         <delete dir="${build.dir}"/>
+        <delete file="Monopoly.jar" />
     </target>
 
     <target name="compile">
@@ -36,6 +37,9 @@
                 <attribute name="Main-Class" value="${main-class}"/>
             </manifest>
         </jar>
+        <copy todir=".">
+            <fileset dir="${jar.dir}"/>
+        </copy>
     </target>
 
     <target name="junit" depends="compile">
