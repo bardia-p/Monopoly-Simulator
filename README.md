@@ -28,7 +28,7 @@ ant -buildfile build.xml
 ```
 
 ## Running the Program
-- To run the program, simply click on the jar file to run it.\
+- To run the program, simply click on the jar file created by the 'build.xml' file to run it.\
 Alternatively you can use: 
     ```
     java -jar Monopoly.jar
@@ -73,6 +73,6 @@ This project is developed by implementing the [MVC design pattern](https://www.g
 - Adding more customizatin to the board setup for the player icons and background colours.
 
 ## CREDITS
-Authors: Bardia Parmoun and Christopher Shen
+Authors: Bardia Parmoun, Kyra Lothrop, Sarah Chow, and Owen VanDusen
 
-Copyright © 2021 Bardia Parmoun, Kyra Lothrop, Sarah Chow, and Owen VanDusen. All rights reserved
+Copyright © 2021. All rights reserved
